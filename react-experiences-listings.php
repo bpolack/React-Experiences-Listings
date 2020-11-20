@@ -13,7 +13,9 @@ defined( 'ABSPATH' ) or die( 'Direct script access disallowed.' );
 // Define Backend Constants
 define( 'REL_NAMESPACE', 'rel' );
 define( 'REL_APP_PATH', plugin_dir_path( __FILE__ ) . '/app' );
-define( 'REL_ASSET_MANIFEST', REL_APP_PATH . '/build/asset-manifest.json' );
+//define( 'REL_ASSET_MANIFEST', REL_APP_PATH . '/build/asset-manifest.json' );
 define( 'REL_INCLUDES', plugin_dir_path( __FILE__ ) . '/includes' );
 
 require_once( REL_INCLUDES . '/enqueue.php' );
+require_once( REL_INCLUDES . '/shortcodes.php' );
+require_once( REL_INCLUDES . '/settings.php' );
