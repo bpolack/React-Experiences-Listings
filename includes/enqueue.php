@@ -3,14 +3,20 @@
 
 defined( 'ABSPATH' ) or die( 'Direct script access disallowed.' );
 
-// Enqueue Theme JS w React Dependency
+// Register Theme JS with React Dependency
 function rel_enqueue_plugin_js() {
-    wp_enqueue_script(
+    wp_register_script(
         'rel-plugin-frontend',
-        plugin_dir_url() . 'build/index.js',
+        REL_APP_URL . 'build/index.js',
         ['wp-element'],
         time(), // Change this to null for production
         true
+    );
+    wp_register_style(
+        'rel-plugin-style',
+        REL_APP_URL . 'build/index.css',
+        [],
+        time() // Change this to null for production
     );
 }
 add_action( 'wp_enqueue_scripts', 'rel_enqueue_plugin_js' );

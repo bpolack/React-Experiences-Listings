@@ -1,0 +1,1 @@
+{"version":3,"sources":["webpack:///App.css"],"names":[],"mappings":"AAAA;IACI,iBAAiB;IACjB,4BAA4B;AAChC,C","file":"index.css","sourcesContent":[".rel-wrapper {\r\n    min-height: 200px;\r\n    background-color: aquamarine;\r\n}"],"sourceRoot":""}

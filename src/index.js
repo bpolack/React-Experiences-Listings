@@ -5,8 +5,29 @@ const targets = document.querySelectorAll('.rel-root');
 
 Array.prototype.forEach.call(targets, target => {
     const id = target.dataset.id;
-    const args = window.relSettings[id]; // Shortcode settings
-    const globals = window.relGlobals; // Global plugin settings
+    let args = window.relSettings[id]; // Shortcode settings
+    let globals = window.relGlobals; // Global plugin settings
+
+    // For dev use
+    if (!args) {
+        args = {
+            "view": "grid",
+            "results": "3",
+            "perpage": "12"
+        }
+    }
+    if (!globals) {
+        globals = {
+            "apiLocation": "http://harrison.infinus.technology/wp-json/wp/v2/",
+            "postType": "listing",
+            "categoryName": "listing_category",
+            "phoneField": "phone",
+            "websiteField": "website",
+            "regionField": "region",
+            "addressField": "address",
+            "mapField": "location",
+        }
+    }
 
     render(
         <App globals={globals} args={args} />, 
