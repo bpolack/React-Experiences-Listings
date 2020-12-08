@@ -24,8 +24,8 @@ The function of this project is to create a React frontend widget to display exp
 ## Built With
 
 * ReactJS
-* GraphQL
-* Redux (consider removing)
+* Node-WPAPI
+* Redux (currently not using, but may switch to Redux)
 * PHP
 
 ## Authors
