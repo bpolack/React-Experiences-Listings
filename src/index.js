@@ -8,22 +8,21 @@ Array.prototype.forEach.call(targets, target => {
     let args = window.relSettings[id]; // Shortcode settings
     let globals = window.relGlobals; // Global plugin settings
 
-    // For dev use
+    // Dev purposes
     if (!args) {
         args = {
             "view": "grid",
-            "results": "3",
             "perpage": "12"
         }
     }
     if (!globals) {
         globals = {
-            "apiLocation": "http://harrison.infinus.technology/wp-json/wp/v2/",
+            "apiLocation": "http://harrison.infinus.technology/wp-json",
             "postType": "listing",
             "categoryName": "listing_category",
             "phoneField": "phone",
             "websiteField": "website",
-            "regionField": "region",
+            "regionName": "region",
             "addressField": "address",
             "mapField": "location",
         }

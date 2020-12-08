@@ -1,6 +1,18 @@
 .rel-wrapper {
     min-height: 200px;
-    background-color: aquamarine;
 }
+.rel-header-item {
+    padding: 5px 0px;
+    display: flex;
+    justify-content: center;
+}
+
+.rel-header-categories {
+    text-align: center;
+}
+.rel-header-regions {
+    text-align: center;
+}
+
 
 /*# sourceMappingURL=index.css.map*/

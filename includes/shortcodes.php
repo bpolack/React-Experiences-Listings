@@ -11,8 +11,11 @@ function create_rel_app( $atts ) {
 
     $default_atts = array( 
         'view' => 'grid',
-        'results' => '3',
-        'perpage' => '12'
+        'perpage' => '6',
+        'initial_category' => '0',
+        'exclude_categories' => '10',
+        'initial_region' => '',
+        'exclude_regions' => '',
     );
     $args = shortcode_atts( $default_atts, $atts );
     $sc_id = uniqid('rel');
@@ -30,15 +33,18 @@ function create_rel_app( $atts ) {
             "categoryName": "<?php echo $globals["category"]; ?>",
             "phoneField": "<?php echo $globals["phone"]; ?>",
             "websiteField": "<?php echo $globals["website"]; ?>",
-            "regionField": "<?php echo $globals["region"]; ?>",
+            "regionName": "<?php echo $globals["region"]; ?>",
             "addressField": "<?php echo $globals["address"]; ?>",
             "mapField": "<?php echo $globals["map_pin"]; ?>"
         };
         window.relSettings = window.relSettings || {};
         window.relSettings["<?php echo $sc_id; ?>"] = {
             "view": "<?php echo $args["view"]; ?>",
-            "results": "<?php echo $args["results"]; ?>",
-            "perpage": "<?php echo $args["perpage"]; ?>"
+            "perpage": "<?php echo $args["perpage"]; ?>",
+            "initialCategory": "<?php echo $args["initial_category"]; ?>",
+            "excludeCategories": "<?php echo $args["exclude_categories"]; ?>",
+            "initialRegion": "<?php echo $args["initial_region"]; ?>",
+            "excludeRegions": "<?php echo $args["exclude_regions"]; ?>"
         };
     </script>
     <div class="rel-root" data-id="<?php echo $sc_id; ?>"></div>

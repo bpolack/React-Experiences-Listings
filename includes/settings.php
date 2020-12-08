@@ -27,9 +27,9 @@ function rel_register_settings() {
     add_settings_field( 'rel_plugin_setting_api_loc', 'API URL (with trailing slash)', 'rel_plugin_setting_api_loc', 'react-experiences-listings', 'post_type_settings' );
     add_settings_field( 'rel_plugin_setting_post_type', 'Listing Post Type', 'rel_plugin_setting_post_type', 'react-experiences-listings', 'post_type_settings' );
     add_settings_field( 'rel_plugin_setting_category', 'Custom Taxonomy (optional)', 'rel_plugin_setting_category', 'react-experiences-listings', 'post_type_settings' );
+    add_settings_field( 'rel_plugin_setting_region', 'Custom Taxonomy Region (optional)', 'rel_plugin_setting_region', 'react-experiences-listings', 'post_type_settings' );
     add_settings_field( 'rel_plugin_setting_phone', 'ACF Phone Field', 'rel_plugin_setting_phone', 'react-experiences-listings', 'post_type_settings' );
     add_settings_field( 'rel_plugin_setting_website', 'ACF Website Field', 'rel_plugin_setting_website', 'react-experiences-listings', 'post_type_settings' );
-    add_settings_field( 'rel_plugin_setting_region', 'ACF Region Field', 'rel_plugin_setting_region', 'react-experiences-listings', 'post_type_settings' );
     add_settings_field( 'rel_plugin_setting_address', 'ACF Address Field', 'rel_plugin_setting_address', 'react-experiences-listings', 'post_type_settings' );
     add_settings_field( 'rel_plugin_setting_map_pin', 'ACF Map Field', 'rel_plugin_setting_map_pin', 'react-experiences-listings', 'post_type_settings' );
 }
@@ -51,6 +51,10 @@ function rel_plugin_setting_category() {
     $options = get_option( 'rel_plugin_options' );
     echo '<input id="rel_plugin_setting_category" name="rel_plugin_options[category]" type="text" value="'.esc_attr( $options['category'] ).'" />';
 }
+function rel_plugin_setting_region() {
+    $options = get_option( 'rel_plugin_options' );
+    echo '<input id="rel_plugin_setting_region" name="rel_plugin_options[region]" type="text" value="'.esc_attr( $options['region'] ).'" />';
+}
 function rel_plugin_setting_phone() {
     $options = get_option( 'rel_plugin_options' );
     echo '<input id="rel_plugin_setting_phone" name="rel_plugin_options[phone]" type="text" value="'.esc_attr( $options['phone'] ).'" />';
@@ -58,10 +62,6 @@ function rel_plugin_setting_phone() {
 function rel_plugin_setting_website() {
     $options = get_option( 'rel_plugin_options' );
     echo '<input id="rel_plugin_setting_website" name="rel_plugin_options[website]" type="text" value="'.esc_attr( $options['website'] ).'" />';
-}
-function rel_plugin_setting_region() {
-    $options = get_option( 'rel_plugin_options' );
-    echo '<input id="rel_plugin_setting_region" name="rel_plugin_options[region]" type="text" value="'.esc_attr( $options['region'] ).'" />';
 }
 function rel_plugin_setting_address() {
     $options = get_option( 'rel_plugin_options' );
