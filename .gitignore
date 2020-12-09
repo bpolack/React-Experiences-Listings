@@ -30,6 +30,9 @@
 ehthumbs.db
 Thumbs.db
 
+# VSCODE
+.vscode
+
 # Logs
 logs
 *.log

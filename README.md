@@ -32,7 +32,7 @@ The function of this project is to create a React frontend widget to display exp
 
 * **[Braighton Polack](https://github.com/bpolack/)** - Dev
 
-See also the list of [contributors](https://github.com/bpolack/node-time-tracker/contributors) who participated in this project.
+See also the list of [contributors](https://github.com/bpolack/React-Experiences-Listings/contributors) who participated in this project.
 
 ## License
 
