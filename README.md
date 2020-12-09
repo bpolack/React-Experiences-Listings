@@ -50,6 +50,23 @@ ACF Address Field: address
 ACF Map Field: location
 ```
 
+Once configured, you can include the module anywhere in Wordpress, using the following shortcode: 
+
+```
+[react_experiences view="grid" initial_category="0" exclude_categories="10,5,7" ]
+```
+
+Optional Shortcode attributes (with default values):
+
+```javascript
+view='grid'
+perpage='6'
+initial_category='0'
+exclude_categories='10'
+initial_region=''
+exclude_regions=''
+```
+
 ## Built With
 
 * ReactJS
