@@ -2,8 +2,9 @@ const { Component } = wp.element;
 import './RelHeader.css';
 
 // Import Components
-import RelCategories from './RelCategories';
-import RelRegions from './RelRegions';
+import RelViews from './RelViews/RelViews';
+import RelCategories from './RelCategories/RelCategories';
+import RelRegions from './RelRegions/RelRegions';
 
 export class RelHeader extends Component {
 
@@ -13,18 +14,8 @@ export class RelHeader extends Component {
                 return;
             default:
                 return (
-                    <div className="rel-header-item">
-                        <div className="rel-header-views">
-                            <button className="rel-view-button" onClick={() => this.props.changeView('grid')}>
-                                Grid
-                            </button>
-                            <button className="rel-view-button" onClick={() => this.props.changeView('rows')}>
-                                Rows
-                            </button>
-                            <button className="rel-view-button" onClick={() => this.props.changeView('map')}>
-                                Map
-                            </button>
-                        </div>
+                    <div className="rel-header-options">
+                        <RelViews currentView={this.props.currentView}  changeView={this.props.changeView} />
                     </div>
                 )
         }

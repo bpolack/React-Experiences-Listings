@@ -4,11 +4,11 @@ import './App.css';
 
 // Import Components
 import RelHeader from './layout/header/RelHeader';
-import RelFooter from './layout/RelFooter';
-import ListingGrid from './views/ListingGrid';
-import ListingRows from './views/ListingRows';
-import ListingMap from './views/ListingMap';
-import ListingSingle from './views/ListingSingle';
+import RelFooter from './layout/footer/RelFooter';
+import ListingGrid from './views/ListingGrid/ListingGrid';
+import ListingRows from './views/ListingRows/ListingRows';
+import ListingMap from './views/ListingMap/ListingMap';
+import ListingSingle from './views/ListingSingle/ListingSingle';
 
 export class App extends Component {
 
@@ -111,6 +111,11 @@ export class App extends Component {
             .param('hide_empty', false)
             .then((data) => {
                 if (data) {
+                    // Add the parent category to the front of the array
+                    data.unshift({
+                        id: (parentCategory != false) ? parentCategory : 0,
+                        name: 'All'
+                    });
                     this.setState({
                         categories: data
                     })
@@ -174,9 +179,6 @@ export class App extends Component {
                     categories={this.state.categories} currentCategory={this.state.currentCategory} changeCategory={this.changeCategory}
                     regions={this.state.regions} currentRegion={this.state.currentRegion} changeRegion={this.changeRegion}  />
                 {this.renderView()}
-                <div>
-
-                </div>
                 <RelFooter />
             </div>
         )

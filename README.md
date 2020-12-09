@@ -18,8 +18,37 @@ The function of this project is to create a React frontend widget to display exp
 
 * A properly configured Wordpress installation with REST API
 * A custom post type for your Listings, ex: "business_listing"
-* Custom fields to contain your listing meta (ideally Advanced Custom Fields)
+* Custom fields to contain your listing meta (Advanced Custom Fields)
 * (Optional) Custom taxonomies or categories to organize your listings
+
+## Quick Setup
+If you are using this plugin **as is**, your Wordpress installation must not be located in a subfolder, your plugins directory must be default (/wp-content/plugins/), and you must not change the name of the plugin folder.
+If your environment does not meet all the above criteria, you will be required to modify the webpack.config.js file, and rebuild the plugin using npm. Within **webpack.config.js**, the default publicPath for the file-loader image rule, is as follows:
+
+```javascript
+publicPath: '/wp-content/plugins/react-experiences-listings/build/images'
+```
+
+Update this path to match your Wordpress enviroment, then rebuild the project using the following command. (You will need to have node installed on your device)
+
+```
+\> npm run-script build
+```
+
+Once the project is built, or if you are using the plugin as is, you may activate the Wordpress plugin, and proceed to the setting configuration to match your needs under **Settings > Experience Listings** in the Wordpress Admin Panel. 
+
+Your listing configuration settings may vary, but in general you will require your Wordpress API URL, custom post type slug, custom taxonomy slugs, and any ACF field names you wish to include. Sample configuration:
+
+```
+API URL: https://your-wordpress-site.com/wp-json
+Listing Post Type: listing
+Custom Taxonomy: listing_category
+Custom Taxonomy Region: region
+ACF Phone Field: phone
+ACF Website Field: website
+ACF Address Field: address
+ACF Map Field: location
+```
 
 ## Built With
 

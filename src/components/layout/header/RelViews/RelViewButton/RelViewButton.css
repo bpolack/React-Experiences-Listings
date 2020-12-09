@@ -1,0 +1,15 @@
+.rel-view-button {
+    display: inline-block;
+    cursor: pointer;
+    padding: 0px 26px;
+    color:#173f57;
+    line-height: 1;
+    border-right: 1px solid #849452;
+}
+.rel-view-button:last-child {
+    border-right: 0px;
+}
+.rel-view-button img {
+    display: block;
+    max-height: 21px;
+}
