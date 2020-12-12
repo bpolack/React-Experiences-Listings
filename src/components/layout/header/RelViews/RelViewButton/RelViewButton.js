@@ -1,34 +1,38 @@
 const { Component } = wp.element;
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import './RelViewButton.css';
 
 // Icons
-import gridIcon from './icons/grid.png';
-import listIcon from './icons/list.png';
-import mapIcon from './icons/map.png';
+import { faThLarge } from '@fortawesome/free-solid-svg-icons';
+import { faThList } from '@fortawesome/free-solid-svg-icons';
+import { faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
 
 export class RelViewButton extends Component {
-    
+
     renderIcon() {
         switch (this.props.view) {
             case 'map':
                 return (
-                    <img src={mapIcon} alt="View Icon" />
+                    <FontAwesomeIcon icon={faMapMarkerAlt} />
                 )
             case 'list':
                 return (
-                    <img src={listIcon} alt="View Icon" />
+                    <FontAwesomeIcon icon={faThList} />
                 )
             default:
                 return (
-                    <img src={gridIcon} alt="View Icon" />
+                    <FontAwesomeIcon icon={faThLarge} />
                 )
         }
+        
     }
-    
+
     render() {
         let buttonClass = "rel-view-button";
+        let fillIcon = false;
         if (this.props.currentView == this.props.view) {
             buttonClass += " active";
+            fillIcon = true;
         }
 
         return (

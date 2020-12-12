@@ -1,7 +1,9 @@
 const { Component } = wp.element;
-const Entities = require('html-entities').AllHtmlEntities;
-const entities = new Entities();
+import { v4 as uuidv4 } from 'uuid';
 import './RelRegions.css';
+
+// Import Components
+import RelRegionButton from './RelRegionButton/RelRegionButton';
 
 export class RelRegions extends Component {
 
@@ -11,9 +13,7 @@ export class RelRegions extends Component {
                 <div className="rel-header-regions">
                     {this.props.regions.map((region, index) => {
                         return (
-                            <button className="rel-region-button" onClick={() => this.props.changeRegion(region.id.toString())}>
-                                {entities.decode(region.name)}
-                            </button>
+                            <RelRegionButton key={uuidv4()} region={region} currentRegion={this.props.currentRegion} changeRegion={this.props.changeRegion} regionColourField={this.props.regionColourField} />
                         )
                     })}
                 </div>

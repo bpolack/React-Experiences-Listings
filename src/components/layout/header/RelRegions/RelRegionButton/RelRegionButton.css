@@ -1,0 +1,11 @@
+.rel-region-button {
+    display: inline-block;
+    cursor: pointer;
+    padding: 3px 20px;
+    color: #173f57;
+    font-size: 15px;
+    font-weight: 700;
+}
+.rel-region-button:hover, .rel-view-button.active {
+    color:#849452;
+}

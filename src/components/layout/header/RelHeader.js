@@ -31,7 +31,7 @@ export class RelHeader extends Component {
                 return (
                     <div className="rel-header-filters">
                         <RelCategories categories={this.props.categories} currentCategory={this.props.currentCategory} changeCategory={this.props.changeCategory} />
-                        <RelRegions regions={this.props.regions} currentRegion={this.props.currentRegion} changeRegion={this.props.changeRegion} />
+                        <RelRegions regions={this.props.regions} currentRegion={this.props.currentRegion} changeRegion={this.props.changeRegion} regionColourField={this.props.regionColourField} />
                     </div>
                 )
         }

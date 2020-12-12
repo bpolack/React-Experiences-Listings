@@ -7,7 +7,7 @@ export class RelCategoryButton extends Component {
     render() {
 
         let buttonClass = "rel-cat-button";
-        if (parseInt(this.props.currentCategory) == this.props.category.id) {
+        if (this.props.currentCategory == this.props.category.id) {
             buttonClass += " active";
         }
 

@@ -20,8 +20,10 @@ require_once( REL_INCLUDES . '/settings.php' );
 require_once( REL_INCLUDES . '/enqueue.php' );
 require_once( REL_INCLUDES . '/shortcodes.php' );
 
+$rel_options = get_option( 'rel_plugin_options' );
+
 // Expose all ACF fields to the REST API
-function hrv_acf_to_rest_api($response, $post, $request) {
+function rel_acf_to_rest_api($response, $post, $request) {
     if (!function_exists('get_fields')) return $response;
 
     if (isset($post)) {
@@ -30,5 +32,18 @@ function hrv_acf_to_rest_api($response, $post, $request) {
     }
     return $response;
 }
-add_filter('rest_prepare_post', 'hrv_acf_to_rest_api', 10, 3);
-add_filter('rest_prepare_listing', 'hrv_acf_to_rest_api', 10, 3);
+add_filter('rest_prepare_post', 'rel_acf_to_rest_api', 10, 3);
+add_filter('rest_prepare_' . $rel_options['post_type'], 'rel_acf_to_rest_api', 10, 3);
+
+// Expose all ACF fields to the REST API
+function rel_acf_to_rest_api_taxonomy($response, $item, $request) {
+    if (!function_exists('get_fields')) return $response;
+
+    if (isset($item)) {
+        $acf = get_fields('term_' . $item->term_id);
+        $response->data['rel_fields'] = $acf;
+    }
+    return $response;
+}
+add_filter('rest_prepare_' . $rel_options['category'], 'rel_acf_to_rest_api_taxonomy', 10, 3);
+add_filter('rest_prepare_' . $rel_options['region'], 'rel_acf_to_rest_api_taxonomy', 10, 3);

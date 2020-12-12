@@ -20,15 +20,15 @@
     cursor: pointer;
     padding: 0px 26px;
     color:#173f57;
+    font-size: 19px;
     line-height: 1;
     border-right: 1px solid #849452;
 }
 .rel-view-button:last-child {
     border-right: 0px;
 }
-.rel-view-button img {
-    display: block;
-    max-height: 21px;
+.rel-view-button:hover, .rel-view-button.active {
+    color:#849452;
 }
 .rel-header-categories {
     margin-top: 40px;
@@ -54,6 +54,20 @@
     background-color: rgb(132, 148, 82, 0.3);
 }
 .rel-header-regions {
+    margin-top: 15px;
     text-align: center;
 }
+.rel-region-button {
+    display: inline-block;
+    cursor: pointer;
+    padding: 3px 20px;
+    color: #173f57;
+    font-size: 15px;
+    font-weight: 700;
+}
+.rel-region-button:hover, .rel-view-button.active {
+    color:#849452;
+}
 
+
+/*# sourceMappingURL=index.css.map*/

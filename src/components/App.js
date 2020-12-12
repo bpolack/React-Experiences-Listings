@@ -83,7 +83,7 @@ export class App extends Component {
             .param(categoryName, (currentCategory != false) ? currentCategory.trim().split(',') : [])
             .param(categoryName + '_exclude', (excludeCategories != false) ? excludeCategories.trim().split(',') : [])
             .param(regionName, (currentRegion != false) ? currentRegion.trim().split(',') : [])
-            .param(regionName + '_exclude', (excludeRegions != false) ? excludeRegions.trim().split(',') : [])
+            /*.param(regionName + '_exclude', (excludeRegions != false) ? excludeRegions.trim().split(',') : []) */
             .page(page)
             .perPage(perpage)
             .then((data) => {
@@ -153,7 +153,7 @@ export class App extends Component {
 
     renderView() {
         switch (this.state.view) {
-            case 'rows':
+            case 'list':
                 return (
                     <ListingRows />
                 )
@@ -177,7 +177,7 @@ export class App extends Component {
             <div className="rel-wrapper" >
                 <RelHeader currentView={this.state.view} changeView={this.changeView}
                     categories={this.state.categories} currentCategory={this.state.currentCategory} changeCategory={this.changeCategory}
-                    regions={this.state.regions} currentRegion={this.state.currentRegion} changeRegion={this.changeRegion}  />
+                    regions={this.state.regions} currentRegion={this.state.currentRegion} changeRegion={this.changeRegion} regionColourField={this.props.globals.regionColourField}  />
                 {this.renderView()}
                 <RelFooter />
             </div>

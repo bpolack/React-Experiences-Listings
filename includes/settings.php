@@ -25,13 +25,15 @@ function rel_register_settings() {
     add_settings_section( 'post_type_settings', 'Post Type Settings', 'rel_plugin_section_text', 'react-experiences-listings' );
     
     add_settings_field( 'rel_plugin_setting_api_loc', 'API URL (with trailing slash)', 'rel_plugin_setting_api_loc', 'react-experiences-listings', 'post_type_settings' );
-    add_settings_field( 'rel_plugin_setting_post_type', 'Listing Post Type', 'rel_plugin_setting_post_type', 'react-experiences-listings', 'post_type_settings' );
-    add_settings_field( 'rel_plugin_setting_category', 'Custom Taxonomy (optional)', 'rel_plugin_setting_category', 'react-experiences-listings', 'post_type_settings' );
-    add_settings_field( 'rel_plugin_setting_region', 'Custom Taxonomy Region (optional)', 'rel_plugin_setting_region', 'react-experiences-listings', 'post_type_settings' );
+    add_settings_field( 'rel_plugin_setting_post_type', 'Listing Post Type Slug', 'rel_plugin_setting_post_type', 'react-experiences-listings', 'post_type_settings' );
     add_settings_field( 'rel_plugin_setting_phone', 'ACF Phone Field', 'rel_plugin_setting_phone', 'react-experiences-listings', 'post_type_settings' );
     add_settings_field( 'rel_plugin_setting_website', 'ACF Website Field', 'rel_plugin_setting_website', 'react-experiences-listings', 'post_type_settings' );
     add_settings_field( 'rel_plugin_setting_address', 'ACF Address Field', 'rel_plugin_setting_address', 'react-experiences-listings', 'post_type_settings' );
     add_settings_field( 'rel_plugin_setting_map_pin', 'ACF Map Field', 'rel_plugin_setting_map_pin', 'react-experiences-listings', 'post_type_settings' );
+    add_settings_field( 'rel_plugin_setting_category', 'Category Custom Taxonomy (optional)', 'rel_plugin_setting_category', 'react-experiences-listings', 'post_type_settings' );
+    add_settings_field( 'rel_plugin_setting_category_icon', 'Category Icon Field', 'rel_plugin_setting_category_icon', 'react-experiences-listings', 'post_type_settings' );
+    add_settings_field( 'rel_plugin_setting_region', 'Region Custom Taxonomy (optional)', 'rel_plugin_setting_region', 'react-experiences-listings', 'post_type_settings' );
+    add_settings_field( 'rel_plugin_setting_region_colour', 'Region Colour Field', 'rel_plugin_setting_region_colour', 'react-experiences-listings', 'post_type_settings' );
 }
 add_action( 'admin_init', 'rel_register_settings' );
 
@@ -46,14 +48,6 @@ function rel_plugin_setting_api_loc() {
 function rel_plugin_setting_post_type() {
     $options = get_option( 'rel_plugin_options' );
     echo '<input id="rel_plugin_setting_post_type" name="rel_plugin_options[post_type]" type="text" value="'.esc_attr( $options['post_type'] ).'" />';
-}
-function rel_plugin_setting_category() {
-    $options = get_option( 'rel_plugin_options' );
-    echo '<input id="rel_plugin_setting_category" name="rel_plugin_options[category]" type="text" value="'.esc_attr( $options['category'] ).'" />';
-}
-function rel_plugin_setting_region() {
-    $options = get_option( 'rel_plugin_options' );
-    echo '<input id="rel_plugin_setting_region" name="rel_plugin_options[region]" type="text" value="'.esc_attr( $options['region'] ).'" />';
 }
 function rel_plugin_setting_phone() {
     $options = get_option( 'rel_plugin_options' );
@@ -70,4 +64,20 @@ function rel_plugin_setting_address() {
 function rel_plugin_setting_map_pin() {
     $options = get_option( 'rel_plugin_options' );
     echo '<input id="rel_plugin_setting_map_pin" name="rel_plugin_options[map_pin]" type="text" value="'.esc_attr( $options['map_pin'] ).'" />';
+}
+function rel_plugin_setting_category() {
+    $options = get_option( 'rel_plugin_options' );
+    echo '<input id="rel_plugin_setting_category" name="rel_plugin_options[category]" type="text" value="'.esc_attr( $options['category'] ).'" />';
+}
+function rel_plugin_setting_category_icon() {
+    $options = get_option( 'rel_plugin_options' );
+    echo '<input id="rel_plugin_setting_category_icon" name="rel_plugin_options[category_icon]" type="text" value="'.esc_attr( $options['category_icon'] ).'" />';
+}
+function rel_plugin_setting_region() {
+    $options = get_option( 'rel_plugin_options' );
+    echo '<input id="rel_plugin_setting_region" name="rel_plugin_options[region]" type="text" value="'.esc_attr( $options['region'] ).'" />';
+}
+function rel_plugin_setting_region_colour() {
+    $options = get_option( 'rel_plugin_options' );
+    echo '<input id="rel_plugin_setting_region_colour" name="rel_plugin_options[region_colour]" type="text" value="'.esc_attr( $options['region_colour'] ).'" />';
 }

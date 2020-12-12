@@ -15,7 +15,7 @@ function create_rel_app( $atts ) {
         'initial_category' => '0',
         'exclude_categories' => '10',
         'initial_region' => '',
-        'exclude_regions' => '',
+        'exclude_regions' => '50,63,51,56,62',
     );
     $args = shortcode_atts( $default_atts, $atts );
     $sc_id = uniqid('rel');
@@ -30,12 +30,14 @@ function create_rel_app( $atts ) {
         window.relGlobals = {
             "apiLocation": "<?php echo $globals["api_loc"]; ?>",
             "postType": "<?php echo $globals["post_type"]; ?>",
-            "categoryName": "<?php echo $globals["category"]; ?>",
             "phoneField": "<?php echo $globals["phone"]; ?>",
             "websiteField": "<?php echo $globals["website"]; ?>",
-            "regionName": "<?php echo $globals["region"]; ?>",
             "addressField": "<?php echo $globals["address"]; ?>",
-            "mapField": "<?php echo $globals["map_pin"]; ?>"
+            "mapField": "<?php echo $globals["map_pin"]; ?>",
+            "categoryName": "<?php echo $globals["category"]; ?>",
+            "categoryIconField": "<?php echo $globals["category_icon"]; ?>",
+            "regionName": "<?php echo $globals["region"]; ?>",
+            "regionColourField": "<?php echo $globals["region_colour"]; ?>",
         };
         window.relSettings = window.relSettings || {};
         window.relSettings["<?php echo $sc_id; ?>"] = {

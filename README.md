@@ -22,14 +22,7 @@ The function of this project is to create a React frontend widget to display exp
 * (Optional) Custom taxonomies or categories to organize your listings
 
 ## Quick Setup
-If you are using this plugin **as is**, your Wordpress installation must not be located in a subfolder, your plugins directory must be default (/wp-content/plugins/), and you must not change the name of the plugin folder.
-If your environment does not meet all the above criteria, you will be required to modify the webpack.config.js file, and rebuild the plugin using npm. Within **webpack.config.js**, the default publicPath for the file-loader image rule, is as follows:
-
-```javascript
-publicPath: '/wp-content/plugins/react-experiences-listings/build/images'
-```
-
-Update this path to match your Wordpress enviroment, then rebuild the project using the following command. (You will need to have node installed on your device)
+Prior to installation, you may want to modify webpack configuration, or other default settings within the plugin. If you choose to do so, you will need to rebuild the project using the following command. (You will need to have node installed on your device)
 
 ```
 \> npm run-script build
