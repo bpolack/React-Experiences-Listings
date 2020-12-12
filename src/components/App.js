@@ -63,12 +63,23 @@ export class App extends Component {
 
     // Method to change the active region
     changeRegion(region) {
-        this.setState({
-            currentRegion: region,
-            listings: []
-        }, () => {
-            this.fetchNextListings();
-        })
+        if (region == this.state.currentRegion) {
+            // Toggle region filtering off
+            this.setState({
+                currentRegion: '',
+                listings: []
+            }, () => {
+                this.fetchNextListings();
+            })
+        }
+        else {
+            this.setState({
+                currentRegion: region,
+                listings: []
+            }, () => {
+                this.fetchNextListings();
+            })
+        }
     }
 
     // Method to fetch the next set of listings from the API
@@ -108,7 +119,7 @@ export class App extends Component {
             .param('parent', (parentCategory != false) ? parentCategory : 0)
             .param('exclude', (excludeCategories != false) ? excludeCategories.trim().split(',') : [])
             .perPage(50)
-            .param('hide_empty', false)
+            .param('hide_empty', true)
             .then((data) => {
                 if (data) {
                     // Add the parent category to the front of the array
@@ -137,7 +148,7 @@ export class App extends Component {
             .param('parent', (parentRegion != false) ? parentRegion : 0)
             .param('exclude', (excludeRegions != false) ? excludeRegions.trim().split(',') : [])
             .perPage(50)
-            .param('hide_empty', false)
+            .param('hide_empty', true)
             .then((data) => {
                 if (data) {
                     this.setState({

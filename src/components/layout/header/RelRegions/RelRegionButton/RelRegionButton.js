@@ -12,7 +12,7 @@ export class RelRegionButton extends Component {
         }
 
         const dotStyle = {
-            //backgroundColor: this.props.region.color
+            backgroundColor: this.props.region.rel_fields[this.props.regionColourField]
         }
 
         return (

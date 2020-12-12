@@ -19722,12 +19722,22 @@ var App = /*#__PURE__*/function (_Component) {
     value: function changeRegion(region) {
       var _this3 = this;
 
-      this.setState({
-        currentRegion: region,
-        listings: []
-      }, function () {
-        _this3.fetchNextListings();
-      });
+      if (region == this.state.currentRegion) {
+        // Toggle region filtering off
+        this.setState({
+          currentRegion: '',
+          listings: []
+        }, function () {
+          _this3.fetchNextListings();
+        });
+      } else {
+        this.setState({
+          currentRegion: region,
+          listings: []
+        }, function () {
+          _this3.fetchNextListings();
+        });
+      }
     } // Method to fetch the next set of listings from the API
 
   }, {
@@ -19767,7 +19777,7 @@ var App = /*#__PURE__*/function (_Component) {
 
       // Destruct required props and states
       var excludeCategories = this.props.args.excludeCategories;
-      this.relWP.relCategories().param('parent', parentCategory != false ? parentCategory : 0).param('exclude', excludeCategories != false ? excludeCategories.trim().split(',') : []).perPage(50).param('hide_empty', false).then(function (data) {
+      this.relWP.relCategories().param('parent', parentCategory != false ? parentCategory : 0).param('exclude', excludeCategories != false ? excludeCategories.trim().split(',') : []).perPage(50).param('hide_empty', true).then(function (data) {
         if (data) {
           // Add the parent category to the front of the array
           data.unshift({
@@ -19791,7 +19801,7 @@ var App = /*#__PURE__*/function (_Component) {
 
       // Destruct required props and states
       var excludeRegions = this.props.args.excludeRegions;
-      this.relWP.relRegions().param('parent', parentRegion != false ? parentRegion : 0).param('exclude', excludeRegions != false ? excludeRegions.trim().split(',') : []).perPage(50).param('hide_empty', false).then(function (data) {
+      this.relWP.relRegions().param('parent', parentRegion != false ? parentRegion : 0).param('exclude', excludeRegions != false ? excludeRegions.trim().split(',') : []).perPage(50).param('hide_empty', true).then(function (data) {
         if (data) {
           _this6.setState({
             regions: data
@@ -20278,7 +20288,8 @@ var RelRegionButton = /*#__PURE__*/function (_Component) {
         buttonClass += " active";
       }
 
-      var dotStyle = {//backgroundColor: this.props.region.color
+      var dotStyle = {
+        backgroundColor: this.props.region.rel_fields[this.props.regionColourField]
       };
       return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("div", {
         className: buttonClass,

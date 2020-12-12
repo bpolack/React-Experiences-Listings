@@ -60,13 +60,27 @@
 .rel-region-button {
     display: inline-block;
     cursor: pointer;
-    padding: 3px 20px;
+    padding: 6px 22px;
+    margin: 0px 2px;
+    border-radius: 18px;
     color: #173f57;
     font-size: 15px;
+    line-height: 24px;
     font-weight: 700;
 }
-.rel-region-button:hover, .rel-view-button.active {
+.rel-region-button:hover {
     color:#849452;
+}
+.rel-region-button.active {
+    background-color: #e8e8e8;
+}
+.region-dot {
+    display: inline-block;
+    margin-right: 5px;
+    width:24px;
+    height:24px;
+    border-radius: 50%;
+    vertical-align: top;
 }
 
 
