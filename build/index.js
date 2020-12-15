@@ -21740,7 +21740,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _layout_header_RelHeader__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./layout/header/RelHeader */ "./src/components/layout/header/RelHeader.js");
 /* harmony import */ var _layout_footer_RelFooter__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./layout/footer/RelFooter */ "./src/components/layout/footer/RelFooter.js");
 /* harmony import */ var _views_ListingGrid_RelListingGrid__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./views/ListingGrid/RelListingGrid */ "./src/components/views/ListingGrid/RelListingGrid.js");
-/* harmony import */ var _views_ListingRows_ListingRows__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./views/ListingRows/ListingRows */ "./src/components/views/ListingRows/ListingRows.js");
+/* harmony import */ var _views_ListingRows_RelListingRows__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./views/ListingRows/RelListingRows */ "./src/components/views/ListingRows/RelListingRows.js");
 /* harmony import */ var _views_ListingMap_ListingMap__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./views/ListingMap/ListingMap */ "./src/components/views/ListingMap/ListingMap.js");
 /* harmony import */ var _views_ListingSingle_ListingSingle__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./views/ListingSingle/ListingSingle */ "./src/components/views/ListingSingle/ListingSingle.js");
 
@@ -21896,7 +21896,7 @@ var App = /*#__PURE__*/function (_Component) {
           page = _this$state.page;
       this.relWP.relListings().param(categoryName, currentCategory != false ? currentCategory.trim().split(',') : []).param(categoryName + '_exclude', excludeCategories != false ? excludeCategories.trim().split(',') : []).param(regionName, currentRegion != false ? currentRegion.trim().split(',') : [])
       /*.param(regionName + '_exclude', (excludeRegions != false) ? excludeRegions.trim().split(',') : []) */
-      .param('_embed', "1").page(page).perPage(perpage).then(function (data) {
+      .param('_embed', "1").order('asc').orderby('title').page(page).perPage(perpage).then(function (data) {
         if (data) {
           _this5.setState({
             listings: _this5.state.listings.concat(data),
@@ -21969,7 +21969,10 @@ var App = /*#__PURE__*/function (_Component) {
     value: function renderView() {
       switch (this.state.view) {
         case 'list':
-          return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_6__["createElement"])(_views_ListingRows_ListingRows__WEBPACK_IMPORTED_MODULE_12__["default"], null);
+          return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_6__["createElement"])(_views_ListingRows_RelListingRows__WEBPACK_IMPORTED_MODULE_12__["default"], {
+            listings: this.state.listings,
+            globals: this.props.globals
+          });
 
         case 'map':
           return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_6__["createElement"])(_views_ListingMap_ListingMap__WEBPACK_IMPORTED_MODULE_13__["default"], null);
@@ -22000,6 +22003,7 @@ var App = /*#__PURE__*/function (_Component) {
         changeRegion: this.changeRegion,
         regionColourField: this.props.globals.regionColourField
       }), this.renderView(), this.renderLoader(), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_6__["createElement"])(_layout_footer_RelFooter__WEBPACK_IMPORTED_MODULE_10__["default"], {
+        currentView: this.state.view,
         loadMore: this.loadMore
       }));
     }
@@ -22071,18 +22075,25 @@ var RelFooter = /*#__PURE__*/function (_Component) {
   }
 
   _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(RelFooter, [{
-    key: "render",
-    value: function render() {
+    key: "renderLoadMore",
+    value: function renderLoadMore() {
       var _this = this;
 
+      if (this.props.currentView === 'grid' || this.props.currentView === 'list') {
+        return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("button", {
+          className: "rel-load-more-button",
+          onClick: function onClick() {
+            return _this.props.loadMore();
+          }
+        }, "Load More");
+      }
+    }
+  }, {
+    key: "render",
+    value: function render() {
       return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("div", {
         className: "rel-footer"
-      }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("button", {
-        className: "rel-load-more-button",
-        onClick: function onClick() {
-          return _this.props.loadMore();
-        }
-      }, "Load More"));
+      }, this.renderLoadMore());
     }
   }]);
 
@@ -23056,16 +23067,27 @@ var ListingMap = /*#__PURE__*/function (_Component) {
 
 /***/ }),
 
-/***/ "./src/components/views/ListingRows/ListingRows.js":
-/*!*********************************************************!*\
-  !*** ./src/components/views/ListingRows/ListingRows.js ***!
-  \*********************************************************/
-/*! exports provided: ListingRows, default */
+/***/ "./src/components/views/ListingRows/RelListingRowItem/RelListingRowItem.css":
+/*!**********************************************************************************!*\
+  !*** ./src/components/views/ListingRows/RelListingRowItem/RelListingRowItem.css ***!
+  \**********************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+// extracted by mini-css-extract-plugin
+
+/***/ }),
+
+/***/ "./src/components/views/ListingRows/RelListingRowItem/RelListingRowItem.js":
+/*!*********************************************************************************!*\
+  !*** ./src/components/views/ListingRows/RelListingRowItem/RelListingRowItem.js ***!
+  \*********************************************************************************/
+/*! exports provided: RelListingRowItem, default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ListingRows", function() { return ListingRows; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "RelListingRowItem", function() { return RelListingRowItem; });
 /* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
 /* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
@@ -23078,6 +23100,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__);
 /* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @wordpress/element */ "@wordpress/element");
 /* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _RelListingRowItem_css__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./RelListingRowItem.css */ "./src/components/views/ListingRows/RelListingRowItem/RelListingRowItem.css");
+/* harmony import */ var _RelListingRowItem_css__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(_RelListingRowItem_css__WEBPACK_IMPORTED_MODULE_6__);
 
 
 
@@ -23090,27 +23114,148 @@ function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflec
 function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
 
 var Component = wp.element.Component;
-var ListingRows = /*#__PURE__*/function (_Component) {
-  _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default()(ListingRows, _Component);
 
-  var _super = _createSuper(ListingRows);
+var Entities = __webpack_require__(/*! html-entities */ "./node_modules/html-entities/lib/index.js").AllHtmlEntities;
 
-  function ListingRows() {
-    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, ListingRows);
+var entities = new Entities();
+
+var RelListingRowItem = /*#__PURE__*/function (_Component) {
+  _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default()(RelListingRowItem, _Component);
+
+  var _super = _createSuper(RelListingRowItem);
+
+  function RelListingRowItem() {
+    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, RelListingRowItem);
 
     return _super.apply(this, arguments);
   }
 
-  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(ListingRows, [{
+  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(RelListingRowItem, [{
     key: "render",
     value: function render() {
-      return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("div", null, "Rows");
+      // Destruct required props and globals
+      var listing = this.props.listing;
+      var _this$props$globals = this.props.globals,
+          addressField = _this$props$globals.addressField,
+          regionColourField = _this$props$globals.regionColourField; // Get the Region dot colour if it exists
+
+      var dotStyle = {
+        backgroundColor: '#c7c7c7'
+      };
+
+      if (typeof listing._embedded['wp:term'][2] !== 'undefined' && listing._embedded['wp:term'][2].length > 0 && typeof listing._embedded['wp:term'][2][0].rel_fields[regionColourField] !== 'undefined') {
+        dotStyle.backgroundColor = listing._embedded['wp:term'][2][0].rel_fields[regionColourField];
+      }
+
+      return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("div", {
+        className: "rel-listing-row-item"
+      }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("div", {
+        className: "rel-listing-row-details"
+      }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("div", {
+        className: "rel-listing-row-dot-container"
+      }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("div", {
+        className: "rel-listing-row-dot",
+        style: dotStyle
+      })), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("div", {
+        className: "rel-listing-row-text"
+      }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("h4", null, entities.decode(listing.title.rendered)), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("p", null, entities.decode(listing.rel_fields[addressField]))), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("div", {
+        className: "rel-listing-row-arrow-container"
+      }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("div", {
+        className: "rel-listing-row-arrow"
+      }))));
     }
   }]);
 
-  return ListingRows;
+  return RelListingRowItem;
 }(Component);
-/* harmony default export */ __webpack_exports__["default"] = (ListingRows);
+/* harmony default export */ __webpack_exports__["default"] = (RelListingRowItem);
+
+/***/ }),
+
+/***/ "./src/components/views/ListingRows/RelListingRows.css":
+/*!*************************************************************!*\
+  !*** ./src/components/views/ListingRows/RelListingRows.css ***!
+  \*************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+// extracted by mini-css-extract-plugin
+
+/***/ }),
+
+/***/ "./src/components/views/ListingRows/RelListingRows.js":
+/*!************************************************************!*\
+  !*** ./src/components/views/ListingRows/RelListingRows.js ***!
+  \************************************************************/
+/*! exports provided: RelListingRows, default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "RelListingRows", function() { return RelListingRows; });
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js");
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js");
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js");
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @wordpress/element */ "@wordpress/element");
+/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var uuid__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! uuid */ "./node_modules/uuid/dist/esm-browser/index.js");
+/* harmony import */ var _RelListingRows_css__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./RelListingRows.css */ "./src/components/views/ListingRows/RelListingRows.css");
+/* harmony import */ var _RelListingRows_css__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(_RelListingRows_css__WEBPACK_IMPORTED_MODULE_7__);
+/* harmony import */ var _RelListingRowItem_RelListingRowItem__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./RelListingRowItem/RelListingRowItem */ "./src/components/views/ListingRows/RelListingRowItem/RelListingRowItem.js");
+
+
+
+
+
+
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default()(this, result); }; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+var Component = wp.element.Component;
+
+ // Import Components
+
+
+var RelListingRows = /*#__PURE__*/function (_Component) {
+  _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default()(RelListingRows, _Component);
+
+  var _super = _createSuper(RelListingRows);
+
+  function RelListingRows() {
+    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, RelListingRows);
+
+    return _super.apply(this, arguments);
+  }
+
+  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(RelListingRows, [{
+    key: "render",
+    value: function render() {
+      var _this = this;
+
+      return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("div", {
+        className: "rel-listings-rows"
+      }, this.props.listings.map(function (listing, index) {
+        return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])(_RelListingRowItem_RelListingRowItem__WEBPACK_IMPORTED_MODULE_8__["default"], {
+          key: Object(uuid__WEBPACK_IMPORTED_MODULE_6__["v4"])(),
+          listing: listing,
+          globals: _this.props.globals
+        });
+      }));
+    }
+  }]);
+
+  return RelListingRows;
+}(Component);
+/* harmony default export */ __webpack_exports__["default"] = (RelListingRows);
 
 /***/ }),
 

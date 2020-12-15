@@ -7,7 +7,7 @@ import './App.css';
 import RelHeader from './layout/header/RelHeader';
 import RelFooter from './layout/footer/RelFooter';
 import RelListingGrid from './views/ListingGrid/RelListingGrid';
-import ListingRows from './views/ListingRows/ListingRows';
+import RelListingRows from './views/ListingRows/RelListingRows';
 import ListingMap from './views/ListingMap/ListingMap';
 import ListingSingle from './views/ListingSingle/ListingSingle';
 
@@ -117,6 +117,8 @@ export class App extends Component {
             .param(regionName, (currentRegion != false) ? currentRegion.trim().split(',') : [])
             /*.param(regionName + '_exclude', (excludeRegions != false) ? excludeRegions.trim().split(',') : []) */
             .param('_embed', "1")
+            .order('asc')
+            .orderby('title')
             .page(page)
             .perPage(perpage)
             .then((data) => {
@@ -205,7 +207,7 @@ export class App extends Component {
         switch (this.state.view) {
             case 'list':
                 return (
-                    <ListingRows />
+                    <RelListingRows listings={this.state.listings} globals={this.props.globals} />
                 )
             case 'map':
                 return (
@@ -230,7 +232,7 @@ export class App extends Component {
                     regions={this.state.regions} currentRegion={this.state.currentRegion} changeRegion={this.changeRegion} regionColourField={this.props.globals.regionColourField}  />
                 {this.renderView()}
                 {this.renderLoader()}
-                <RelFooter loadMore={this.loadMore} />
+                <RelFooter currentView={this.state.view} loadMore={this.loadMore} />
             </div>
         )
     }
