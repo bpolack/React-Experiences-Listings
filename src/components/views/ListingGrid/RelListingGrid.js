@@ -1,9 +1,9 @@
 const { Component } = wp.element;
 import { v4 as uuidv4 } from 'uuid';
-import './ListingGrid.css';
+import './RelListingGrid.css';
 
 // Import Components
-import ListingGridItem from './ListingGridItem/ListingGridItem';
+import RelListingGridItem from './RelListingGridItem/RelListingGridItem';
 
 export class RelListingGrid extends Component {
     render() {

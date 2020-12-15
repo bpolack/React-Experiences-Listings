@@ -20611,10 +20611,10 @@ var RelViews = /*#__PURE__*/function (_Component) {
 
 /***/ }),
 
-/***/ "./src/components/views/ListingGrid/ListingGrid.css":
-/*!**********************************************************!*\
-  !*** ./src/components/views/ListingGrid/ListingGrid.css ***!
-  \**********************************************************/
+/***/ "./src/components/views/ListingGrid/RelListingGrid.css":
+/*!*************************************************************!*\
+  !*** ./src/components/views/ListingGrid/RelListingGrid.css ***!
+  \*************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -20622,27 +20622,16 @@ var RelViews = /*#__PURE__*/function (_Component) {
 
 /***/ }),
 
-/***/ "./src/components/views/ListingGrid/ListingGridItem/ListingGridItem.css":
-/*!******************************************************************************!*\
-  !*** ./src/components/views/ListingGrid/ListingGridItem/ListingGridItem.css ***!
-  \******************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-// extracted by mini-css-extract-plugin
-
-/***/ }),
-
-/***/ "./src/components/views/ListingGrid/ListingGridItem/ListingGridItem.js":
-/*!*****************************************************************************!*\
-  !*** ./src/components/views/ListingGrid/ListingGridItem/ListingGridItem.js ***!
-  \*****************************************************************************/
-/*! exports provided: ListingGridItem, default */
+/***/ "./src/components/views/ListingGrid/RelListingGrid.js":
+/*!************************************************************!*\
+  !*** ./src/components/views/ListingGrid/RelListingGrid.js ***!
+  \************************************************************/
+/*! exports provided: RelListingGrid, default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ListingGridItem", function() { return ListingGridItem; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "RelListingGrid", function() { return RelListingGrid; });
 /* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
 /* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
@@ -20655,8 +20644,95 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__);
 /* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @wordpress/element */ "@wordpress/element");
 /* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var _ListingGridItem_css__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./ListingGridItem.css */ "./src/components/views/ListingGrid/ListingGridItem/ListingGridItem.css");
-/* harmony import */ var _ListingGridItem_css__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(_ListingGridItem_css__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var uuid__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! uuid */ "./node_modules/uuid/dist/esm-browser/index.js");
+/* harmony import */ var _RelListingGrid_css__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./RelListingGrid.css */ "./src/components/views/ListingGrid/RelListingGrid.css");
+/* harmony import */ var _RelListingGrid_css__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(_RelListingGrid_css__WEBPACK_IMPORTED_MODULE_7__);
+/* harmony import */ var _RelListingGridItem_RelListingGridItem__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./RelListingGridItem/RelListingGridItem */ "./src/components/views/ListingGrid/RelListingGridItem/RelListingGridItem.js");
+
+
+
+
+
+
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default()(this, result); }; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+var Component = wp.element.Component;
+
+ // Import Components
+
+
+var RelListingGrid = /*#__PURE__*/function (_Component) {
+  _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default()(RelListingGrid, _Component);
+
+  var _super = _createSuper(RelListingGrid);
+
+  function RelListingGrid() {
+    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, RelListingGrid);
+
+    return _super.apply(this, arguments);
+  }
+
+  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(RelListingGrid, [{
+    key: "render",
+    value: function render() {
+      var _this = this;
+
+      return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("div", {
+        className: "rel-listings-grid"
+      }, this.props.listings.map(function (listing, index) {
+        return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])(ListingGridItem, {
+          key: Object(uuid__WEBPACK_IMPORTED_MODULE_6__["v4"])(),
+          listing: listing,
+          globals: _this.props.globals
+        });
+      }));
+    }
+  }]);
+
+  return RelListingGrid;
+}(Component);
+/* harmony default export */ __webpack_exports__["default"] = (RelListingGrid);
+
+/***/ }),
+
+/***/ "./src/components/views/ListingGrid/RelListingGridItem/RelListingGridItem.css":
+/*!************************************************************************************!*\
+  !*** ./src/components/views/ListingGrid/RelListingGridItem/RelListingGridItem.css ***!
+  \************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+// extracted by mini-css-extract-plugin
+
+/***/ }),
+
+/***/ "./src/components/views/ListingGrid/RelListingGridItem/RelListingGridItem.js":
+/*!***********************************************************************************!*\
+  !*** ./src/components/views/ListingGrid/RelListingGridItem/RelListingGridItem.js ***!
+  \***********************************************************************************/
+/*! exports provided: RelListingGridItem, default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "RelListingGridItem", function() { return RelListingGridItem; });
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js");
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js");
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js");
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @wordpress/element */ "@wordpress/element");
+/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _RelListingGridItem_css__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./RelListingGridItem.css */ "./src/components/views/ListingGrid/RelListingGridItem/RelListingGridItem.css");
+/* harmony import */ var _RelListingGridItem_css__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(_RelListingGridItem_css__WEBPACK_IMPORTED_MODULE_6__);
 
 
 
@@ -20674,18 +20750,18 @@ var Entities = __webpack_require__(/*! html-entities */ "./node_modules/html-ent
 
 var entities = new Entities();
 
-var ListingGridItem = /*#__PURE__*/function (_Component) {
-  _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default()(ListingGridItem, _Component);
+var RelListingGridItem = /*#__PURE__*/function (_Component) {
+  _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default()(RelListingGridItem, _Component);
 
-  var _super = _createSuper(ListingGridItem);
+  var _super = _createSuper(RelListingGridItem);
 
-  function ListingGridItem() {
-    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, ListingGridItem);
+  function RelListingGridItem() {
+    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, RelListingGridItem);
 
     return _super.apply(this, arguments);
   }
 
-  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(ListingGridItem, [{
+  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(RelListingGridItem, [{
     key: "render",
     value: function render() {
       // Destruct required props and globals
@@ -20732,85 +20808,9 @@ var ListingGridItem = /*#__PURE__*/function (_Component) {
     }
   }]);
 
-  return ListingGridItem;
+  return RelListingGridItem;
 }(Component);
-/* harmony default export */ __webpack_exports__["default"] = (ListingGridItem);
-
-/***/ }),
-
-/***/ "./src/components/views/ListingGrid/RelListingGrid.js":
-/*!************************************************************!*\
-  !*** ./src/components/views/ListingGrid/RelListingGrid.js ***!
-  \************************************************************/
-/*! exports provided: RelListingGrid, default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "RelListingGrid", function() { return RelListingGrid; });
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
-/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js");
-/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js");
-/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js");
-/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @wordpress/element */ "@wordpress/element");
-/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var uuid__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! uuid */ "./node_modules/uuid/dist/esm-browser/index.js");
-/* harmony import */ var _ListingGrid_css__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./ListingGrid.css */ "./src/components/views/ListingGrid/ListingGrid.css");
-/* harmony import */ var _ListingGrid_css__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(_ListingGrid_css__WEBPACK_IMPORTED_MODULE_7__);
-/* harmony import */ var _ListingGridItem_ListingGridItem__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./ListingGridItem/ListingGridItem */ "./src/components/views/ListingGrid/ListingGridItem/ListingGridItem.js");
-
-
-
-
-
-
-
-function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default()(this, result); }; }
-
-function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
-
-var Component = wp.element.Component;
-
- // Import Components
-
-
-var RelListingGrid = /*#__PURE__*/function (_Component) {
-  _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default()(RelListingGrid, _Component);
-
-  var _super = _createSuper(RelListingGrid);
-
-  function RelListingGrid() {
-    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, RelListingGrid);
-
-    return _super.apply(this, arguments);
-  }
-
-  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(RelListingGrid, [{
-    key: "render",
-    value: function render() {
-      var _this = this;
-
-      return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("div", {
-        className: "rel-listings-grid"
-      }, this.props.listings.map(function (listing, index) {
-        return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])(_ListingGridItem_ListingGridItem__WEBPACK_IMPORTED_MODULE_8__["default"], {
-          key: Object(uuid__WEBPACK_IMPORTED_MODULE_6__["v4"])(),
-          listing: listing,
-          globals: _this.props.globals
-        });
-      }));
-    }
-  }]);
-
-  return RelListingGrid;
-}(Component);
-/* harmony default export */ __webpack_exports__["default"] = (RelListingGrid);
+/* harmony default export */ __webpack_exports__["default"] = (RelListingGridItem);
 
 /***/ }),
 

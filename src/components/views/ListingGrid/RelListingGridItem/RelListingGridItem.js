@@ -1,9 +1,9 @@
 const { Component } = wp.element;
 const Entities = require('html-entities').AllHtmlEntities;
 const entities = new Entities();
-import './ListingGridItem.css';
+import './RelListingGridItem.css';
 
-export class ListingGridItem extends Component {
+export class RelListingGridItem extends Component {
     render() {
 
         // Destruct required props and globals
@@ -45,4 +45,4 @@ export class ListingGridItem extends Component {
     }
 }
 
-export default ListingGridItem
+export default RelListingGridItem
