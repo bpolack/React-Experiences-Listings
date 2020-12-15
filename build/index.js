@@ -19625,7 +19625,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _App_css__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(_App_css__WEBPACK_IMPORTED_MODULE_7__);
 /* harmony import */ var _layout_header_RelHeader__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./layout/header/RelHeader */ "./src/components/layout/header/RelHeader.js");
 /* harmony import */ var _layout_footer_RelFooter__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./layout/footer/RelFooter */ "./src/components/layout/footer/RelFooter.js");
-/* harmony import */ var _views_ListingGrid_ListingGrid__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./views/ListingGrid/ListingGrid */ "./src/components/views/ListingGrid/ListingGrid.js");
+/* harmony import */ var _views_ListingGrid_RelListingGrid__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./views/ListingGrid/RelListingGrid */ "./src/components/views/ListingGrid/RelListingGrid.js");
 /* harmony import */ var _views_ListingRows_ListingRows__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./views/ListingRows/ListingRows */ "./src/components/views/ListingRows/ListingRows.js");
 /* harmony import */ var _views_ListingMap_ListingMap__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./views/ListingMap/ListingMap */ "./src/components/views/ListingMap/ListingMap.js");
 /* harmony import */ var _views_ListingSingle_ListingSingle__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./views/ListingSingle/ListingSingle */ "./src/components/views/ListingSingle/ListingSingle.js");
@@ -19759,7 +19759,7 @@ var App = /*#__PURE__*/function (_Component) {
           page = _this$state.page;
       this.relWP.relListings().param(categoryName, currentCategory != false ? currentCategory.trim().split(',') : []).param(categoryName + '_exclude', excludeCategories != false ? excludeCategories.trim().split(',') : []).param(regionName, currentRegion != false ? currentRegion.trim().split(',') : [])
       /*.param(regionName + '_exclude', (excludeRegions != false) ? excludeRegions.trim().split(',') : []) */
-      .page(page).perPage(perpage).then(function (data) {
+      .param('_embed', "1").page(page).perPage(perpage).then(function (data) {
         if (data) {
           _this4.setState({
             listings: _this4.state.listings.concat(data)
@@ -19825,8 +19825,9 @@ var App = /*#__PURE__*/function (_Component) {
           return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_6__["createElement"])(_views_ListingSingle_ListingSingle__WEBPACK_IMPORTED_MODULE_13__["default"], null);
 
         default:
-          return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_6__["createElement"])(_views_ListingGrid_ListingGrid__WEBPACK_IMPORTED_MODULE_10__["default"], {
-            listings: this.state.listings
+          return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_6__["createElement"])(_views_ListingGrid_RelListingGrid__WEBPACK_IMPORTED_MODULE_10__["default"], {
+            listings: this.state.listings,
+            globals: this.props.globals
           });
       }
     }
@@ -20621,16 +20622,27 @@ var RelViews = /*#__PURE__*/function (_Component) {
 
 /***/ }),
 
-/***/ "./src/components/views/ListingGrid/ListingGrid.js":
-/*!*********************************************************!*\
-  !*** ./src/components/views/ListingGrid/ListingGrid.js ***!
-  \*********************************************************/
-/*! exports provided: ListingGrid, default */
+/***/ "./src/components/views/ListingGrid/ListingGridItem/ListingGridItem.css":
+/*!******************************************************************************!*\
+  !*** ./src/components/views/ListingGrid/ListingGridItem/ListingGridItem.css ***!
+  \******************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+// extracted by mini-css-extract-plugin
+
+/***/ }),
+
+/***/ "./src/components/views/ListingGrid/ListingGridItem/ListingGridItem.js":
+/*!*****************************************************************************!*\
+  !*** ./src/components/views/ListingGrid/ListingGridItem/ListingGridItem.js ***!
+  \*****************************************************************************/
+/*! exports provided: ListingGridItem, default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ListingGrid", function() { return ListingGrid; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ListingGridItem", function() { return ListingGridItem; });
 /* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
 /* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
@@ -20643,8 +20655,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__);
 /* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @wordpress/element */ "@wordpress/element");
 /* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var _ListingGrid_css__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./ListingGrid.css */ "./src/components/views/ListingGrid/ListingGrid.css");
-/* harmony import */ var _ListingGrid_css__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(_ListingGrid_css__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var _ListingGridItem_css__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./ListingGridItem.css */ "./src/components/views/ListingGrid/ListingGridItem/ListingGridItem.css");
+/* harmony import */ var _ListingGridItem_css__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(_ListingGridItem_css__WEBPACK_IMPORTED_MODULE_6__);
 
 
 
@@ -20658,27 +20670,147 @@ function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Re
 
 var Component = wp.element.Component;
 
-var ListingGrid = /*#__PURE__*/function (_Component) {
-  _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default()(ListingGrid, _Component);
+var Entities = __webpack_require__(/*! html-entities */ "./node_modules/html-entities/lib/index.js").AllHtmlEntities;
 
-  var _super = _createSuper(ListingGrid);
+var entities = new Entities();
 
-  function ListingGrid() {
-    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, ListingGrid);
+var ListingGridItem = /*#__PURE__*/function (_Component) {
+  _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default()(ListingGridItem, _Component);
+
+  var _super = _createSuper(ListingGridItem);
+
+  function ListingGridItem() {
+    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, ListingGridItem);
 
     return _super.apply(this, arguments);
   }
 
-  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(ListingGrid, [{
+  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(ListingGridItem, [{
     key: "render",
     value: function render() {
-      return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("div", null, "Grid");
+      // Destruct required props and globals
+      var listing = this.props.listing;
+      var _this$props$globals = this.props.globals,
+          addressField = _this$props$globals.addressField,
+          regionColourField = _this$props$globals.regionColourField,
+          placeholderImage = _this$props$globals.placeholderImage; // Check for a featured image if it exists
+
+      var thumbSrc = placeholderImage;
+      var thumbAlt = '';
+
+      if (listing._embedded['wp:featuredmedia']) {
+        thumbSrc = listing._embedded['wp:featuredmedia'][0].media_details.sizes.thumbnail.source_url;
+        thumbAlt = listing._embedded['wp:featuredmedia'][0].alt_text;
+      } // Get the Region dot colour if it exists
+
+
+      var dotStyle = {
+        backgroundColor: '#c7c7c7'
+      };
+
+      if (typeof listing._embedded['wp:term'][2] !== 'undefined' && listing._embedded['wp:term'][2].length > 0 && typeof listing._embedded['wp:term'][2][0].rel_fields[regionColourField] !== 'undefined') {
+        dotStyle.backgroundColor = listing._embedded['wp:term'][2][0].rel_fields[regionColourField];
+      }
+
+      return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("div", {
+        className: "rel-listing-grid-item"
+      }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("div", {
+        className: "rel-listing-image"
+      }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("img", {
+        src: thumbSrc,
+        alt: thumbAlt
+      })), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("div", {
+        className: "rel-listing-grid-details"
+      }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("div", {
+        className: "rel-listing-grid-text"
+      }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("h4", null, entities.decode(listing.title.rendered)), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("p", null, entities.decode(listing.rel_fields[addressField]))), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("div", {
+        className: "rel-listing-grid-dot-container"
+      }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("div", {
+        className: "rel-listing-grid-dot",
+        style: dotStyle
+      }))));
     }
   }]);
 
-  return ListingGrid;
+  return ListingGridItem;
 }(Component);
-/* harmony default export */ __webpack_exports__["default"] = (ListingGrid);
+/* harmony default export */ __webpack_exports__["default"] = (ListingGridItem);
+
+/***/ }),
+
+/***/ "./src/components/views/ListingGrid/RelListingGrid.js":
+/*!************************************************************!*\
+  !*** ./src/components/views/ListingGrid/RelListingGrid.js ***!
+  \************************************************************/
+/*! exports provided: RelListingGrid, default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "RelListingGrid", function() { return RelListingGrid; });
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js");
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js");
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js");
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @wordpress/element */ "@wordpress/element");
+/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var uuid__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! uuid */ "./node_modules/uuid/dist/esm-browser/index.js");
+/* harmony import */ var _ListingGrid_css__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./ListingGrid.css */ "./src/components/views/ListingGrid/ListingGrid.css");
+/* harmony import */ var _ListingGrid_css__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(_ListingGrid_css__WEBPACK_IMPORTED_MODULE_7__);
+/* harmony import */ var _ListingGridItem_ListingGridItem__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./ListingGridItem/ListingGridItem */ "./src/components/views/ListingGrid/ListingGridItem/ListingGridItem.js");
+
+
+
+
+
+
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default()(this, result); }; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+var Component = wp.element.Component;
+
+ // Import Components
+
+
+var RelListingGrid = /*#__PURE__*/function (_Component) {
+  _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default()(RelListingGrid, _Component);
+
+  var _super = _createSuper(RelListingGrid);
+
+  function RelListingGrid() {
+    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, RelListingGrid);
+
+    return _super.apply(this, arguments);
+  }
+
+  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(RelListingGrid, [{
+    key: "render",
+    value: function render() {
+      var _this = this;
+
+      return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("div", {
+        className: "rel-listings-grid"
+      }, this.props.listings.map(function (listing, index) {
+        return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])(_ListingGridItem_ListingGridItem__WEBPACK_IMPORTED_MODULE_8__["default"], {
+          key: Object(uuid__WEBPACK_IMPORTED_MODULE_6__["v4"])(),
+          listing: listing,
+          globals: _this.props.globals
+        });
+      }));
+    }
+  }]);
+
+  return RelListingGrid;
+}(Component);
+/* harmony default export */ __webpack_exports__["default"] = (RelListingGrid);
 
 /***/ }),
 

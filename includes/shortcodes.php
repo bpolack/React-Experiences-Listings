@@ -38,6 +38,7 @@ function create_rel_app( $atts ) {
             "categoryIconField": "<?php echo $globals["category_icon"]; ?>",
             "regionName": "<?php echo $globals["region"]; ?>",
             "regionColourField": "<?php echo $globals["region_colour"]; ?>",
+            "placeholderImage": "<?php echo $globals["placeholder"]; ?>"
         };
         window.relSettings = window.relSettings || {};
         window.relSettings["<?php echo $sc_id; ?>"] = {

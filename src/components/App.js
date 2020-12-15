@@ -5,7 +5,7 @@ import './App.css';
 // Import Components
 import RelHeader from './layout/header/RelHeader';
 import RelFooter from './layout/footer/RelFooter';
-import ListingGrid from './views/ListingGrid/ListingGrid';
+import RelListingGrid from './views/ListingGrid/RelListingGrid';
 import ListingRows from './views/ListingRows/ListingRows';
 import ListingMap from './views/ListingMap/ListingMap';
 import ListingSingle from './views/ListingSingle/ListingSingle';
@@ -95,6 +95,7 @@ export class App extends Component {
             .param(categoryName + '_exclude', (excludeCategories != false) ? excludeCategories.trim().split(',') : [])
             .param(regionName, (currentRegion != false) ? currentRegion.trim().split(',') : [])
             /*.param(regionName + '_exclude', (excludeRegions != false) ? excludeRegions.trim().split(',') : []) */
+            .param('_embed', "1")
             .page(page)
             .perPage(perpage)
             .then((data) => {
@@ -178,7 +179,7 @@ export class App extends Component {
                 )
             default:
                 return (
-                    <ListingGrid listings={this.state.listings} />
+                    <RelListingGrid listings={this.state.listings} globals={this.props.globals} />
                 )
         }
     }

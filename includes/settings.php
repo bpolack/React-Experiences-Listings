@@ -34,6 +34,8 @@ function rel_register_settings() {
     add_settings_field( 'rel_plugin_setting_category_icon', 'Category Icon Field', 'rel_plugin_setting_category_icon', 'react-experiences-listings', 'post_type_settings' );
     add_settings_field( 'rel_plugin_setting_region', 'Region Custom Taxonomy (optional)', 'rel_plugin_setting_region', 'react-experiences-listings', 'post_type_settings' );
     add_settings_field( 'rel_plugin_setting_region_colour', 'Region Colour Field', 'rel_plugin_setting_region_colour', 'react-experiences-listings', 'post_type_settings' );
+
+    add_settings_field( 'rel_plugin_setting_placeholder', 'Placeholder Image URL', 'rel_plugin_setting_placeholder', 'react-experiences-listings', 'post_type_settings' );
 }
 add_action( 'admin_init', 'rel_register_settings' );
 
@@ -80,4 +82,8 @@ function rel_plugin_setting_region() {
 function rel_plugin_setting_region_colour() {
     $options = get_option( 'rel_plugin_options' );
     echo '<input id="rel_plugin_setting_region_colour" name="rel_plugin_options[region_colour]" type="text" value="'.esc_attr( $options['region_colour'] ).'" />';
+}
+function rel_plugin_setting_placeholder() {
+    $options = get_option( 'rel_plugin_options' );
+    echo '<input id="rel_plugin_setting_placeholder" name="rel_plugin_options[placeholder]" type="text" value="'.esc_attr( $options['placeholder'] ).'" />';
 }
