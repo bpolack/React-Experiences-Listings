@@ -1,6 +1,11 @@
 .rel-wrapper {
     min-height: 200px;
 }
+.rel-loader-container {
+    padding: 30px 15px;
+    display: flex;
+    justify-content: center;
+}
 .rel-header-item {
     padding: 5px 0px;
     display: flex;
@@ -82,6 +87,11 @@
     height:24px;
     border-radius: 50%;
     vertical-align: top;
+}
+.rel-footer {
+    padding: 50px 15px 30px 15px;
+    display: flex;
+    justify-content: center;
 }
 .rel-listings-grid {
     display: -ms-grid;

@@ -11,10 +11,14 @@ export class RelRegionButton extends Component {
             buttonClass += " active";
         }
 
-        const dotStyle = {
-            backgroundColor: this.props.region.rel_fields[this.props.regionColourField]
+        // Get the Region dot colour if it exists
+        let dotStyle = {
+            backgroundColor: '#c7c7c7'
         }
-
+        if (typeof this.props.region.rel_fields[this.props.regionColourField] !== 'undefined') {
+            dotStyle.backgroundColor = this.props.region.rel_fields[this.props.regionColourField];
+        }
+        
         return (
             <div className={buttonClass} onClick={() => this.props.changeRegion(this.props.region.id.toString())}>
                 <span className="region-dot" style={dotStyle}></span> {entities.decode(this.props.region.name)}

@@ -11,7 +11,7 @@ export class RelListingGrid extends Component {
             <div className="rel-listings-grid">
                 {this.props.listings.map((listing, index) => {
                     return (
-                        <ListingGridItem key={uuidv4()} listing={listing} globals={this.props.globals} />
+                        <RelListingGridItem key={uuidv4()} listing={listing} globals={this.props.globals} />
                     )
                 })}
             </div>

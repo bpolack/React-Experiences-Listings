@@ -1,3 +1,8 @@
 .rel-wrapper {
     min-height: 200px;
 }
+.rel-loader-container {
+    padding: 30px 15px;
+    display: flex;
+    justify-content: center;
+}

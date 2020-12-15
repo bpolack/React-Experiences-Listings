@@ -1,5 +1,6 @@
 const { Component } = wp.element;
 const WPAPI = require('wpapi');
+import Loader from 'react-loader-spinner'
 import './App.css';
 
 // Import Components
@@ -18,6 +19,7 @@ export class App extends Component {
         // Set the ititial state
         this.state = {
             view: props.args.view,
+            loading: true,
             page: 1,
             currentCategory: props.args.initialCategory,
             currentRegion: props.args.initialRegion,
@@ -36,6 +38,7 @@ export class App extends Component {
         this.changeView = this.changeView.bind(this);
         this.changeCategory = this.changeCategory.bind(this);
         this.changeRegion = this.changeRegion.bind(this);
+        this.loadMore = this.loadMore.bind(this);
     }
 
     componentDidMount() {
@@ -55,7 +58,9 @@ export class App extends Component {
     changeCategory(category) {
         this.setState({
             currentCategory: category,
-            listings: []
+            page: 1,
+            listings: [],
+            loading: true
         }, () => {
             this.fetchNextListings();
         })
@@ -67,7 +72,9 @@ export class App extends Component {
             // Toggle region filtering off
             this.setState({
                 currentRegion: '',
-                listings: []
+                page: 1,
+                listings: [],
+                loading: true
             }, () => {
                 this.fetchNextListings();
             })
@@ -75,11 +82,25 @@ export class App extends Component {
         else {
             this.setState({
                 currentRegion: region,
-                listings: []
+                page: 1,
+                listings: [],
+                loading: true
             }, () => {
                 this.fetchNextListings();
             })
         }
+    }
+
+    // Method to load more listings
+    loadMore() {
+        const currentPage = this.state.page;
+
+        this.setState({
+            page: currentPage + 1,
+            loading: true
+        }, () => {
+            this.fetchNextListings();
+        })
     }
 
     // Method to fetch the next set of listings from the API
@@ -101,7 +122,8 @@ export class App extends Component {
             .then((data) => {
                 if (data) {
                     this.setState({
-                        listings: this.state.listings.concat(data)
+                        listings: this.state.listings.concat(data),
+                        loading: false
                     })
                 }
             })
@@ -163,6 +185,22 @@ export class App extends Component {
 
     }
 
+    renderLoader() {
+        if ((this.state.view == 'grid' || this.state.view == 'list') && this.state.loading) {
+            return (
+                <div className="rel-loader-container">
+                    <Loader
+                        type="RevolvingDot"
+                        color="#173f57"
+                        height={100}
+                        width={100}
+                        timeout={2000}
+                    />
+                </div>
+            )
+        }
+    }
+
     renderView() {
         switch (this.state.view) {
             case 'list':
@@ -191,7 +229,8 @@ export class App extends Component {
                     categories={this.state.categories} currentCategory={this.state.currentCategory} changeCategory={this.changeCategory}
                     regions={this.state.regions} currentRegion={this.state.currentRegion} changeRegion={this.changeRegion} regionColourField={this.props.globals.regionColourField}  />
                 {this.renderView()}
-                <RelFooter />
+                {this.renderLoader()}
+                <RelFooter loadMore={this.loadMore} />
             </div>
         )
     }
