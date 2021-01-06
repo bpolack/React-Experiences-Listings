@@ -3,3 +3,7 @@
     display: flex;
     justify-content: center;
 }
+.rel-end-of-posts {
+    color: #888;
+    font-size: 15px;
+}

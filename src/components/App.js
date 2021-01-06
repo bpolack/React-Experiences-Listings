@@ -311,6 +311,8 @@ export class App extends Component {
                 {this.renderLoader()}
                 <RelFooter 
                     currentView={this.state.view} 
+                    page={this.state.page} 
+                    totalPages={this.state.totalPages} 
                     loadMore={this.loadMore} 
                 />
             </div>

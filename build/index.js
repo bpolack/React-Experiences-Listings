@@ -22067,6 +22067,8 @@ var App = /*#__PURE__*/function (_Component) {
         regionColourField: this.props.globals.regionColourField
       }), this.renderView(), this.renderLoader(), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_6__["createElement"])(_layout_footer_RelFooter__WEBPACK_IMPORTED_MODULE_10__["default"], {
         currentView: this.state.view,
+        page: this.state.page,
+        totalPages: this.state.totalPages,
         loadMore: this.loadMore
       }));
     }
@@ -22143,12 +22145,18 @@ var RelFooter = /*#__PURE__*/function (_Component) {
       var _this = this;
 
       if (this.props.currentView === 'grid' || this.props.currentView === 'list') {
-        return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("button", {
-          className: "rel-load-more-button",
-          onClick: function onClick() {
-            return _this.props.loadMore();
-          }
-        }, "Load More");
+        if (this.props.page < this.props.totalPages) {
+          return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("button", {
+            className: "rel-load-more-button",
+            onClick: function onClick() {
+              return _this.props.loadMore();
+            }
+          }, "Load More");
+        } else {
+          return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("div", {
+            className: "rel-end-of-posts"
+          }, "end of listings - try exploring a new category!");
+        }
       }
     }
   }, {

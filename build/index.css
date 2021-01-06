@@ -110,6 +110,10 @@
     display: flex;
     justify-content: center;
 }
+.rel-end-of-posts {
+    color: #888;
+    font-size: 15px;
+}
 .rel-listings-grid {
     display: -ms-grid;
     display: grid;
