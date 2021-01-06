@@ -1,12 +1,12 @@
 const { Component } = wp.element;
 const Entities = require('html-entities').AllHtmlEntities;
 const entities = new Entities();
-import './RelCategoryButton.css';
+import './RelSubcategoryItem.css';
 
-export class RelCategoryButton extends Component {
+export class RelSubcategoryItem extends Component {
     render() {
 
-        let buttonClass = "rel-cat-button";
+        let buttonClass = "rel-subcat-button";
         if (this.props.category.ignoreSubcategories && this.props.activeBranch[this.props.activeBranch.length - 1] !== this.props.category.id) {
             // This means the "All" category button should not be active
         }
@@ -25,4 +25,4 @@ export class RelCategoryButton extends Component {
     }
 }
 
-export default RelCategoryButton
+export default RelSubcategoryItem

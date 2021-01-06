@@ -21778,7 +21778,7 @@ var App = /*#__PURE__*/function (_Component) {
 
     _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, App);
 
-    _this = _super.call(this, props); // Set the ititial state
+    _this = _super.call(this, props); // Set the initial state
 
     _this.state = {
       view: props.args.view,
@@ -21832,6 +21832,9 @@ var App = /*#__PURE__*/function (_Component) {
         listings: [],
         loading: true
       }, function () {
+        _this2.fetchCategories(category); // configure fetch for subcats
+
+
         _this2.fetchNextListings();
       });
     } // Method to change the active region
@@ -21868,13 +21871,16 @@ var App = /*#__PURE__*/function (_Component) {
     value: function loadMore() {
       var _this4 = this;
 
-      var currentPage = this.state.page;
-      this.setState({
-        page: currentPage + 1,
-        loading: true
-      }, function () {
-        _this4.fetchNextListings();
-      });
+      var currentPage = this.state.page; // Check that currentPage is less than totalPages
+
+      if (currentPage < this.state.totalPages) {
+        this.setState({
+          page: currentPage + 1,
+          loading: true
+        }, function () {
+          _this4.fetchNextListings();
+        });
+      }
     } // Method to fetch the next set of listings from the API
 
   }, {
@@ -21897,35 +21903,92 @@ var App = /*#__PURE__*/function (_Component) {
       this.relWP.relListings().param(categoryName, currentCategory != false ? currentCategory.trim().split(',') : []).param(categoryName + '_exclude', excludeCategories != false ? excludeCategories.trim().split(',') : []).param(regionName, currentRegion != false ? currentRegion.trim().split(',') : [])
       /*.param(regionName + '_exclude', (excludeRegions != false) ? excludeRegions.trim().split(',') : []) */
       .param('_embed', "1").order('asc').orderby('title').page(page).perPage(perpage).then(function (data) {
-        if (data) {
+        if (data.length > 0) {
           _this5.setState({
             listings: _this5.state.listings.concat(data),
+            totalPages: data._paging.totalPages,
+            loading: false
+          });
+        } else {
+          _this5.setState({
+            totalPages: 0,
             loading: false
           });
         }
       }).catch(function (err) {
-        console.error("WP API Get Error: " + err);
+        console.error("WP API Fetch Error - Are you requesting a page that doesn't exist?");
+
+        _this5.setState({
+          loading: false
+        });
       });
-    } // Method to fetch a set of category terms, given a parent term ID 
+    } // Recursive function to re-create a categories state array with potential subcategories
+
+  }, {
+    key: "fetchSubcategories",
+    value: function fetchSubcategories(currentArray, parentCategory, data) {
+      var _this6 = this;
+
+      var parentFound = false;
+      currentArray.find(function (category, index) {
+        // * This should be replaced with forEach
+        // If the parentCategory ID is found then return from find
+        if (category.id === parentCategory) {
+          parentFound = true;
+
+          if (category.ignoreSubcategories) {
+            return true;
+          } else {
+            currentArray[index].subcategories = data;
+            return true;
+          }
+        } // If the category contains subcategories then recurse
+
+
+        if (typeof category.subcategories !== 'undefined' && category.subcategories.length > 0) {
+          parentFound = _this6.fetchSubcategories(currentArray[index].subcategories, parentCategory, data);
+
+          if (parentFound) {
+            return true;
+          }
+        }
+      }); // For early exit, return true if the parent ID has been found within recursion
+
+      if (parentFound) {
+        return true;
+      } else {
+        return false;
+      }
+    } // Method to fetch a set of subcategory terms, given a parent term ID 
 
   }, {
     key: "fetchCategories",
     value: function fetchCategories(parentCategory) {
-      var _this6 = this;
+      var _this7 = this;
 
       // Destruct required props and states
       var excludeCategories = this.props.args.excludeCategories;
-      this.relWP.relCategories().param('parent', parentCategory != false ? parentCategory : 0).param('exclude', excludeCategories != false ? excludeCategories.trim().split(',') : []).perPage(50).param('hide_empty', true).then(function (data) {
-        if (data) {
+      var categories = this.state.categories;
+      this.relWP.relCategories().param('parent', parentCategory != false ? parentCategory : 0).param('exclude', excludeCategories != false ? excludeCategories.trim().split(',') : []).perPage(20).param('hide_empty', true).then(function (data) {
+        if (data.length > 0) {
           // Add the parent category to the front of the array
           data.unshift({
-            id: parentCategory != false ? parentCategory : 0,
-            name: 'All'
-          });
+            id: parentCategory != false ? parseInt(parentCategory) : 0,
+            name: 'All',
+            ignoreSubcategories: true
+          }); // If top level categories state has already been set
 
-          _this6.setState({
-            categories: data
-          });
+          if (categories.length > 0) {
+            _this7.fetchSubcategories(categories, parseInt(parentCategory), data);
+
+            _this7.setState({
+              categories: _this7.state.categories
+            });
+          } else {
+            _this7.setState({
+              categories: data
+            });
+          }
         }
       }).catch(function (err) {
         console.error("WP API Get Error: " + err);
@@ -21935,13 +21998,13 @@ var App = /*#__PURE__*/function (_Component) {
   }, {
     key: "fetchRegions",
     value: function fetchRegions(parentRegion) {
-      var _this7 = this;
+      var _this8 = this;
 
       // Destruct required props and states
       var excludeRegions = this.props.args.excludeRegions;
       this.relWP.relRegions().param('parent', parentRegion != false ? parentRegion : 0).param('exclude', excludeRegions != false ? excludeRegions.trim().split(',') : []).perPage(50).param('hide_empty', true).then(function (data) {
         if (data) {
-          _this7.setState({
+          _this8.setState({
             regions: data
           });
         }
@@ -22128,18 +22191,21 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
 /* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js");
-/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js");
-/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js");
-/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @wordpress/element */ "@wordpress/element");
-/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var uuid__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! uuid */ "./node_modules/uuid/dist/esm-browser/index.js");
-/* harmony import */ var _RelCategories_css__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./RelCategories.css */ "./src/components/layout/header/RelCategories/RelCategories.css");
-/* harmony import */ var _RelCategories_css__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(_RelCategories_css__WEBPACK_IMPORTED_MODULE_7__);
-/* harmony import */ var _RelCategoryButton_RelCategoryButton__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./RelCategoryButton/RelCategoryButton */ "./src/components/layout/header/RelCategories/RelCategoryButton/RelCategoryButton.js");
+/* harmony import */ var _babel_runtime_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime/helpers/assertThisInitialized */ "./node_modules/@babel/runtime/helpers/assertThisInitialized.js");
+/* harmony import */ var _babel_runtime_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js");
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js");
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js");
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @wordpress/element */ "@wordpress/element");
+/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(_wordpress_element__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var uuid__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! uuid */ "./node_modules/uuid/dist/esm-browser/index.js");
+/* harmony import */ var _RelCategories_css__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./RelCategories.css */ "./src/components/layout/header/RelCategories/RelCategories.css");
+/* harmony import */ var _RelCategories_css__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(_RelCategories_css__WEBPACK_IMPORTED_MODULE_8__);
+/* harmony import */ var _RelCategoryButton_RelCategoryButton__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./RelCategoryButton/RelCategoryButton */ "./src/components/layout/header/RelCategories/RelCategoryButton/RelCategoryButton.js");
+/* harmony import */ var _RelSubcategories_RelSubcategories__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./RelSubcategories/RelSubcategories */ "./src/components/layout/header/RelCategories/RelSubcategories/RelSubcategories.js");
 
 
 
@@ -22147,7 +22213,8 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default()(this, result); }; }
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_5___default()(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_5___default()(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_4___default()(this, result); }; }
 
 function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
 
@@ -22156,34 +22223,97 @@ var Component = wp.element.Component;
  // Import Components
 
 
+
 var RelCategories = /*#__PURE__*/function (_Component) {
-  _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default()(RelCategories, _Component);
+  _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_3___default()(RelCategories, _Component);
 
   var _super = _createSuper(RelCategories);
 
-  function RelCategories() {
+  function RelCategories(props) {
+    var _this;
+
     _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, RelCategories);
 
-    return _super.apply(this, arguments);
-  }
+    _this = _super.call(this, props); // Set the initial state
+
+    _this.state = {
+      activeBranch: [parseInt(_this.props.currentCategory)]
+    }; // Bind callback methods to class
+
+    _this.changeBranch = _this.changeBranch.bind(_babel_runtime_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_2___default()(_this));
+    return _this;
+  } // Method to update the active category branch - used for displaying category levels
+
 
   _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(RelCategories, [{
+    key: "changeBranch",
+    value: function changeBranch(childCategory, parentCategory) {
+      var newBranch;
+
+      if (typeof parentCategory !== 'undefined') {
+        // Grab the index of the parent category from the array 
+        var parentIndex = this.state.activeBranch.findIndex(function (category) {
+          return category === parentCategory;
+        });
+
+        if (parentIndex !== -1) {
+          newBranch = this.state.activeBranch.slice(0, parentIndex).concat([parentCategory, childCategory]);
+        } else {
+          newBranch = [parentCategory, childCategory];
+        }
+      } else {
+        // Special case for "All" category links
+        var childIndex = this.state.activeBranch.findIndex(function (category) {
+          return category === childCategory;
+        });
+
+        if (childIndex !== -1) {
+          newBranch = this.state.activeBranch.slice(0, childIndex + 1);
+        } else {
+          newBranch = [childCategory];
+        }
+      }
+
+      this.setState({
+        activeBranch: newBranch
+      });
+    }
+  }, {
+    key: "renderSubcategorySection",
+    value: function renderSubcategorySection(category) {
+      if (typeof category.subcategories !== 'undefined' && category.subcategories.length > 0 && this.state.activeBranch.includes(category.id)) {
+        return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_6__["createElement"])(_RelSubcategories_RelSubcategories__WEBPACK_IMPORTED_MODULE_10__["default"], {
+          categories: category.subcategories,
+          currentCategory: this.props.currentCategory,
+          changeCategory: this.props.changeCategory,
+          activeBranch: this.state.activeBranch,
+          changeBranch: this.changeBranch
+        });
+      }
+    }
+  }, {
     key: "render",
     value: function render() {
-      var _this = this;
+      var _this2 = this;
 
-      return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("div", {
+      return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_6__["createElement"])("div", {
+        className: "rel-header-category-wrapper"
+      }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_6__["createElement"])("div", {
         className: "rel-header-item"
-      }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("div", {
+      }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_6__["createElement"])("div", {
         className: "rel-header-categories"
       }, this.props.categories.map(function (category, index) {
-        return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])(_RelCategoryButton_RelCategoryButton__WEBPACK_IMPORTED_MODULE_8__["default"], {
-          key: Object(uuid__WEBPACK_IMPORTED_MODULE_6__["v4"])(),
+        return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_6__["createElement"])(_RelCategoryButton_RelCategoryButton__WEBPACK_IMPORTED_MODULE_9__["default"], {
+          key: Object(uuid__WEBPACK_IMPORTED_MODULE_7__["v4"])(),
           category: category,
-          currentCategory: _this.props.currentCategory,
-          changeCategory: _this.props.changeCategory
+          currentCategory: _this2.props.currentCategory,
+          changeCategory: _this2.props.changeCategory,
+          activeBranch: _this2.state.activeBranch,
+          changeBranch: _this2.changeBranch
         });
-      })));
+      }))), this.props.categories.map(function (category, index) {
+        return _this2.renderSubcategorySection(category);
+      }));
     }
   }]);
 
@@ -22263,14 +22393,17 @@ var RelCategoryButton = /*#__PURE__*/function (_Component) {
 
       var buttonClass = "rel-cat-button";
 
-      if (this.props.currentCategory == this.props.category.id) {
+      if (this.props.category.ignoreSubcategories && this.props.activeBranch[this.props.activeBranch.length - 1] !== this.props.category.id) {// This means the "All" category button should not be active
+      } else if (this.props.activeBranch.includes(this.props.category.id)) {
         buttonClass += " active";
       }
 
       return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("div", {
         className: buttonClass,
         onClick: function onClick() {
-          return _this.props.changeCategory(_this.props.category.id.toString());
+          _this.props.changeBranch(_this.props.category.id, _this.props.category.parent);
+
+          _this.props.changeCategory(_this.props.category.id.toString());
         }
       }, entities.decode(this.props.category.name));
     }
@@ -22279,6 +22412,202 @@ var RelCategoryButton = /*#__PURE__*/function (_Component) {
   return RelCategoryButton;
 }(Component);
 /* harmony default export */ __webpack_exports__["default"] = (RelCategoryButton);
+
+/***/ }),
+
+/***/ "./src/components/layout/header/RelCategories/RelSubcategories/RelSubcategories.css":
+/*!******************************************************************************************!*\
+  !*** ./src/components/layout/header/RelCategories/RelSubcategories/RelSubcategories.css ***!
+  \******************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+// extracted by mini-css-extract-plugin
+
+/***/ }),
+
+/***/ "./src/components/layout/header/RelCategories/RelSubcategories/RelSubcategories.js":
+/*!*****************************************************************************************!*\
+  !*** ./src/components/layout/header/RelCategories/RelSubcategories/RelSubcategories.js ***!
+  \*****************************************************************************************/
+/*! exports provided: RelSubcategories, default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "RelSubcategories", function() { return RelSubcategories; });
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js");
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js");
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js");
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @wordpress/element */ "@wordpress/element");
+/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var uuid__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! uuid */ "./node_modules/uuid/dist/esm-browser/index.js");
+/* harmony import */ var _RelSubcategories_css__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./RelSubcategories.css */ "./src/components/layout/header/RelCategories/RelSubcategories/RelSubcategories.css");
+/* harmony import */ var _RelSubcategories_css__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(_RelSubcategories_css__WEBPACK_IMPORTED_MODULE_7__);
+/* harmony import */ var _RelSubcategoryItem_RelSubcategoryItem__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./RelSubcategoryItem/RelSubcategoryItem */ "./src/components/layout/header/RelCategories/RelSubcategories/RelSubcategoryItem/RelSubcategoryItem.js");
+
+
+
+
+
+
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default()(this, result); }; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+var Component = wp.element.Component;
+
+ // Import Components
+
+
+var RelSubcategories = /*#__PURE__*/function (_Component) {
+  _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default()(RelSubcategories, _Component);
+
+  var _super = _createSuper(RelSubcategories);
+
+  function RelSubcategories() {
+    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, RelSubcategories);
+
+    return _super.apply(this, arguments);
+  }
+
+  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(RelSubcategories, [{
+    key: "renderSubcategories",
+    // Recursively render subcategories if they exist
+    value: function renderSubcategories(categories) {
+      var _this = this;
+
+      return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("div", {
+        className: "rel-header-subcategory-level"
+      }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("div", {
+        className: "rel-header-item"
+      }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("div", {
+        className: "rel-header-subcategories"
+      }, categories.map(function (category, index) {
+        return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])(_RelSubcategoryItem_RelSubcategoryItem__WEBPACK_IMPORTED_MODULE_8__["default"], {
+          key: Object(uuid__WEBPACK_IMPORTED_MODULE_6__["v4"])(),
+          category: category,
+          currentCategory: _this.props.currentCategory,
+          changeCategory: _this.props.changeCategory,
+          activeBranch: _this.props.activeBranch,
+          changeBranch: _this.props.changeBranch
+        });
+      }))), categories.map(function (category, index) {
+        if (typeof category.subcategories !== 'undefined' && category.subcategories.length > 0 && _this.props.activeBranch.includes(category.id)) {
+          return _this.renderSubcategories(category.subcategories);
+        }
+      }));
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      return this.renderSubcategories(this.props.categories);
+    }
+  }]);
+
+  return RelSubcategories;
+}(Component);
+/* harmony default export */ __webpack_exports__["default"] = (RelSubcategories);
+
+/***/ }),
+
+/***/ "./src/components/layout/header/RelCategories/RelSubcategories/RelSubcategoryItem/RelSubcategoryItem.css":
+/*!***************************************************************************************************************!*\
+  !*** ./src/components/layout/header/RelCategories/RelSubcategories/RelSubcategoryItem/RelSubcategoryItem.css ***!
+  \***************************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+// extracted by mini-css-extract-plugin
+
+/***/ }),
+
+/***/ "./src/components/layout/header/RelCategories/RelSubcategories/RelSubcategoryItem/RelSubcategoryItem.js":
+/*!**************************************************************************************************************!*\
+  !*** ./src/components/layout/header/RelCategories/RelSubcategories/RelSubcategoryItem/RelSubcategoryItem.js ***!
+  \**************************************************************************************************************/
+/*! exports provided: RelSubcategoryItem, default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "RelSubcategoryItem", function() { return RelSubcategoryItem; });
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js");
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js");
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js");
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @wordpress/element */ "@wordpress/element");
+/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _RelSubcategoryItem_css__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./RelSubcategoryItem.css */ "./src/components/layout/header/RelCategories/RelSubcategories/RelSubcategoryItem/RelSubcategoryItem.css");
+/* harmony import */ var _RelSubcategoryItem_css__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(_RelSubcategoryItem_css__WEBPACK_IMPORTED_MODULE_6__);
+
+
+
+
+
+
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default()(this, result); }; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+var Component = wp.element.Component;
+
+var Entities = __webpack_require__(/*! html-entities */ "./node_modules/html-entities/lib/index.js").AllHtmlEntities;
+
+var entities = new Entities();
+
+var RelSubcategoryItem = /*#__PURE__*/function (_Component) {
+  _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default()(RelSubcategoryItem, _Component);
+
+  var _super = _createSuper(RelSubcategoryItem);
+
+  function RelSubcategoryItem() {
+    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, RelSubcategoryItem);
+
+    return _super.apply(this, arguments);
+  }
+
+  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(RelSubcategoryItem, [{
+    key: "render",
+    value: function render() {
+      var _this = this;
+
+      var buttonClass = "rel-subcat-button";
+
+      if (this.props.category.ignoreSubcategories && this.props.activeBranch[this.props.activeBranch.length - 1] !== this.props.category.id) {// This means the "All" category button should not be active
+      } else if (this.props.activeBranch.includes(this.props.category.id)) {
+        buttonClass += " active";
+      }
+
+      return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("div", {
+        className: buttonClass,
+        onClick: function onClick() {
+          _this.props.changeBranch(_this.props.category.id, _this.props.category.parent);
+
+          _this.props.changeCategory(_this.props.category.id.toString());
+        }
+      }, entities.decode(this.props.category.name));
+    }
+  }]);
+
+  return RelSubcategoryItem;
+}(Component);
+/* harmony default export */ __webpack_exports__["default"] = (RelSubcategoryItem);
 
 /***/ }),
 

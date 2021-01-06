@@ -15,7 +15,10 @@ export class RelHeader extends Component {
             default:
                 return (
                     <div className="rel-header-options">
-                        <RelViews currentView={this.props.currentView}  changeView={this.props.changeView} />
+                        <RelViews 
+                            currentView={this.props.currentView}  
+                            changeView={this.props.changeView} 
+                        />
                     </div>
                 )
         }
@@ -30,8 +33,17 @@ export class RelHeader extends Component {
             default:
                 return (
                     <div className="rel-header-filters">
-                        <RelCategories categories={this.props.categories} currentCategory={this.props.currentCategory} changeCategory={this.props.changeCategory} />
-                        <RelRegions regions={this.props.regions} currentRegion={this.props.currentRegion} changeRegion={this.props.changeRegion} regionColourField={this.props.regionColourField} />
+                        <RelCategories 
+                            categories={this.props.categories} 
+                            currentCategory={this.props.currentCategory} 
+                            changeCategory={this.props.changeCategory} 
+                        />
+                        <RelRegions 
+                            regions={this.props.regions} 
+                            currentRegion={this.props.currentRegion} 
+                            changeRegion={this.props.changeRegion} 
+                            regionColourField={this.props.regionColourField} 
+                        />
                     </div>
                 )
         }

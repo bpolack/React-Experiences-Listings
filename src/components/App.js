@@ -16,7 +16,7 @@ export class App extends Component {
     constructor(props) {
         super(props);
 
-        // Set the ititial state
+        // Set the initial state
         this.state = {
             view: props.args.view,
             loading: true,
@@ -62,6 +62,7 @@ export class App extends Component {
             listings: [],
             loading: true
         }, () => {
+            this.fetchCategories(category); // configure fetch for subcats
             this.fetchNextListings();
         })
     }
@@ -95,12 +96,16 @@ export class App extends Component {
     loadMore() {
         const currentPage = this.state.page;
 
-        this.setState({
-            page: currentPage + 1,
-            loading: true
-        }, () => {
-            this.fetchNextListings();
-        })
+        // Check that currentPage is less than totalPages
+        if (currentPage < this.state.totalPages) {
+            this.setState({
+                page: currentPage + 1,
+                loading: true
+            }, () => {
+                this.fetchNextListings();
+            })
+        }
+        
     }
 
     // Method to fetch the next set of listings from the API
@@ -122,39 +127,97 @@ export class App extends Component {
             .page(page)
             .perPage(perpage)
             .then((data) => {
-                if (data) {
+                if (data.length > 0) {
                     this.setState({
                         listings: this.state.listings.concat(data),
+                        totalPages: data._paging.totalPages,
+                        loading: false
+                    })
+                }
+                else {
+                    this.setState({
+                        totalPages: 0,
                         loading: false
                     })
                 }
             })
             .catch((err) => {
-                console.error("WP API Get Error: " + err);
+                console.error("WP API Fetch Error - Are you requesting a page that doesn't exist?");
+                this.setState({
+                    loading: false
+                })
             });
     }
 
-    // Method to fetch a set of category terms, given a parent term ID 
+    // Recursive function to re-create a categories state array with potential subcategories
+    fetchSubcategories(currentArray, parentCategory, data) {
+        
+        let parentFound = false;
+        
+        currentArray.find( (category, index) => {  // * This should be replaced with forEach
+            
+            // If the parentCategory ID is found then return from find
+            if (category.id === parentCategory) {
+                parentFound = true;
+                if (category.ignoreSubcategories) {
+                    return true;
+                }
+                else {
+                    currentArray[index].subcategories = data;
+                    return true;
+                }
+            }
+            // If the category contains subcategories then recurse
+            if (typeof category.subcategories !== 'undefined' && category.subcategories.length > 0) {
+                parentFound = this.fetchSubcategories(currentArray[index].subcategories, parentCategory, data);
+                if (parentFound) {
+                    return true;
+                }
+            }
+        })
+
+        // For early exit, return true if the parent ID has been found within recursion
+        if (parentFound) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    // Method to fetch a set of subcategory terms, given a parent term ID 
     fetchCategories(parentCategory) {
 
         // Destruct required props and states
         const { excludeCategories } = this.props.args;
+        const { categories } = this.state;
 
         this.relWP.relCategories()
             .param('parent', (parentCategory != false) ? parentCategory : 0)
             .param('exclude', (excludeCategories != false) ? excludeCategories.trim().split(',') : [])
-            .perPage(50)
+            .perPage(20)
             .param('hide_empty', true)
             .then((data) => {
-                if (data) {
+                if (data.length > 0) {
                     // Add the parent category to the front of the array
                     data.unshift({
-                        id: (parentCategory != false) ? parentCategory : 0,
-                        name: 'All'
+                        id: (parentCategory != false) ? parseInt(parentCategory) : 0,
+                        name: 'All',
+                        ignoreSubcategories: true
                     });
-                    this.setState({
-                        categories: data
-                    })
+
+                    // If top level categories state has already been set
+                    if (categories.length > 0) {
+                        this.fetchSubcategories(categories, parseInt(parentCategory), data);
+                        this.setState({
+                            categories: this.state.categories
+                        })
+                    }
+                    else {
+                        this.setState({
+                            categories: data
+                        })
+                    }
                 }
             })
             .catch((err) => {
@@ -207,7 +270,10 @@ export class App extends Component {
         switch (this.state.view) {
             case 'list':
                 return (
-                    <RelListingRows listings={this.state.listings} globals={this.props.globals} />
+                    <RelListingRows 
+                        listings={this.state.listings} 
+                        globals={this.props.globals} 
+                    />
                 )
             case 'map':
                 return (
@@ -219,7 +285,10 @@ export class App extends Component {
                 )
             default:
                 return (
-                    <RelListingGrid listings={this.state.listings} globals={this.props.globals} />
+                    <RelListingGrid 
+                        listings={this.state.listings} 
+                        globals={this.props.globals} 
+                    />
                 )
         }
     }
@@ -227,12 +296,23 @@ export class App extends Component {
     render() {
         return (
             <div className="rel-wrapper" >
-                <RelHeader currentView={this.state.view} changeView={this.changeView}
-                    categories={this.state.categories} currentCategory={this.state.currentCategory} changeCategory={this.changeCategory}
-                    regions={this.state.regions} currentRegion={this.state.currentRegion} changeRegion={this.changeRegion} regionColourField={this.props.globals.regionColourField}  />
+                <RelHeader 
+                    currentView={this.state.view} 
+                    changeView={this.changeView}
+                    categories={this.state.categories} 
+                    currentCategory={this.state.currentCategory} 
+                    changeCategory={this.changeCategory}
+                    regions={this.state.regions} 
+                    currentRegion={this.state.currentRegion} 
+                    changeRegion={this.changeRegion} 
+                    regionColourField={this.props.globals.regionColourField}  
+                />
                 {this.renderView()}
                 {this.renderLoader()}
-                <RelFooter currentView={this.state.view} loadMore={this.loadMore} />
+                <RelFooter 
+                    currentView={this.state.view} 
+                    loadMore={this.loadMore} 
+                />
             </div>
         )
     }

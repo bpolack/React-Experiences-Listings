@@ -58,8 +58,25 @@
 .rel-cat-button:hover, .rel-cat-button.active {
     background-color: rgb(132, 148, 82, 0.3);
 }
+.rel-header-subcategories {
+    padding-top: 2px;
+    border-bottom: 1px solid rgb(132, 148, 82, 0.3);
+    text-align: center;
+}
+.rel-subcat-button {
+    display: inline-block;
+    cursor: pointer;
+    padding: 6px 18px;
+    color: #173f57;
+    font-size: 15px;
+    font-weight: 700;
+    transition: 0.3s ease background-color;
+}
+.rel-subcat-button:hover, .rel-subcat-button.active {
+    background-color: rgb(132, 148, 82, 0.3);
+}
 .rel-header-regions {
-    margin-top: 15px;
+    margin-top: 20px;
     margin-bottom: 35px;
     text-align: center;
 }
@@ -172,10 +189,10 @@
     transition: 0.3s ease background-color;
 }
 .rel-listing-row-item:hover {
-    background-color: rgba(0,0,0,0.1);
+    background-color: rgba(0,0,0,0.02);
 }
 .rel-listing-row-details {
-    padding: 15px 30px 15px 0px;
+    padding: 15px 15px 15px 0px;
     display: flex;
 }
 .rel-listing-row-dot-container {
@@ -199,6 +216,11 @@
     align-items: center;
     margin-left: auto;
     padding-left: 10px;
+    padding-right: 30px;
+    transition: 0.3s ease padding-right;
+}
+.rel-listing-row-item:hover .rel-listing-row-arrow-container {
+    padding-right: 12px;
 }
 
 .rel-listing-row-text h4 {

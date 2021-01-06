@@ -5,10 +5,10 @@
     transition: 0.3s ease background-color;
 }
 .rel-listing-row-item:hover {
-    background-color: rgba(0,0,0,0.1);
+    background-color: rgba(0,0,0,0.02);
 }
 .rel-listing-row-details {
-    padding: 15px 30px 15px 0px;
+    padding: 15px 15px 15px 0px;
     display: flex;
 }
 .rel-listing-row-dot-container {
@@ -32,6 +32,11 @@
     align-items: center;
     margin-left: auto;
     padding-left: 10px;
+    padding-right: 30px;
+    transition: 0.3s ease padding-right;
+}
+.rel-listing-row-item:hover .rel-listing-row-arrow-container {
+    padding-right: 12px;
 }
 
 .rel-listing-row-text h4 {
