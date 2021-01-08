@@ -1,13 +1,14 @@
 const { Component } = wp.element;
+import './RelModalOverlay.css';
 
-export class ListingMap extends Component {
+export class RelModalOverlay extends Component {
     render() {
         return (
             <div>
-                Google Maps Component Under Development
+                
             </div>
         )
     }
 }
 
-export default ListingMap
+export default RelModalOverlay

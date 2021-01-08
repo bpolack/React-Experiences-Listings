@@ -1,5 +1,4 @@
 const { Component } = wp.element;
-import { v4 as uuidv4 } from 'uuid';
 import './RelSubcategories.css';
 
 // Import Components
@@ -16,7 +15,7 @@ export class RelSubcategories extends Component {
                         {categories.map((category, index) => {
                             return (
                                 <RelSubcategoryItem 
-                                    key={uuidv4()} 
+                                    key={category.key} 
                                     category={category} 
                                     currentCategory={this.props.currentCategory} 
                                     changeCategory={this.props.changeCategory} 

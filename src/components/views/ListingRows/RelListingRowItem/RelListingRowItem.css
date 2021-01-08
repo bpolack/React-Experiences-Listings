@@ -77,4 +77,7 @@
         border-right: 0;
         margin-right: 0;
     }
+    .rel-listing-row-arrow-container {
+        padding-right: 5px;
+    }
 }

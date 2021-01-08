@@ -27,7 +27,7 @@ export class RelListingGridItem extends Component {
         }
         
         return (
-            <div className="rel-listing-grid-item">
+            <div className="rel-listing-grid-item" onClick={(e) => this.props.toggleModal(e, false, listing)}>
                 <div className="rel-listing-image">
                     <img src={thumbSrc} alt={thumbAlt} />
                 </div>

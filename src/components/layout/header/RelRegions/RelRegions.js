@@ -1,5 +1,4 @@
 const { Component } = wp.element;
-import { v4 as uuidv4 } from 'uuid';
 import './RelRegions.css';
 
 // Import Components
@@ -13,7 +12,7 @@ export class RelRegions extends Component {
                 <div className="rel-header-regions">
                     {this.props.regions.map((region, index) => {
                         return (
-                            <RelRegionButton key={uuidv4()} region={region} currentRegion={this.props.currentRegion} changeRegion={this.props.changeRegion} regionColourField={this.props.regionColourField} />
+                            <RelRegionButton key={region.key} region={region} currentRegion={this.props.currentRegion} changeRegion={this.props.changeRegion} regionColourField={this.props.regionColourField} />
                         )
                     })}
                 </div>

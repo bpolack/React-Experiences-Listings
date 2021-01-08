@@ -1,5 +1,6 @@
 const { Component } = wp.element;
 const WPAPI = require('wpapi');
+import { v3 as uuidv3 } from 'uuid';
 import Loader from 'react-loader-spinner'
 import './App.css';
 
@@ -10,6 +11,7 @@ import RelListingGrid from './views/ListingGrid/RelListingGrid';
 import RelListingRows from './views/ListingRows/RelListingRows';
 import ListingMap from './views/ListingMap/ListingMap';
 import ListingSingle from './views/ListingSingle/ListingSingle';
+import RelModal from './layout/modules/RelModal/RelModal';
 
 export class App extends Component {
 
@@ -20,6 +22,8 @@ export class App extends Component {
         this.state = {
             view: props.args.view,
             loading: true,
+            modalOpened: false,
+            modalListing: false,
             page: 1,
             currentCategory: props.args.initialCategory,
             currentRegion: props.args.initialRegion,
@@ -38,6 +42,7 @@ export class App extends Component {
         this.changeView = this.changeView.bind(this);
         this.changeCategory = this.changeCategory.bind(this);
         this.changeRegion = this.changeRegion.bind(this);
+        this.toggleModal = this.toggleModal.bind(this);
         this.loadMore = this.loadMore.bind(this);
     }
 
@@ -128,6 +133,9 @@ export class App extends Component {
             .perPage(perpage)
             .then((data) => {
                 if (data.length > 0) {
+                    // Hash static keys to every listing
+                    data.forEach( listing => listing.key = uuidv3(JSON.stringify(listing), uuidv3.URL) ); 
+
                     this.setState({
                         listings: this.state.listings.concat(data),
                         totalPages: data._paging.totalPages,
@@ -206,6 +214,9 @@ export class App extends Component {
                         ignoreSubcategories: true
                     });
 
+                    // Hash static keys to every region
+                    data.forEach( category => category.key = uuidv3(JSON.stringify(category), uuidv3.URL) ); 
+
                     // If top level categories state has already been set
                     if (categories.length > 0) {
                         this.fetchSubcategories(categories, parseInt(parentCategory), data);
@@ -238,7 +249,10 @@ export class App extends Component {
             .perPage(50)
             .param('hide_empty', true)
             .then((data) => {
-                if (data) {
+                if (data.length > 0) {
+                    // Hash static keys to every region
+                    data.forEach( region => region.key = uuidv3(JSON.stringify(region), uuidv3.URL) ); 
+
                     this.setState({
                         regions: data
                     })
@@ -248,6 +262,43 @@ export class App extends Component {
                 console.error("WP API Get Error: " + err);
             });
 
+    }
+
+    toggleModal(event, forceClose, listing) {
+        if (listing != false) {
+            this.setState({
+                modalOpened: true,
+                modalListing: listing
+            });
+        }
+        else if (event.target === event.currentTarget || forceClose) {
+            this.setState({
+                modalOpened: false,
+                modalListing: false
+            });
+        }
+    }
+
+    renderModal() {
+        if (this.state.modalOpened && this.state.modalListing != false) {
+            return (
+                <RelModal
+                    modalListing={this.state.modalListing} 
+                    toggleModal={this.toggleModal} 
+                    globals={this.props.globals} 
+                />
+            )
+        }
+    }
+
+    renderModalOverlay() {
+        if (this.state.modalOpened && this.state.modalListing != false) {
+            return (
+                <RelModalOverlay 
+                    toggleModal={this.toggleModal} 
+                />
+            )
+        }
     }
 
     renderLoader() {
@@ -273,6 +324,7 @@ export class App extends Component {
                     <RelListingRows 
                         listings={this.state.listings} 
                         globals={this.props.globals} 
+                        toggleModal={this.toggleModal}
                     />
                 )
             case 'map':
@@ -288,6 +340,7 @@ export class App extends Component {
                     <RelListingGrid 
                         listings={this.state.listings} 
                         globals={this.props.globals} 
+                        toggleModal={this.toggleModal}
                     />
                 )
         }
@@ -315,6 +368,7 @@ export class App extends Component {
                     totalPages={this.state.totalPages} 
                     loadMore={this.loadMore} 
                 />
+                {this.renderModal()}
             </div>
         )
     }

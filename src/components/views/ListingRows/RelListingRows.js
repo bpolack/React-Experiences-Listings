@@ -1,5 +1,4 @@
 const { Component } = wp.element;
-import { v4 as uuidv4 } from 'uuid';
 import './RelListingRows.css';
 
 // Import Components
@@ -11,7 +10,12 @@ export class RelListingRows extends Component {
             <div className="rel-listings-rows">
                 {this.props.listings.map((listing, index) => {
                     return (
-                        <RelListingRowItem key={uuidv4()} listing={listing} globals={this.props.globals} />
+                        <RelListingRowItem 
+                            key={listing.key} 
+                            listing={listing} 
+                            globals={this.props.globals} 
+                            toggleModal={this.props.toggleModal}
+                        />
                     )
                 })}
             </div>

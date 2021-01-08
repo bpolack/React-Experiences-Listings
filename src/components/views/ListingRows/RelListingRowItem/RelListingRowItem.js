@@ -19,7 +19,7 @@ export class RelListingRowItem extends Component {
         }
         
         return (
-            <div className="rel-listing-row-item">
+            <div className="rel-listing-row-item" onClick={(e) => this.props.toggleModal(e, false, listing)}>
                 <div className="rel-listing-row-details">
                     <div className="rel-listing-row-dot-container">
                         <div className="rel-listing-row-dot" style={dotStyle} ></div>

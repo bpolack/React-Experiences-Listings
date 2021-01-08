@@ -17,3 +17,10 @@
 .rel-cat-button:hover, .rel-cat-button.active {
     background-color: rgb(132, 148, 82, 0.3);
 }
+@media only screen and (max-width: 800px) {
+    .rel-cat-button {
+        display: block;
+        border-bottom: 0px;
+        border-right: 0px;
+    }
+}
