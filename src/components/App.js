@@ -118,14 +118,13 @@ export class App extends Component {
 
         // Destruct required props and states
         const { categoryName, regionName } = this.props.globals;
-        const { perpage, excludeCategories, excludeRegions } = this.props.args;
+        const { perpage, excludeCategories, excludeRegions, initialCategory } = this.props.args;
         const { currentCategory, currentRegion, page } = this.state;
 
         this.relWP.relListings()
             .param(categoryName, (currentCategory != false) ? currentCategory.trim().split(',') : [])
-            .param(categoryName + '_exclude', (excludeCategories != false) ? excludeCategories.trim().split(',') : [])
+            .param(categoryName + '_exclude', (excludeCategories != false && currentCategory == initialCategory) ? excludeCategories.trim().split(',') : [])
             .param(regionName, (currentRegion != false) ? currentRegion.trim().split(',') : [])
-            /*.param(regionName + '_exclude', (excludeRegions != false) ? excludeRegions.trim().split(',') : []) */
             .param('_embed', "1")
             .order('asc')
             .orderby('title')

@@ -55,7 +55,7 @@ Optional Shortcode attributes (with default values):
 view='grid'
 perpage='6'
 initial_category='0'
-exclude_categories='10'
+exclude_categories=''
 initial_region=''
 exclude_regions=''
 ```

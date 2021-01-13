@@ -21902,14 +21902,13 @@ var App = /*#__PURE__*/function (_Component) {
       var _this$props$args = this.props.args,
           perpage = _this$props$args.perpage,
           excludeCategories = _this$props$args.excludeCategories,
-          excludeRegions = _this$props$args.excludeRegions;
+          excludeRegions = _this$props$args.excludeRegions,
+          initialCategory = _this$props$args.initialCategory;
       var _this$state = this.state,
           currentCategory = _this$state.currentCategory,
           currentRegion = _this$state.currentRegion,
           page = _this$state.page;
-      this.relWP.relListings().param(categoryName, currentCategory != false ? currentCategory.trim().split(',') : []).param(categoryName + '_exclude', excludeCategories != false ? excludeCategories.trim().split(',') : []).param(regionName, currentRegion != false ? currentRegion.trim().split(',') : [])
-      /*.param(regionName + '_exclude', (excludeRegions != false) ? excludeRegions.trim().split(',') : []) */
-      .param('_embed', "1").order('asc').orderby('title').page(page).perPage(perpage).then(function (data) {
+      this.relWP.relListings().param(categoryName, currentCategory != false ? currentCategory.trim().split(',') : []).param(categoryName + '_exclude', excludeCategories != false && currentCategory == initialCategory ? excludeCategories.trim().split(',') : []).param(regionName, currentRegion != false ? currentRegion.trim().split(',') : []).param('_embed', "1").order('asc').orderby('title').page(page).perPage(perpage).then(function (data) {
         if (data.length > 0) {
           // Hash static keys to every listing
           data.forEach(function (listing) {
