@@ -1,13 +1,9 @@
 const { Component } = wp.element;
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 const Entities = require('html-entities').AllHtmlEntities;
 const entities = new Entities();
-import './RelModal.css';
+import './RelListingSingle.css';
 
-// Fontawesome Icons
-import { faTimesCircle, faLink } from '@fortawesome/free-solid-svg-icons';
-
-export class RelModal extends Component {
+export class RelListingSingle extends Component {
 
     renderRegion(listing, regionColourField) {
 
@@ -25,9 +21,9 @@ export class RelModal extends Component {
 
         if (regionName) {
             return (
-                <div className="rel-modal-region-container">
-                    <div className="rel-modal-region-dot" style={dotStyle} ></div>
-                    <div className="rel-modal-region">{regionName}</div>
+                <div className="rel-single-region-container">
+                    <div className="rel-single-region-dot" style={dotStyle} ></div>
+                    <div className="rel-single-region">{regionName}</div>
                 </div>
             )
         }
@@ -40,9 +36,9 @@ export class RelModal extends Component {
             const mapsLink = "http://maps.google.com/maps?q=" + listing.rel_fields[mapField].lat + "," + listing.rel_fields[mapField].lng;
 
             return (
-                <div className="rel-modal-field">
-                    <div className="rel-modal-region-dot empty"></div>
-                    <div className="rel-modal-address">
+                <div className="rel-single-field">
+                    <div className="rel-single-region-dot empty"></div>
+                    <div className="rel-single-address">
                         <a href={mapsLink} target="_blank">{entities.decode(listing.rel_fields[addressField])}</a>
                     </div>
                 </div>
@@ -50,9 +46,9 @@ export class RelModal extends Component {
         }
         else if (listing.rel_fields[addressField] != false) {
             return (
-                <div className="rel-modal-field">
-                    <div className="rel-modal-region-dot empty"></div>
-                    <div className="rel-modal-address">{entities.decode(listing.rel_fields[addressField])}</div>
+                <div className="rel-single-field">
+                    <div className="rel-single-region-dot empty"></div>
+                    <div className="rel-single-address">{entities.decode(listing.rel_fields[addressField])}</div>
                 </div>
             )
         }
@@ -61,9 +57,9 @@ export class RelModal extends Component {
 
         if (listing.rel_fields[phoneField] != false) {
             return (
-                <div className="rel-modal-field">
-                    <div className="rel-modal-region-dot empty"></div>
-                    <div className="rel-modal-phone">{entities.decode(listing.rel_fields[phoneField])}</div>
+                <div className="rel-single-field">
+                    <div className="rel-single-region-dot empty"></div>
+                    <div className="rel-single-phone">{entities.decode(listing.rel_fields[phoneField])}</div>
                 </div>
             )
         }
@@ -72,20 +68,12 @@ export class RelModal extends Component {
 
         if (listing.rel_fields[websiteField] != false) {
             return (
-                <div className="rel-modal-field">
-                    <div className="rel-modal-region-dot empty"></div>
-                    <div className="rel-modal-website">
+                <div className="rel-single-field">
+                    <div className="rel-single-region-dot empty"></div>
+                    <div className="rel-single-website">
                         <a href={listing.rel_fields[websiteField]} target="_blank">{listing.rel_fields[websiteField]}</a>
                     </div>
                 </div>
-            )
-        }
-    }
-    renderLink(internalLink) {
-
-        if (internalLink != false) {
-            return (
-                <a href={internalLink}><FontAwesomeIcon className="rel-modal-link" icon={faLink} /></a>
             )
         }
     }
@@ -93,44 +81,47 @@ export class RelModal extends Component {
     render() {
 
         // Destruct required props and globals
-        const listing = this.props.modalListing;
+        const listing = this.props.singleListing;
         const {phoneField, addressField, mapField, websiteField, regionColourField, placeholderImage} = this.props.globals;
 
-        // Check for a featured image if it exists
-        let thumbSrc = placeholderImage;
-        let thumbAlt = '';
-        if (listing._embedded['wp:featuredmedia']) {
-            thumbSrc = listing._embedded['wp:featuredmedia'][0].media_details.sizes.medium.source_url;
-            thumbAlt = listing._embedded['wp:featuredmedia'][0].alt_text;
-        }
+        if (listing) {
+            // Check for a featured image if it exists
+            let thumbSrc = placeholderImage;
+            let thumbAlt = '';
+            if (listing._embedded['wp:featuredmedia']) {
+                thumbSrc = listing._embedded['wp:featuredmedia'][0].media_details.sizes.large.source_url;
+                thumbAlt = listing._embedded['wp:featuredmedia'][0].alt_text;
+            }
 
-        return (
-            <div className="rel-modal-background" onClick={ (e) => this.props.toggleModal(e, false, false) }>
-                <div className="rel-modal-container">
-                    <div className="rel-modal-image">
+            return (
+                <div className="rel-listings-single">
+                    <div className="rel-single-image">
                         <img src={thumbSrc} alt={thumbAlt} />
                     </div>
-                    <div className="rel-modal-details">
-                        <div className="rel-modal-text">
-                            <h4>{entities.decode(listing.title.rendered)} {this.renderLink(listing.link)}</h4>
-                            <div className="rel-modal-content" 
+                    <div className="rel-single-details">
+                        <div className="rel-single-text">
+                            <h4>{entities.decode(listing.title.rendered)}</h4>
+                            <div className="rel-single-content" 
                                 dangerouslySetInnerHTML={{ __html: entities.decode(listing.content.rendered) }} >
                             </div>
                         </div>
                         {this.renderRegion(listing, regionColourField)}
-                        <div className="rel-modal-field-container">
+                        <div className="rel-single-field-container">
                             {this.renderAddress(listing, addressField, mapField)}
                             {this.renderPhone(listing, phoneField)}
                             {this.renderWebsite(listing, websiteField)}
                         </div>
-                        <div className="rel-modal-close-container" onClick={ (e) => this.props.toggleModal(e, true, false) }>
-                            <FontAwesomeIcon className="rel-modal-close" icon={faTimesCircle} />
-                        </div>
                     </div>
                 </div>
-            </div>
-        )
+            )
+        }
+        else {
+            return (
+                <div className="rel-listings-single"></div>
+            )
+        }
+        
     }
 }
 
-export default RelModal
+export default RelListingSingle

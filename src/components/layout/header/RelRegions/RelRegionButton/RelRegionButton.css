@@ -23,3 +23,8 @@
     border-radius: 50%;
     vertical-align: top;
 }
+@media only screen and (max-width: 768px) {
+    .rel-region-button {
+        display: block;
+    }
+}

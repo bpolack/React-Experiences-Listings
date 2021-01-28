@@ -10,7 +10,7 @@ import RelFooter from './layout/footer/RelFooter';
 import RelListingGrid from './views/ListingGrid/RelListingGrid';
 import RelListingRows from './views/ListingRows/RelListingRows';
 import ListingMap from './views/ListingMap/ListingMap';
-import ListingSingle from './views/ListingSingle/ListingSingle';
+import RelListingSingle from './views/ListingSingle/RelListingSingle';
 import RelModal from './layout/modules/RelModal/RelModal';
 
 export class App extends Component {
@@ -34,7 +34,7 @@ export class App extends Component {
 
         // Configure WPAPI handlers
         this.relWP = new WPAPI({ endpoint: props.globals.apiLocation });
-        this.relWP.relListings = this.relWP.registerRoute('wp/v2', '/' + props.globals.postType + '/');
+        this.relWP.relListings = this.relWP.registerRoute('wp/v2', '/' + props.globals.postType + '/(?P<id>\\d+)');
         this.relWP.relCategories = this.relWP.registerRoute('wp/v2', '/' + props.globals.categoryName + '/');
         this.relWP.relRegions = this.relWP.registerRoute('wp/v2', '/' + props.globals.regionName + '/');
 
@@ -47,9 +47,14 @@ export class App extends Component {
     }
 
     componentDidMount() {
-        this.fetchCategories(this.state.currentCategory);
-        this.fetchRegions(this.state.currentRegion);
-        this.fetchNextListings();
+        if (this.state.view !== 'single') {
+            this.fetchCategories(this.state.currentCategory);
+            this.fetchRegions(this.state.currentRegion);
+            this.fetchNextListings();
+        }
+        else {
+            this.fetchSingleListing(this.props.args.singleListing);
+        }
     }
 
     // Method to change the active view
@@ -109,6 +114,36 @@ export class App extends Component {
             }, () => {
                 this.fetchNextListings();
             })
+        }
+        
+    }
+
+    // Method to fetch a single listing, given the listing ID
+    fetchSingleListing(singleListingId) {
+        if (singleListingId != false) {
+            this.relWP.relListings()
+            .id(parseInt(singleListingId))
+            .param('_embed', "1")
+            .then((data) => {
+                if (data) {
+                    this.setState({
+                        modalListing: data,
+                        loading: false
+                    })
+                }
+                else {
+                    console.error("No listing found with provided ID");
+                }
+            })
+            .catch((err) => {
+                console.error("WP API Fetch Error - Are you requesting a page that doesn't exist?");
+                this.setState({
+                    loading: false
+                })
+            });
+        }
+        else {
+            console.error("Must provide a shortcode argument single_listing for single view");
         }
         
     }
@@ -290,18 +325,8 @@ export class App extends Component {
         }
     }
 
-    renderModalOverlay() {
-        if (this.state.modalOpened && this.state.modalListing != false) {
-            return (
-                <RelModalOverlay 
-                    toggleModal={this.toggleModal} 
-                />
-            )
-        }
-    }
-
     renderLoader() {
-        if ((this.state.view == 'grid' || this.state.view == 'list') && this.state.loading) {
+        if ((this.state.view == 'grid' || this.state.view == 'list' || this.state.view == 'single') && this.state.loading) {
             return (
                 <div className="rel-loader-container">
                     <Loader
@@ -332,7 +357,10 @@ export class App extends Component {
                 )
             case 'single':
                 return (
-                    <ListingSingle />
+                    <RelListingSingle 
+                        singleListing={this.state.modalListing} 
+                        globals={this.props.globals} 
+                    />
                 )
             default:
                 return (

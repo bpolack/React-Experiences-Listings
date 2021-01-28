@@ -16,6 +16,7 @@ function create_rel_app( $atts ) {
         'exclude_categories' => '10',
         'initial_region' => '',
         'exclude_regions' => '50,63,51,56,62',
+        'single_listing' => '',
     );
     $args = shortcode_atts( $default_atts, $atts );
     $sc_id = uniqid('rel');
@@ -47,7 +48,8 @@ function create_rel_app( $atts ) {
             "initialCategory": "<?php echo $args["initial_category"]; ?>",
             "excludeCategories": "<?php echo $args["exclude_categories"]; ?>",
             "initialRegion": "<?php echo $args["initial_region"]; ?>",
-            "excludeRegions": "<?php echo $args["exclude_regions"]; ?>"
+            "excludeRegions": "<?php echo $args["exclude_regions"]; ?>",
+            "singleListing": "<?php echo $args["single_listing"]; ?>"
         };
     </script>
     <div class="rel-root" data-id="<?php echo $sc_id; ?>"></div>

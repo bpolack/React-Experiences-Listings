@@ -1,5 +1,10 @@
 const { Component } = wp.element;
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import './RelCategories.css';
+
+
+// Fontawesome Icons
+import { faLink } from '@fortawesome/free-solid-svg-icons';
 
 // Import Components
 import RelCategoryButton from './RelCategoryButton/RelCategoryButton';
@@ -12,15 +17,17 @@ export class RelCategories extends Component {
 
         // Set the initial state
         this.state = {
-            activeBranch: [parseInt(this.props.currentCategory)]
+            activeBranch: [parseInt(this.props.currentCategory)],
+            activeLink: ''
         };
 
         // Bind callback methods to class
         this.changeBranch = this.changeBranch.bind(this);
     }
 
-    // Method to update the active category branch - used for displaying category levels
-    changeBranch(childCategory, parentCategory) {
+    // Method to update the active category branch 
+    // *** used for displaying category levels and updating the category link icon
+    changeBranch(childCategory, parentCategory, childCategoryLink) {
 
         let newBranch;
 
@@ -49,7 +56,8 @@ export class RelCategories extends Component {
         }
 
         this.setState({
-            activeBranch: newBranch
+            activeBranch: newBranch,
+            activeLink: childCategoryLink
         })
     }
 
@@ -63,6 +71,14 @@ export class RelCategories extends Component {
                     activeBranch={this.state.activeBranch} 
                     changeBranch={this.changeBranch} 
                 />
+            )
+        }
+    }
+
+    renderLink() {
+        if (this.state.activeLink != false && typeof this.state.activeLink !== 'undefined') {
+            return (
+                <a href={this.state.activeLink}><FontAwesomeIcon className="rel-header-category-link" icon={faLink} /></a>
             )
         }
     }
@@ -91,6 +107,7 @@ export class RelCategories extends Component {
                         this.renderSubcategorySection(category)
                     )
                 })}
+                {this.renderLink()}
             </div>
         )
     }

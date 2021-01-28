@@ -1,4 +1,21 @@
+.rel-header-category-wrapper {
+    position: relative;
+}
 .rel-header-categories {
-    margin-top: 40px;
     text-align: center;
+}
+.rel-header-category-link {
+    position: absolute;
+    top: 22px;
+    right: -25px;
+    font-size: 18px;
+    color: #173f57;
+}
+.rel-header-category-link:hover {
+    color: #497081;
+}
+@media only screen and (max-width: 768px) {
+    .rel-header-category-link {
+        display: none;
+    }
 }

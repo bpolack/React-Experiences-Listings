@@ -16,7 +16,7 @@ export class RelSubcategoryItem extends Component {
 
         return (
             <div className={buttonClass} onClick={() => {
-                this.props.changeBranch(this.props.category.id, this.props.category.parent);
+                this.props.changeBranch(this.props.category.id, this.props.category.parent, this.props.category.link);
                 this.props.changeCategory(this.props.category.id.toString());
             }} >
                 {entities.decode(this.props.category.name)}
