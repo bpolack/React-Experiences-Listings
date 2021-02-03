@@ -78,11 +78,21 @@ export class RelListingSingle extends Component {
         }
     }
 
+    renderLogo(listing, logoField) {
+        if (typeof listing.rel_fields[logoField] !== 'undefined' && listing.rel_fields[logoField] != false) {
+            return (
+                <div className="rel-single-logo">
+                    <img src={listing.rel_fields[logoField]} />
+                </div>
+            )
+        }
+    }
+
     render() {
 
         // Destruct required props and globals
         const listing = this.props.singleListing;
-        const {phoneField, addressField, mapField, websiteField, regionColourField, placeholderImage} = this.props.globals;
+        const {phoneField, addressField, logoField, mapField, websiteField, regionColourField, placeholderImage} = this.props.globals;
 
         if (listing) {
             // Check for a featured image if it exists
@@ -97,6 +107,7 @@ export class RelListingSingle extends Component {
                 <div className="rel-listings-single">
                     <div className="rel-single-image">
                         <img src={thumbSrc} alt={thumbAlt} />
+                        {this.renderLogo(listing, logoField)}
                     </div>
                     <div className="rel-single-details">
                         <div className="rel-single-text">

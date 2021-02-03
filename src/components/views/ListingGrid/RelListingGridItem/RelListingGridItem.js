@@ -4,11 +4,23 @@ const entities = new Entities();
 import './RelListingGridItem.css';
 
 export class RelListingGridItem extends Component {
+
+
+    renderLogo(listing, logoField) {
+        if (typeof listing.rel_fields[logoField] !== 'undefined' && listing.rel_fields[logoField] != false) {
+            return (
+                <div className="rel-listing-logo">
+                    <img src={listing.rel_fields[logoField]} />
+                </div>
+            )
+        }
+    }
+
     render() {
 
         // Destruct required props and globals
         const {listing} = this.props;
-        const {addressField, regionColourField, placeholderImage} = this.props.globals;
+        const {addressField, logoField, regionColourField, placeholderImage} = this.props.globals;
 
         // Check for a featured image if it exists
         let thumbSrc = placeholderImage;
@@ -30,6 +42,7 @@ export class RelListingGridItem extends Component {
             <div className="rel-listing-grid-item" onClick={(e) => this.props.toggleModal(e, false, listing)}>
                 <div className="rel-listing-image">
                     <img src={thumbSrc} alt={thumbAlt} />
+                    {this.renderLogo(listing, logoField)}
                 </div>
                 <div className="rel-listing-grid-details">
                     <div className="rel-listing-grid-text">

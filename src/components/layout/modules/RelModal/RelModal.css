@@ -28,12 +28,20 @@
     flex-grow: 1;
     display: flex;
     background-color: #ddd;
+    position: relative;
 }
 .rel-modal-image img {
     width: 100%;
     display: block;
     object-fit: cover;
     object-position: center center;
+}
+.rel-modal-image .rel-modal-logo {
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    max-width: 90px;
+    opacity: 0.85;
 }
 .rel-modal-details {
     padding: 35px;

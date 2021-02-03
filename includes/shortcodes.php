@@ -34,12 +34,14 @@ function create_rel_app( $atts ) {
             "phoneField": "<?php echo $globals["phone"]; ?>",
             "websiteField": "<?php echo $globals["website"]; ?>",
             "addressField": "<?php echo $globals["address"]; ?>",
+            "logoField": "<?php echo $globals["logo"]; ?>",
             "mapField": "<?php echo $globals["map_pin"]; ?>",
             "categoryName": "<?php echo $globals["category"]; ?>",
             "categoryIconField": "<?php echo $globals["category_icon"]; ?>",
             "regionName": "<?php echo $globals["region"]; ?>",
             "regionColourField": "<?php echo $globals["region_colour"]; ?>",
-            "placeholderImage": "<?php echo $globals["placeholder"]; ?>"
+            "placeholderImage": "<?php echo $globals["placeholder"]; ?>",
+            "apiKey": "<?php echo $globals["apikey"]; ?>"
         };
         window.relSettings = window.relSettings || {};
         window.relSettings["<?php echo $sc_id; ?>"] = {

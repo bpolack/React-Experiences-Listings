@@ -212,6 +212,7 @@
 .rel-listing-image {
     max-height: 300px;
     display: flex;
+    position: relative;
 }
 .rel-listing-image img {
     width: 100%;
@@ -222,8 +223,15 @@
        object-position: center center;
     transition: 0.3s ease opacity;
 }
-.rel-listing-grid-item:hover .rel-listing-image img {
-    opacity: 0.7;
+.rel-listing-image .rel-listing-logo {
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    max-width: 90px;
+    opacity: 0.8;
+}
+.rel-listing-grid-item:hover .rel-listing-image > img {
+    opacity: 0.65;
 }
 .rel-listing-grid-details {
     padding: 20px 25px 0px 25px;
@@ -352,6 +360,11 @@
         padding-right: 5px;
     }
 }
+
+.rel-map-marker-label {
+    background-color: #849452;
+    padding: 0px 10px;
+}
 .rel-listings-single {
     margin: 0 30px;
     display: flex;
@@ -360,6 +373,7 @@
     width: 50%;
     display: flex;
     background-color: #ddd;
+    position: relative;
 }
 .rel-single-image img {
     width: 100%;
@@ -368,6 +382,13 @@
        object-fit: cover;
     -o-object-position: center center;
        object-position: center center;
+}
+.rel-single-image .rel-single-logo {
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    max-width: 90px;
+    opacity: 0.84;
 }
 .rel-single-details {
     padding: 35px;
@@ -461,6 +482,7 @@
     flex-grow: 1;
     display: flex;
     background-color: #ddd;
+    position: relative;
 }
 .rel-modal-image img {
     width: 100%;
@@ -469,6 +491,13 @@
        object-fit: cover;
     -o-object-position: center center;
        object-position: center center;
+}
+.rel-modal-image .rel-modal-logo {
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    max-width: 90px;
+    opacity: 0.85;
 }
 .rel-modal-details {
     padding: 35px;

@@ -29,6 +29,7 @@ function rel_register_settings() {
     add_settings_field( 'rel_plugin_setting_phone', 'ACF Phone Field', 'rel_plugin_setting_phone', 'react-experiences-listings', 'post_type_settings' );
     add_settings_field( 'rel_plugin_setting_website', 'ACF Website Field', 'rel_plugin_setting_website', 'react-experiences-listings', 'post_type_settings' );
     add_settings_field( 'rel_plugin_setting_address', 'ACF Address Field', 'rel_plugin_setting_address', 'react-experiences-listings', 'post_type_settings' );
+    add_settings_field( 'rel_plugin_setting_logo', 'ACF Logo Field', 'rel_plugin_setting_logo', 'react-experiences-listings', 'post_type_settings' );
     add_settings_field( 'rel_plugin_setting_map_pin', 'ACF Map Field', 'rel_plugin_setting_map_pin', 'react-experiences-listings', 'post_type_settings' );
     add_settings_field( 'rel_plugin_setting_category', 'Category Custom Taxonomy (optional)', 'rel_plugin_setting_category', 'react-experiences-listings', 'post_type_settings' );
     add_settings_field( 'rel_plugin_setting_category_icon', 'Category Icon Field', 'rel_plugin_setting_category_icon', 'react-experiences-listings', 'post_type_settings' );
@@ -36,6 +37,7 @@ function rel_register_settings() {
     add_settings_field( 'rel_plugin_setting_region_colour', 'Region Colour Field', 'rel_plugin_setting_region_colour', 'react-experiences-listings', 'post_type_settings' );
 
     add_settings_field( 'rel_plugin_setting_placeholder', 'Placeholder Image URL', 'rel_plugin_setting_placeholder', 'react-experiences-listings', 'post_type_settings' );
+    add_settings_field( 'rel_plugin_setting_apikey', 'Google Maps API Key', 'rel_plugin_setting_apikey', 'react-experiences-listings', 'post_type_settings' );
 }
 add_action( 'admin_init', 'rel_register_settings' );
 
@@ -63,6 +65,10 @@ function rel_plugin_setting_address() {
     $options = get_option( 'rel_plugin_options' );
     echo '<input id="rel_plugin_setting_address" name="rel_plugin_options[address]" type="text" value="'.esc_attr( $options['address'] ).'" />';
 }
+function rel_plugin_setting_logo() {
+    $options = get_option( 'rel_plugin_options' );
+    echo '<input id="rel_plugin_setting_logo" name="rel_plugin_options[logo]" type="text" value="'.esc_attr( $options['logo'] ).'" />';
+}
 function rel_plugin_setting_map_pin() {
     $options = get_option( 'rel_plugin_options' );
     echo '<input id="rel_plugin_setting_map_pin" name="rel_plugin_options[map_pin]" type="text" value="'.esc_attr( $options['map_pin'] ).'" />';
@@ -86,4 +92,8 @@ function rel_plugin_setting_region_colour() {
 function rel_plugin_setting_placeholder() {
     $options = get_option( 'rel_plugin_options' );
     echo '<input id="rel_plugin_setting_placeholder" name="rel_plugin_options[placeholder]" type="text" value="'.esc_attr( $options['placeholder'] ).'" />';
+}
+function rel_plugin_setting_apikey() {
+    $options = get_option( 'rel_plugin_options' );
+    echo '<input id="rel_plugin_setting_apikey" name="rel_plugin_options[apikey]" type="text" value="'.esc_attr( $options['apikey'] ).'" />';
 }

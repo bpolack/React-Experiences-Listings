@@ -15,7 +15,7 @@ export class RelRegionButton extends Component {
         let dotStyle = {
             backgroundColor: '#c7c7c7'
         }
-        if (typeof this.props.region.rel_fields[this.props.regionColourField] !== 'undefined') {
+        if (typeof this.props.region.rel_fields[this.props.regionColourField] !== 'undefined' && this.props.region.rel_fields[this.props.regionColourField] != false) {
             dotStyle.backgroundColor = this.props.region.rel_fields[this.props.regionColourField];
         }
         

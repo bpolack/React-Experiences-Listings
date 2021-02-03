@@ -90,11 +90,21 @@ export class RelModal extends Component {
         }
     }
 
+    renderLogo(listing, logoField) {
+        if (typeof listing.rel_fields[logoField] !== 'undefined' && listing.rel_fields[logoField] != false) {
+            return (
+                <div className="rel-modal-logo">
+                    <img src={listing.rel_fields[logoField]} />
+                </div>
+            )
+        }
+    }
+
     render() {
 
         // Destruct required props and globals
         const listing = this.props.modalListing;
-        const {phoneField, addressField, mapField, websiteField, regionColourField, placeholderImage} = this.props.globals;
+        const {phoneField, addressField, logoField, mapField, websiteField, regionColourField, placeholderImage} = this.props.globals;
 
         // Check for a featured image if it exists
         let thumbSrc = placeholderImage;
@@ -109,6 +119,7 @@ export class RelModal extends Component {
                 <div className="rel-modal-container">
                     <div className="rel-modal-image">
                         <img src={thumbSrc} alt={thumbAlt} />
+                        {this.renderLogo(listing, logoField)}
                     </div>
                     <div className="rel-modal-details">
                         <div className="rel-modal-text">

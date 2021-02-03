@@ -7,6 +7,7 @@
 .rel-listing-image {
     max-height: 300px;
     display: flex;
+    position: relative;
 }
 .rel-listing-image img {
     width: 100%;
@@ -15,8 +16,15 @@
     object-position: center center;
     transition: 0.3s ease opacity;
 }
-.rel-listing-grid-item:hover .rel-listing-image img {
-    opacity: 0.7;
+.rel-listing-image .rel-listing-logo {
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    max-width: 90px;
+    opacity: 0.8;
+}
+.rel-listing-grid-item:hover .rel-listing-image > img {
+    opacity: 0.65;
 }
 .rel-listing-grid-details {
     padding: 20px 25px 0px 25px;

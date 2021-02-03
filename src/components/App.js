@@ -9,7 +9,7 @@ import RelHeader from './layout/header/RelHeader';
 import RelFooter from './layout/footer/RelFooter';
 import RelListingGrid from './views/ListingGrid/RelListingGrid';
 import RelListingRows from './views/ListingRows/RelListingRows';
-import ListingMap from './views/ListingMap/ListingMap';
+import RelListingMap from './views/ListingMap/RelListingMap';
 import RelListingSingle from './views/ListingSingle/RelListingSingle';
 import RelModal from './layout/modules/RelModal/RelModal';
 
@@ -59,9 +59,22 @@ export class App extends Component {
 
     // Method to change the active view
     changeView(view) {
-        this.setState({
-            view: view
-        })
+        // If we are leaving map view, flush the listings and reset currentCategory
+        if (this.state.view === "map") {
+            this.setState({
+                view: view,
+                page: 1,
+                listings: [],
+                loading: true
+            }, () => {
+                this.fetchNextListings();
+            })
+        }
+        else {
+            this.setState({
+                view: view
+            })
+        }
     }
 
     // Method to change the active category
@@ -82,7 +95,7 @@ export class App extends Component {
         if (region == this.state.currentRegion) {
             // Toggle region filtering off
             this.setState({
-                currentRegion: '',
+                currentRegion: this.props.args.initialRegion,
                 page: 1,
                 listings: [],
                 loading: true
@@ -103,49 +116,65 @@ export class App extends Component {
     }
 
     // Method to load more listings
-    loadMore() {
+    loadMore(callback) {
         const currentPage = this.state.page;
-
-        // Check that currentPage is less than totalPages
-        if (currentPage < this.state.totalPages) {
-            this.setState({
-                page: currentPage + 1,
-                loading: true
-            }, () => {
-                this.fetchNextListings();
-            })
-        }
         
+        if (typeof this.state.totalPages !== 'undefined') {
+            // Check that currentPage is less than totalPages
+            if (currentPage < this.state.totalPages) {
+                this.setState({
+                    page: currentPage + 1,
+                    loading: true
+                }, () => {
+                    this.fetchNextListings();
+                    if (typeof callback === 'function') {
+                        callback(true); // If a callback is set, param true if there may be more to load
+                    }
+                })
+            }
+            else {
+                if (typeof callback === 'function') {
+                    callback(false); // Or false if there is not more to load
+                }
+            }
+        }
+        else {
+            // Callback early if totalPages state has not yet been set
+            if (typeof callback === 'function') {
+                callback(true); 
+            }
+        }
+
     }
 
     // Method to fetch a single listing, given the listing ID
     fetchSingleListing(singleListingId) {
         if (singleListingId != false) {
             this.relWP.relListings()
-            .id(parseInt(singleListingId))
-            .param('_embed', "1")
-            .then((data) => {
-                if (data) {
+                .id(parseInt(singleListingId))
+                .param('_embed', "1")
+                .then((data) => {
+                    if (data) {
+                        this.setState({
+                            modalListing: data,
+                            loading: false
+                        })
+                    }
+                    else {
+                        console.error("No listing found with provided ID");
+                    }
+                })
+                .catch((err) => {
+                    console.error("WP API Fetch Error - Are you requesting a page that doesn't exist?");
                     this.setState({
-                        modalListing: data,
                         loading: false
                     })
-                }
-                else {
-                    console.error("No listing found with provided ID");
-                }
-            })
-            .catch((err) => {
-                console.error("WP API Fetch Error - Are you requesting a page that doesn't exist?");
-                this.setState({
-                    loading: false
-                })
-            });
+                });
         }
         else {
             console.error("Must provide a shortcode argument single_listing for single view");
         }
-        
+
     }
 
     // Method to fetch the next set of listings from the API
@@ -168,7 +197,7 @@ export class App extends Component {
             .then((data) => {
                 if (data.length > 0) {
                     // Hash static keys to every listing
-                    data.forEach( listing => listing.key = uuidv3(JSON.stringify(listing), uuidv3.URL) ); 
+                    data.forEach(listing => listing.key = uuidv3(JSON.stringify(listing), uuidv3.URL));
 
                     this.setState({
                         listings: this.state.listings.concat(data),
@@ -193,11 +222,11 @@ export class App extends Component {
 
     // Recursive function to re-create a categories state array with potential subcategories
     fetchSubcategories(currentArray, parentCategory, data) {
-        
+
         let parentFound = false;
-        
-        currentArray.find( (category, index) => {  // * This should be replaced with forEach
-            
+
+        currentArray.find((category, index) => {  // * This should be replaced with forEach
+
             // If the parentCategory ID is found then return from find
             if (category.id === parentCategory) {
                 parentFound = true;
@@ -249,7 +278,7 @@ export class App extends Component {
                     });
 
                     // Hash static keys to every region
-                    data.forEach( category => category.key = uuidv3(JSON.stringify(category), uuidv3.URL) ); 
+                    data.forEach(category => category.key = uuidv3(JSON.stringify(category), uuidv3.URL));
 
                     // If top level categories state has already been set
                     if (categories.length > 0) {
@@ -285,7 +314,7 @@ export class App extends Component {
             .then((data) => {
                 if (data.length > 0) {
                     // Hash static keys to every region
-                    data.forEach( region => region.key = uuidv3(JSON.stringify(region), uuidv3.URL) ); 
+                    data.forEach(region => region.key = uuidv3(JSON.stringify(region), uuidv3.URL));
 
                     this.setState({
                         regions: data
@@ -317,9 +346,9 @@ export class App extends Component {
         if (this.state.modalOpened && this.state.modalListing != false) {
             return (
                 <RelModal
-                    modalListing={this.state.modalListing} 
-                    toggleModal={this.toggleModal} 
-                    globals={this.props.globals} 
+                    modalListing={this.state.modalListing}
+                    toggleModal={this.toggleModal}
+                    globals={this.props.globals}
                 />
             )
         }
@@ -345,28 +374,35 @@ export class App extends Component {
         switch (this.state.view) {
             case 'list':
                 return (
-                    <RelListingRows 
-                        listings={this.state.listings} 
-                        globals={this.props.globals} 
+                    <RelListingRows
+                        listings={this.state.listings}
+                        globals={this.props.globals}
                         toggleModal={this.toggleModal}
                     />
                 )
             case 'map':
                 return (
-                    <ListingMap />
+                    <RelListingMap
+                        listings={this.state.listings}
+                        globals={this.props.globals}
+                        toggleModal={this.toggleModal}
+                        page={this.state.page}
+                        totalPages={this.state.totalPages}
+                        loadMore={this.loadMore}
+                    />
                 )
             case 'single':
                 return (
-                    <RelListingSingle 
-                        singleListing={this.state.modalListing} 
-                        globals={this.props.globals} 
+                    <RelListingSingle
+                        singleListing={this.state.modalListing}
+                        globals={this.props.globals}
                     />
                 )
             default:
                 return (
-                    <RelListingGrid 
-                        listings={this.state.listings} 
-                        globals={this.props.globals} 
+                    <RelListingGrid
+                        listings={this.state.listings}
+                        globals={this.props.globals}
                         toggleModal={this.toggleModal}
                     />
                 )
@@ -376,24 +412,24 @@ export class App extends Component {
     render() {
         return (
             <div className="rel-wrapper" >
-                <RelHeader 
-                    currentView={this.state.view} 
+                <RelHeader
+                    currentView={this.state.view}
                     changeView={this.changeView}
-                    categories={this.state.categories} 
-                    currentCategory={this.state.currentCategory} 
+                    categories={this.state.categories}
+                    currentCategory={this.state.currentCategory}
                     changeCategory={this.changeCategory}
-                    regions={this.state.regions} 
-                    currentRegion={this.state.currentRegion} 
-                    changeRegion={this.changeRegion} 
-                    regionColourField={this.props.globals.regionColourField}  
+                    regions={this.state.regions}
+                    currentRegion={this.state.currentRegion}
+                    changeRegion={this.changeRegion}
+                    regionColourField={this.props.globals.regionColourField}
                 />
                 {this.renderView()}
                 {this.renderLoader()}
-                <RelFooter 
-                    currentView={this.state.view} 
-                    page={this.state.page} 
-                    totalPages={this.state.totalPages} 
-                    loadMore={this.loadMore} 
+                <RelFooter
+                    currentView={this.state.view}
+                    page={this.state.page}
+                    totalPages={this.state.totalPages}
+                    loadMore={this.loadMore}
                 />
                 {this.renderModal()}
             </div>
