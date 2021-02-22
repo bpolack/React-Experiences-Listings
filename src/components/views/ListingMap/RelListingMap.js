@@ -1,4 +1,4 @@
-const { useState, useCallback } = wp.element;
+const { useState, useCallback, useRef } = wp.element;
 import { GoogleMap, useJsApiLoader, MarkerClusterer } from '@react-google-maps/api';
 import './RelListingMap.css';
 
@@ -202,6 +202,8 @@ function RelListingMap(props) {
     // Destruct required props and globals
     const { listings } = props;
     const { mapField } = props.globals;
+    const mapRef = useRef(null);
+    let cancelLoad = false;
 
     const { isLoaded } = useJsApiLoader({
         id: 'google-map-script',
@@ -211,10 +213,11 @@ function RelListingMap(props) {
 
     const [map, setMap] = useState(null);
 
+    // Triggers the loading of additional listings into the map on a timeout
     function triggerMapLoadMore(toggle) {
         if (toggle) {
             props.loadMore(moreToLoad => {
-                if (moreToLoad) {
+                if (moreToLoad && !cancelLoad) {
                     setTimeout(
                         () => triggerMapLoadMore(true),
                         800
@@ -223,6 +226,7 @@ function RelListingMap(props) {
             });
         }
     }
+    /* This function should be moved to App.js asap */
 
     const onLoad = useCallback(function callback(map) {
         triggerMapLoadMore(true);
@@ -230,10 +234,12 @@ function RelListingMap(props) {
 
     const onUnmount = useCallback(function callback(map) {
         setMap(null);
+        cancelLoad = true;
     }, [])
 
     return isLoaded ? (
         <GoogleMap
+            ref={mapRef}
             mapContainerStyle={containerStyle}
             center={center}
             zoom={zoom}

@@ -28606,29 +28606,15 @@ var App = /*#__PURE__*/function (_Component) {
   }, {
     key: "changeView",
     value: function changeView(view) {
-      var _this2 = this;
-
-      // If we are leaving map view, flush the listings and reset currentCategory
-      if (this.state.view === "map") {
-        this.setState({
-          view: view,
-          page: 1,
-          listings: [],
-          loading: true
-        }, function () {
-          _this2.fetchNextListings();
-        });
-      } else {
-        this.setState({
-          view: view
-        });
-      }
+      this.setState({
+        view: view
+      });
     } // Method to change the active category
 
   }, {
     key: "changeCategory",
     value: function changeCategory(category) {
-      var _this3 = this;
+      var _this2 = this;
 
       this.setState({
         currentCategory: category,
@@ -28636,17 +28622,17 @@ var App = /*#__PURE__*/function (_Component) {
         listings: [],
         loading: true
       }, function () {
-        _this3.fetchCategories(category); // configure fetch for subcats
+        _this2.fetchCategories(category); // configure fetch for subcats
 
 
-        _this3.fetchNextListings();
+        _this2.fetchNextListings();
       });
     } // Method to change the active region
 
   }, {
     key: "changeRegion",
     value: function changeRegion(region) {
-      var _this4 = this;
+      var _this3 = this;
 
       if (region == this.state.currentRegion) {
         // Toggle region filtering off
@@ -28656,7 +28642,7 @@ var App = /*#__PURE__*/function (_Component) {
           listings: [],
           loading: true
         }, function () {
-          _this4.fetchNextListings();
+          _this3.fetchNextListings();
         });
       } else {
         this.setState({
@@ -28665,7 +28651,7 @@ var App = /*#__PURE__*/function (_Component) {
           listings: [],
           loading: true
         }, function () {
-          _this4.fetchNextListings();
+          _this3.fetchNextListings();
         });
       }
     } // Method to load more listings
@@ -28673,7 +28659,7 @@ var App = /*#__PURE__*/function (_Component) {
   }, {
     key: "loadMore",
     value: function loadMore(callback) {
-      var _this5 = this;
+      var _this4 = this;
 
       var currentPage = this.state.page;
 
@@ -28684,7 +28670,7 @@ var App = /*#__PURE__*/function (_Component) {
             page: currentPage + 1,
             loading: true
           }, function () {
-            _this5.fetchNextListings();
+            _this4.fetchNextListings();
 
             if (typeof callback === 'function') {
               callback(true); // If a callback is set, param true if there may be more to load
@@ -28706,12 +28692,12 @@ var App = /*#__PURE__*/function (_Component) {
   }, {
     key: "fetchSingleListing",
     value: function fetchSingleListing(singleListingId) {
-      var _this6 = this;
+      var _this5 = this;
 
       if (singleListingId != false) {
         this.relWP.relListings().id(parseInt(singleListingId)).param('_embed', "1").then(function (data) {
           if (data) {
-            _this6.setState({
+            _this5.setState({
               modalListing: data,
               loading: false
             });
@@ -28721,7 +28707,7 @@ var App = /*#__PURE__*/function (_Component) {
         }).catch(function (err) {
           console.error("WP API Fetch Error - Are you requesting a page that doesn't exist?");
 
-          _this6.setState({
+          _this5.setState({
             loading: false
           });
         });
@@ -28733,7 +28719,7 @@ var App = /*#__PURE__*/function (_Component) {
   }, {
     key: "fetchNextListings",
     value: function fetchNextListings() {
-      var _this7 = this;
+      var _this6 = this;
 
       // Destruct required props and states
       var _this$props$globals = this.props.globals,
@@ -28755,13 +28741,13 @@ var App = /*#__PURE__*/function (_Component) {
             return listing.key = Object(uuid__WEBPACK_IMPORTED_MODULE_7__["v3"])(JSON.stringify(listing), uuid__WEBPACK_IMPORTED_MODULE_7__["v3"].URL);
           });
 
-          _this7.setState({
-            listings: _this7.state.listings.concat(data),
+          _this6.setState({
+            listings: _this6.state.listings.concat(data),
             totalPages: data._paging.totalPages,
             loading: false
           });
         } else {
-          _this7.setState({
+          _this6.setState({
             totalPages: 0,
             loading: false
           });
@@ -28769,7 +28755,7 @@ var App = /*#__PURE__*/function (_Component) {
       }).catch(function (err) {
         console.error("WP API Fetch Error - Are you requesting a page that doesn't exist?");
 
-        _this7.setState({
+        _this6.setState({
           loading: false
         });
       });
@@ -28778,7 +28764,7 @@ var App = /*#__PURE__*/function (_Component) {
   }, {
     key: "fetchSubcategories",
     value: function fetchSubcategories(currentArray, parentCategory, data) {
-      var _this8 = this;
+      var _this7 = this;
 
       var parentFound = false;
       currentArray.find(function (category, index) {
@@ -28797,7 +28783,7 @@ var App = /*#__PURE__*/function (_Component) {
 
 
         if (typeof category.subcategories !== 'undefined' && category.subcategories.length > 0) {
-          parentFound = _this8.fetchSubcategories(currentArray[index].subcategories, parentCategory, data);
+          parentFound = _this7.fetchSubcategories(currentArray[index].subcategories, parentCategory, data);
 
           if (parentFound) {
             return true;
@@ -28815,7 +28801,7 @@ var App = /*#__PURE__*/function (_Component) {
   }, {
     key: "fetchCategories",
     value: function fetchCategories(parentCategory) {
-      var _this9 = this;
+      var _this8 = this;
 
       // Destruct required props and states
       var excludeCategories = this.props.args.excludeCategories;
@@ -28834,13 +28820,13 @@ var App = /*#__PURE__*/function (_Component) {
           }); // If top level categories state has already been set
 
           if (categories.length > 0) {
-            _this9.fetchSubcategories(categories, parseInt(parentCategory), data);
+            _this8.fetchSubcategories(categories, parseInt(parentCategory), data);
 
-            _this9.setState({
-              categories: _this9.state.categories
+            _this8.setState({
+              categories: _this8.state.categories
             });
           } else {
-            _this9.setState({
+            _this8.setState({
               categories: data
             });
           }
@@ -28853,7 +28839,7 @@ var App = /*#__PURE__*/function (_Component) {
   }, {
     key: "fetchRegions",
     value: function fetchRegions(parentRegion) {
-      var _this10 = this;
+      var _this9 = this;
 
       // Destruct required props and states
       var excludeRegions = this.props.args.excludeRegions;
@@ -28864,7 +28850,7 @@ var App = /*#__PURE__*/function (_Component) {
             return region.key = Object(uuid__WEBPACK_IMPORTED_MODULE_7__["v3"])(JSON.stringify(region), uuid__WEBPACK_IMPORTED_MODULE_7__["v3"].URL);
           });
 
-          _this10.setState({
+          _this9.setState({
             regions: data
           });
         }
@@ -29666,9 +29652,6 @@ var RelHeader = /*#__PURE__*/function (_Component) {
     key: "renderCategories",
     value: function renderCategories() {
       switch (this.props.currentView) {
-        case 'map':
-          return;
-
         case 'single':
           return;
 
@@ -30587,7 +30570,8 @@ __webpack_require__.r(__webpack_exports__);
 
 var _wp$element = wp.element,
     useState = _wp$element.useState,
-    useCallback = _wp$element.useCallback;
+    useCallback = _wp$element.useCallback,
+    useRef = _wp$element.useRef;
 
  // Import Components
 
@@ -30752,6 +30736,8 @@ function RelListingMap(props) {
   // Destruct required props and globals
   var listings = props.listings;
   var mapField = props.globals.mapField;
+  var mapRef = useRef(null);
+  var cancelLoad = false;
 
   var _useJsApiLoader = Object(_react_google_maps_api__WEBPACK_IMPORTED_MODULE_2__["useJsApiLoader"])({
     id: 'google-map-script',
@@ -30763,12 +30749,13 @@ function RelListingMap(props) {
   var _useState = useState(null),
       _useState2 = _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0___default()(_useState, 2),
       map = _useState2[0],
-      setMap = _useState2[1];
+      setMap = _useState2[1]; // Triggers the loading of additional listings into the map on a timeout
+
 
   function triggerMapLoadMore(toggle) {
     if (toggle) {
       props.loadMore(function (moreToLoad) {
-        if (moreToLoad) {
+        if (moreToLoad && !cancelLoad) {
           setTimeout(function () {
             return triggerMapLoadMore(true);
           }, 800);
@@ -30776,14 +30763,18 @@ function RelListingMap(props) {
       });
     }
   }
+  /* This function should be moved to App.js asap */
+
 
   var onLoad = useCallback(function callback(map) {
     triggerMapLoadMore(true);
   }, []);
   var onUnmount = useCallback(function callback(map) {
     setMap(null);
+    cancelLoad = true;
   }, []);
   return isLoaded ? Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_react_google_maps_api__WEBPACK_IMPORTED_MODULE_2__["GoogleMap"], {
+    ref: mapRef,
     mapContainerStyle: containerStyle,
     center: center,
     zoom: zoom,

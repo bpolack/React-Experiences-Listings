@@ -59,22 +59,9 @@ export class App extends Component {
 
     // Method to change the active view
     changeView(view) {
-        // If we are leaving map view, flush the listings and reset currentCategory
-        if (this.state.view === "map") {
-            this.setState({
-                view: view,
-                page: 1,
-                listings: [],
-                loading: true
-            }, () => {
-                this.fetchNextListings();
-            })
-        }
-        else {
-            this.setState({
-                view: view
-            })
-        }
+        this.setState({
+            view: view
+        })
     }
 
     // Method to change the active category
