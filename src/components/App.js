@@ -1,5 +1,5 @@
 const { Component } = wp.element;
-const WPAPI = require('wpapi');
+import WPAPI from 'wpapi/browser/wpapi.min';
 import { v3 as uuidv3 } from 'uuid';
 import Loader from 'react-loader-spinner'
 import './App.css';
@@ -26,6 +26,7 @@ export class App extends Component {
             modalListing: false,
             page: 1,
             currentCategory: props.args.initialCategory,
+            currentFlag: props.args.initialFlag,
             currentRegion: props.args.initialRegion,
             categories: [],
             regions: [],
@@ -36,6 +37,7 @@ export class App extends Component {
         this.relWP = new WPAPI({ endpoint: props.globals.apiLocation });
         this.relWP.relListings = this.relWP.registerRoute('wp/v2', '/' + props.globals.postType + '/(?P<id>\\d+)');
         this.relWP.relCategories = this.relWP.registerRoute('wp/v2', '/' + props.globals.categoryName + '/');
+        this.relWP.relFlags = this.relWP.registerRoute('wp/v2', '/' + props.globals.flagName + '/');
         this.relWP.relRegions = this.relWP.registerRoute('wp/v2', '/' + props.globals.regionName + '/');
 
         // Bind callback methods to class
@@ -168,17 +170,18 @@ export class App extends Component {
     fetchNextListings() {
 
         // Destruct required props and states
-        const { categoryName, regionName } = this.props.globals;
-        const { perpage, excludeCategories, excludeRegions, initialCategory } = this.props.args;
-        const { currentCategory, currentRegion, page } = this.state;
+        const { categoryName, flagName, regionName } = this.props.globals;
+        const { perpage, order, orderby, excludeCategories, excludeRegions, initialCategory } = this.props.args;
+        const { currentCategory, currentFlag, currentRegion, page } = this.state;
 
         this.relWP.relListings()
             .param(categoryName, (currentCategory != false) ? currentCategory.trim().split(',') : [])
             .param(categoryName + '_exclude', (excludeCategories != false && currentCategory == initialCategory) ? excludeCategories.trim().split(',') : [])
+            .param(flagName, (currentFlag != false) ? currentFlag.trim().split(',') : [])
             .param(regionName, (currentRegion != false) ? currentRegion.trim().split(',') : [])
             .param('_embed', "1")
-            .order('asc')
-            .orderby('title')
+            .order( (order != false ) ? order : 'asc' )
+            .orderby( (orderby != false ) ? orderby : 'title' )
             .page(page)
             .perPage(perpage)
             .then((data) => {
@@ -200,7 +203,8 @@ export class App extends Component {
                 }
             })
             .catch((err) => {
-                console.error("WP API Fetch Error - Are you requesting a page that doesn't exist?");
+                console.error("WP API Fetch Error - Are you requesting a path that doesn't exist?");
+                console.error(err);
                 this.setState({
                     loading: false
                 })

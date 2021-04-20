@@ -16543,192 +16543,6 @@ var Clusterer = /*#__PURE__*/function () {
 
 /***/ }),
 
-/***/ "./node_modules/component-emitter/index.js":
-/*!*************************************************!*\
-  !*** ./node_modules/component-emitter/index.js ***!
-  \*************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-
-/**
- * Expose `Emitter`.
- */
-
-if (true) {
-  module.exports = Emitter;
-}
-
-/**
- * Initialize a new `Emitter`.
- *
- * @api public
- */
-
-function Emitter(obj) {
-  if (obj) return mixin(obj);
-};
-
-/**
- * Mixin the emitter properties.
- *
- * @param {Object} obj
- * @return {Object}
- * @api private
- */
-
-function mixin(obj) {
-  for (var key in Emitter.prototype) {
-    obj[key] = Emitter.prototype[key];
-  }
-  return obj;
-}
-
-/**
- * Listen on the given `event` with `fn`.
- *
- * @param {String} event
- * @param {Function} fn
- * @return {Emitter}
- * @api public
- */
-
-Emitter.prototype.on =
-Emitter.prototype.addEventListener = function(event, fn){
-  this._callbacks = this._callbacks || {};
-  (this._callbacks['$' + event] = this._callbacks['$' + event] || [])
-    .push(fn);
-  return this;
-};
-
-/**
- * Adds an `event` listener that will be invoked a single
- * time then automatically removed.
- *
- * @param {String} event
- * @param {Function} fn
- * @return {Emitter}
- * @api public
- */
-
-Emitter.prototype.once = function(event, fn){
-  function on() {
-    this.off(event, on);
-    fn.apply(this, arguments);
-  }
-
-  on.fn = fn;
-  this.on(event, on);
-  return this;
-};
-
-/**
- * Remove the given callback for `event` or all
- * registered callbacks.
- *
- * @param {String} event
- * @param {Function} fn
- * @return {Emitter}
- * @api public
- */
-
-Emitter.prototype.off =
-Emitter.prototype.removeListener =
-Emitter.prototype.removeAllListeners =
-Emitter.prototype.removeEventListener = function(event, fn){
-  this._callbacks = this._callbacks || {};
-
-  // all
-  if (0 == arguments.length) {
-    this._callbacks = {};
-    return this;
-  }
-
-  // specific event
-  var callbacks = this._callbacks['$' + event];
-  if (!callbacks) return this;
-
-  // remove all handlers
-  if (1 == arguments.length) {
-    delete this._callbacks['$' + event];
-    return this;
-  }
-
-  // remove specific handler
-  var cb;
-  for (var i = 0; i < callbacks.length; i++) {
-    cb = callbacks[i];
-    if (cb === fn || cb.fn === fn) {
-      callbacks.splice(i, 1);
-      break;
-    }
-  }
-
-  // Remove event specific arrays for event types that no
-  // one is subscribed for to avoid memory leak.
-  if (callbacks.length === 0) {
-    delete this._callbacks['$' + event];
-  }
-
-  return this;
-};
-
-/**
- * Emit `event` with the given args.
- *
- * @param {String} event
- * @param {Mixed} ...
- * @return {Emitter}
- */
-
-Emitter.prototype.emit = function(event){
-  this._callbacks = this._callbacks || {};
-
-  var args = new Array(arguments.length - 1)
-    , callbacks = this._callbacks['$' + event];
-
-  for (var i = 1; i < arguments.length; i++) {
-    args[i - 1] = arguments[i];
-  }
-
-  if (callbacks) {
-    callbacks = callbacks.slice(0);
-    for (var i = 0, len = callbacks.length; i < len; ++i) {
-      callbacks[i].apply(this, args);
-    }
-  }
-
-  return this;
-};
-
-/**
- * Return array of callbacks for `event`.
- *
- * @param {String} event
- * @return {Array}
- * @api public
- */
-
-Emitter.prototype.listeners = function(event){
-  this._callbacks = this._callbacks || {};
-  return this._callbacks['$' + event] || [];
-};
-
-/**
- * Check if this emitter has `event` handlers.
- *
- * @param {String} event
- * @return {Boolean}
- * @api public
- */
-
-Emitter.prototype.hasListeners = function(event){
-  return !! this.listeners(event).length;
-};
-
-
-/***/ }),
-
 /***/ "./node_modules/html-entities/lib/html4-entities.js":
 /*!**********************************************************!*\
   !*** ./node_modules/html-entities/lib/html4-entities.js ***!
@@ -17214,112 +17028,6 @@ var invariant = function(condition, format, a, b, c, d, e, f) {
 };
 
 module.exports = invariant;
-
-
-/***/ }),
-
-/***/ "./node_modules/li/lib/index.js":
-/*!**************************************!*\
-  !*** ./node_modules/li/lib/index.js ***!
-  \**************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (name, definition, context) {
-
-  //try CommonJS, then AMD (require.js), then use global.
-
-  if ( true && module.exports) module.exports = definition();
-  else if (typeof context['define'] == 'function' && context['define']['amd']) !(__WEBPACK_AMD_DEFINE_FACTORY__ = (definition),
-				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
-				(__WEBPACK_AMD_DEFINE_FACTORY__.call(exports, __webpack_require__, exports, module)) :
-				__WEBPACK_AMD_DEFINE_FACTORY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-  else context[name] = definition();
-
-})('li', function () {
-  // compile regular expressions ahead of time for efficiency
-  var relsRegExp = /^;\s*([^"=]+)=(?:"([^"]+)"|([^";,]+)(?:[;,]|$))/;
-  var sourceRegExp = /^<([^>]*)>/;
-  var delimiterRegExp = /^\s*,\s*/;
-
-  return {
-    parse: function (linksHeader, options) {
-      var match;
-      var source;
-      var rels;
-      var extended = options && options.extended || false;
-      var links = [];
-
-      while (linksHeader) {
-        linksHeader = linksHeader.trim();
-
-        // Parse `<link>`
-        source = sourceRegExp.exec(linksHeader);
-        if (!source) break;
-
-        var current = {
-          link: source[1]
-        };
-
-        // Move cursor
-        linksHeader = linksHeader.slice(source[0].length);
-
-        // Parse `; attr=relation` and `; attr="relation"`
-
-        var nextDelimiter = linksHeader.match(delimiterRegExp);
-        while(linksHeader && (!nextDelimiter || nextDelimiter.index > 0)) {
-          match = relsRegExp.exec(linksHeader);
-          if (!match) break;
-
-          // Move cursor
-          linksHeader = linksHeader.slice(match[0].length);
-          nextDelimiter = linksHeader.match(delimiterRegExp);
-
-
-          if (match[1] === 'rel' || match[1] === 'rev') {
-            // Add either quoted rel or unquoted rel
-            rels = (match[2] || match[3]).split(/\s+/);
-            current[match[1]] = rels;
-          } else {
-            current[match[1]] = match[2] || match[3];
-          }
-        }
-
-        links.push(current);
-        // Move cursor
-        linksHeader = linksHeader.replace(delimiterRegExp, '');
-      }
-
-      if (!extended) {
-        return links.reduce(function(result, currentLink) {
-          if (currentLink.rel) {
-            currentLink.rel.forEach(function(rel) {
-              result[rel] = currentLink.link;
-            });
-          }
-          return result;
-        }, {});
-      }
-
-      return links;
-    },
-    stringify: function (params) {
-      var grouped = Object.keys(params).reduce(function(grouped, key) {
-        grouped[params[key]] = grouped[params[key]] || [];
-        grouped[params[key]].push(key);
-        return grouped;
-      }, {});
-
-      var entries = Object.keys(grouped).reduce(function(result, link) {
-        return result.concat('<' + link + '>; rel="' + grouped[link].join(' ') + '"');
-      }, []);
-
-      return entries.join(', ');
-    }
-  };
-
-}, this);
 
 
 /***/ }),
@@ -20848,6 +20556,2474 @@ exports.default = exports.SlideDown;
 
 /***/ }),
 
+/***/ "./node_modules/react-tooltip/dist/index.es.js":
+/*!*****************************************************!*\
+  !*** ./node_modules/react-tooltip/dist/index.es.js ***!
+  \*****************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "react");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var prop_types__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! prop-types */ "./node_modules/prop-types/index.js");
+/* harmony import */ var prop_types__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(prop_types__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var uuid__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! uuid */ "./node_modules/react-tooltip/node_modules/uuid/dist/esm-browser/index.js");
+
+
+
+
+function _classCallCheck(instance, Constructor) {
+  if (!(instance instanceof Constructor)) {
+    throw new TypeError("Cannot call a class as a function");
+  }
+}
+
+function _defineProperties(target, props) {
+  for (var i = 0; i < props.length; i++) {
+    var descriptor = props[i];
+    descriptor.enumerable = descriptor.enumerable || false;
+    descriptor.configurable = true;
+    if ("value" in descriptor) descriptor.writable = true;
+    Object.defineProperty(target, descriptor.key, descriptor);
+  }
+}
+
+function _createClass(Constructor, protoProps, staticProps) {
+  if (protoProps) _defineProperties(Constructor.prototype, protoProps);
+  if (staticProps) _defineProperties(Constructor, staticProps);
+  return Constructor;
+}
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+function _extends() {
+  _extends = Object.assign || function (target) {
+    for (var i = 1; i < arguments.length; i++) {
+      var source = arguments[i];
+
+      for (var key in source) {
+        if (Object.prototype.hasOwnProperty.call(source, key)) {
+          target[key] = source[key];
+        }
+      }
+    }
+
+    return target;
+  };
+
+  return _extends.apply(this, arguments);
+}
+
+function ownKeys(object, enumerableOnly) {
+  var keys = Object.keys(object);
+
+  if (Object.getOwnPropertySymbols) {
+    var symbols = Object.getOwnPropertySymbols(object);
+    if (enumerableOnly) symbols = symbols.filter(function (sym) {
+      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+    });
+    keys.push.apply(keys, symbols);
+  }
+
+  return keys;
+}
+
+function _objectSpread2(target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i] != null ? arguments[i] : {};
+
+    if (i % 2) {
+      ownKeys(Object(source), true).forEach(function (key) {
+        _defineProperty(target, key, source[key]);
+      });
+    } else if (Object.getOwnPropertyDescriptors) {
+      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
+    } else {
+      ownKeys(Object(source)).forEach(function (key) {
+        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+      });
+    }
+  }
+
+  return target;
+}
+
+function _inherits(subClass, superClass) {
+  if (typeof superClass !== "function" && superClass !== null) {
+    throw new TypeError("Super expression must either be null or a function");
+  }
+
+  subClass.prototype = Object.create(superClass && superClass.prototype, {
+    constructor: {
+      value: subClass,
+      writable: true,
+      configurable: true
+    }
+  });
+  if (superClass) _setPrototypeOf(subClass, superClass);
+}
+
+function _getPrototypeOf(o) {
+  _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) {
+    return o.__proto__ || Object.getPrototypeOf(o);
+  };
+  return _getPrototypeOf(o);
+}
+
+function _setPrototypeOf(o, p) {
+  _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) {
+    o.__proto__ = p;
+    return o;
+  };
+
+  return _setPrototypeOf(o, p);
+}
+
+function _assertThisInitialized(self) {
+  if (self === void 0) {
+    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+  }
+
+  return self;
+}
+
+function _possibleConstructorReturn(self, call) {
+  if (call && (typeof call === "object" || typeof call === "function")) {
+    return call;
+  }
+
+  return _assertThisInitialized(self);
+}
+
+var CONSTANT = {
+  GLOBAL: {
+    HIDE: '__react_tooltip_hide_event',
+    REBUILD: '__react_tooltip_rebuild_event',
+    SHOW: '__react_tooltip_show_event'
+  }
+};
+
+/**
+ * Static methods for react-tooltip
+ */
+
+var dispatchGlobalEvent = function dispatchGlobalEvent(eventName, opts) {
+  // Compatible with IE
+  // @see http://stackoverflow.com/questions/26596123/internet-explorer-9-10-11-event-constructor-doesnt-work
+  // @see https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent/CustomEvent
+  var event;
+
+  if (typeof window.CustomEvent === 'function') {
+    event = new window.CustomEvent(eventName, {
+      detail: opts
+    });
+  } else {
+    event = document.createEvent('Event');
+    event.initEvent(eventName, false, true, opts);
+  }
+
+  window.dispatchEvent(event);
+};
+
+function staticMethods (target) {
+  /**
+   * Hide all tooltip
+   * @trigger ReactTooltip.hide()
+   */
+  target.hide = function (target) {
+    dispatchGlobalEvent(CONSTANT.GLOBAL.HIDE, {
+      target: target
+    });
+  };
+  /**
+   * Rebuild all tooltip
+   * @trigger ReactTooltip.rebuild()
+   */
+
+
+  target.rebuild = function () {
+    dispatchGlobalEvent(CONSTANT.GLOBAL.REBUILD);
+  };
+  /**
+   * Show specific tooltip
+   * @trigger ReactTooltip.show()
+   */
+
+
+  target.show = function (target) {
+    dispatchGlobalEvent(CONSTANT.GLOBAL.SHOW, {
+      target: target
+    });
+  };
+
+  target.prototype.globalRebuild = function () {
+    if (this.mount) {
+      this.unbindListener();
+      this.bindListener();
+    }
+  };
+
+  target.prototype.globalShow = function (event) {
+    if (this.mount) {
+      var hasTarget = event && event.detail && event.detail.target && true || false; // Create a fake event, specific show will limit the type to `solid`
+      // only `float` type cares e.clientX e.clientY
+
+      this.showTooltip({
+        currentTarget: hasTarget && event.detail.target
+      }, true);
+    }
+  };
+
+  target.prototype.globalHide = function (event) {
+    if (this.mount) {
+      var hasTarget = event && event.detail && event.detail.target && true || false;
+      this.hideTooltip({
+        currentTarget: hasTarget && event.detail.target
+      }, hasTarget);
+    }
+  };
+}
+
+/**
+ * Events that should be bound to the window
+ */
+function windowListener (target) {
+  target.prototype.bindWindowEvents = function (resizeHide) {
+    // ReactTooltip.hide
+    window.removeEventListener(CONSTANT.GLOBAL.HIDE, this.globalHide);
+    window.addEventListener(CONSTANT.GLOBAL.HIDE, this.globalHide, false); // ReactTooltip.rebuild
+
+    window.removeEventListener(CONSTANT.GLOBAL.REBUILD, this.globalRebuild);
+    window.addEventListener(CONSTANT.GLOBAL.REBUILD, this.globalRebuild, false); // ReactTooltip.show
+
+    window.removeEventListener(CONSTANT.GLOBAL.SHOW, this.globalShow);
+    window.addEventListener(CONSTANT.GLOBAL.SHOW, this.globalShow, false); // Resize
+
+    if (resizeHide) {
+      window.removeEventListener('resize', this.onWindowResize);
+      window.addEventListener('resize', this.onWindowResize, false);
+    }
+  };
+
+  target.prototype.unbindWindowEvents = function () {
+    window.removeEventListener(CONSTANT.GLOBAL.HIDE, this.globalHide);
+    window.removeEventListener(CONSTANT.GLOBAL.REBUILD, this.globalRebuild);
+    window.removeEventListener(CONSTANT.GLOBAL.SHOW, this.globalShow);
+    window.removeEventListener('resize', this.onWindowResize);
+  };
+  /**
+   * invoked by resize event of window
+   */
+
+
+  target.prototype.onWindowResize = function () {
+    if (!this.mount) return;
+    this.hideTooltip();
+  };
+}
+
+/**
+ * Custom events to control showing and hiding of tooltip
+ *
+ * @attributes
+ * - `event` {String}
+ * - `eventOff` {String}
+ */
+var checkStatus = function checkStatus(dataEventOff, e) {
+  var show = this.state.show;
+  var id = this.props.id;
+  var isCapture = this.isCapture(e.currentTarget);
+  var currentItem = e.currentTarget.getAttribute('currentItem');
+  if (!isCapture) e.stopPropagation();
+
+  if (show && currentItem === 'true') {
+    if (!dataEventOff) this.hideTooltip(e);
+  } else {
+    e.currentTarget.setAttribute('currentItem', 'true');
+    setUntargetItems(e.currentTarget, this.getTargetArray(id));
+    this.showTooltip(e);
+  }
+};
+
+var setUntargetItems = function setUntargetItems(currentTarget, targetArray) {
+  for (var i = 0; i < targetArray.length; i++) {
+    if (currentTarget !== targetArray[i]) {
+      targetArray[i].setAttribute('currentItem', 'false');
+    } else {
+      targetArray[i].setAttribute('currentItem', 'true');
+    }
+  }
+};
+
+var customListeners = {
+  id: '9b69f92e-d3fe-498b-b1b4-c5e63a51b0cf',
+  set: function set(target, event, listener) {
+    if (this.id in target) {
+      var map = target[this.id];
+      map[event] = listener;
+    } else {
+      // this is workaround for WeakMap, which is not supported in older browsers, such as IE
+      Object.defineProperty(target, this.id, {
+        configurable: true,
+        value: _defineProperty({}, event, listener)
+      });
+    }
+  },
+  get: function get(target, event) {
+    var map = target[this.id];
+
+    if (map !== undefined) {
+      return map[event];
+    }
+  }
+};
+function customEvent (target) {
+  target.prototype.isCustomEvent = function (ele) {
+    var event = this.state.event;
+    return event || !!ele.getAttribute('data-event');
+  };
+  /* Bind listener for custom event */
+
+
+  target.prototype.customBindListener = function (ele) {
+    var _this = this;
+
+    var _this$state = this.state,
+        event = _this$state.event,
+        eventOff = _this$state.eventOff;
+    var dataEvent = ele.getAttribute('data-event') || event;
+    var dataEventOff = ele.getAttribute('data-event-off') || eventOff;
+    dataEvent.split(' ').forEach(function (event) {
+      ele.removeEventListener(event, customListeners.get(ele, event));
+      var customListener = checkStatus.bind(_this, dataEventOff);
+      customListeners.set(ele, event, customListener);
+      ele.addEventListener(event, customListener, false);
+    });
+
+    if (dataEventOff) {
+      dataEventOff.split(' ').forEach(function (event) {
+        ele.removeEventListener(event, _this.hideTooltip);
+        ele.addEventListener(event, _this.hideTooltip, false);
+      });
+    }
+  };
+  /* Unbind listener for custom event */
+
+
+  target.prototype.customUnbindListener = function (ele) {
+    var _this$state2 = this.state,
+        event = _this$state2.event,
+        eventOff = _this$state2.eventOff;
+    var dataEvent = event || ele.getAttribute('data-event');
+    var dataEventOff = eventOff || ele.getAttribute('data-event-off');
+    ele.removeEventListener(dataEvent, customListeners.get(ele, event));
+    if (dataEventOff) ele.removeEventListener(dataEventOff, this.hideTooltip);
+  };
+}
+
+/**
+ * Util method to judge if it should follow capture model
+ */
+function isCapture (target) {
+  target.prototype.isCapture = function (currentTarget) {
+    return currentTarget && currentTarget.getAttribute('data-iscapture') === 'true' || this.props.isCapture || false;
+  };
+}
+
+/**
+ * Util method to get effect
+ */
+function getEffect (target) {
+  target.prototype.getEffect = function (currentTarget) {
+    var dataEffect = currentTarget.getAttribute('data-effect');
+    return dataEffect || this.props.effect || 'float';
+  };
+}
+
+/**
+ * Util method to get effect
+ */
+
+var makeProxy = function makeProxy(e) {
+  var proxy = {};
+
+  for (var key in e) {
+    if (typeof e[key] === 'function') {
+      proxy[key] = e[key].bind(e);
+    } else {
+      proxy[key] = e[key];
+    }
+  }
+
+  return proxy;
+};
+
+var bodyListener = function bodyListener(callback, options, e) {
+  var _options$respectEffec = options.respectEffect,
+      respectEffect = _options$respectEffec === void 0 ? false : _options$respectEffec,
+      _options$customEvent = options.customEvent,
+      customEvent = _options$customEvent === void 0 ? false : _options$customEvent;
+  var id = this.props.id;
+  var tip = e.target.getAttribute('data-tip') || null;
+  var forId = e.target.getAttribute('data-for') || null;
+  var target = e.target;
+
+  if (this.isCustomEvent(target) && !customEvent) {
+    return;
+  }
+
+  var isTargetBelongsToTooltip = id == null && forId == null || forId === id;
+
+  if (tip != null && (!respectEffect || this.getEffect(target) === 'float') && isTargetBelongsToTooltip) {
+    var proxy = makeProxy(e);
+    proxy.currentTarget = target;
+    callback(proxy);
+  }
+};
+
+var findCustomEvents = function findCustomEvents(targetArray, dataAttribute) {
+  var events = {};
+  targetArray.forEach(function (target) {
+    var event = target.getAttribute(dataAttribute);
+    if (event) event.split(' ').forEach(function (event) {
+      return events[event] = true;
+    });
+  });
+  return events;
+};
+
+var getBody = function getBody() {
+  return document.getElementsByTagName('body')[0];
+};
+
+function bodyMode (target) {
+  target.prototype.isBodyMode = function () {
+    return !!this.props.bodyMode;
+  };
+
+  target.prototype.bindBodyListener = function (targetArray) {
+    var _this = this;
+
+    var _this$state = this.state,
+        event = _this$state.event,
+        eventOff = _this$state.eventOff,
+        possibleCustomEvents = _this$state.possibleCustomEvents,
+        possibleCustomEventsOff = _this$state.possibleCustomEventsOff;
+    var body = getBody();
+    var customEvents = findCustomEvents(targetArray, 'data-event');
+    var customEventsOff = findCustomEvents(targetArray, 'data-event-off');
+    if (event != null) customEvents[event] = true;
+    if (eventOff != null) customEventsOff[eventOff] = true;
+    possibleCustomEvents.split(' ').forEach(function (event) {
+      return customEvents[event] = true;
+    });
+    possibleCustomEventsOff.split(' ').forEach(function (event) {
+      return customEventsOff[event] = true;
+    });
+    this.unbindBodyListener(body);
+    var listeners = this.bodyModeListeners = {};
+
+    if (event == null) {
+      listeners.mouseover = bodyListener.bind(this, this.showTooltip, {});
+      listeners.mousemove = bodyListener.bind(this, this.updateTooltip, {
+        respectEffect: true
+      });
+      listeners.mouseout = bodyListener.bind(this, this.hideTooltip, {});
+    }
+
+    for (var _event in customEvents) {
+      listeners[_event] = bodyListener.bind(this, function (e) {
+        var targetEventOff = e.currentTarget.getAttribute('data-event-off') || eventOff;
+        checkStatus.call(_this, targetEventOff, e);
+      }, {
+        customEvent: true
+      });
+    }
+
+    for (var _event2 in customEventsOff) {
+      listeners[_event2] = bodyListener.bind(this, this.hideTooltip, {
+        customEvent: true
+      });
+    }
+
+    for (var _event3 in listeners) {
+      body.addEventListener(_event3, listeners[_event3]);
+    }
+  };
+
+  target.prototype.unbindBodyListener = function (body) {
+    body = body || getBody();
+    var listeners = this.bodyModeListeners;
+
+    for (var event in listeners) {
+      body.removeEventListener(event, listeners[event]);
+    }
+  };
+}
+
+/**
+ * Tracking target removing from DOM.
+ * It's necessary to hide tooltip when it's target disappears.
+ * Otherwise, the tooltip would be shown forever until another target
+ * is triggered.
+ *
+ * If MutationObserver is not available, this feature just doesn't work.
+ */
+// https://hacks.mozilla.org/2012/05/dom-mutationobserver-reacting-to-dom-changes-without-killing-browser-performance/
+var getMutationObserverClass = function getMutationObserverClass() {
+  return window.MutationObserver || window.WebKitMutationObserver || window.MozMutationObserver;
+};
+
+function trackRemoval (target) {
+  target.prototype.bindRemovalTracker = function () {
+    var _this = this;
+
+    var MutationObserver = getMutationObserverClass();
+    if (MutationObserver == null) return;
+    var observer = new MutationObserver(function (mutations) {
+      for (var m1 = 0; m1 < mutations.length; m1++) {
+        var mutation = mutations[m1];
+
+        for (var m2 = 0; m2 < mutation.removedNodes.length; m2++) {
+          var element = mutation.removedNodes[m2];
+
+          if (element === _this.state.currentTarget) {
+            _this.hideTooltip();
+
+            return;
+          }
+        }
+      }
+    });
+    observer.observe(window.document, {
+      childList: true,
+      subtree: true
+    });
+    this.removalTracker = observer;
+  };
+
+  target.prototype.unbindRemovalTracker = function () {
+    if (this.removalTracker) {
+      this.removalTracker.disconnect();
+      this.removalTracker = null;
+    }
+  };
+}
+
+/**
+ * Calculate the position of tooltip
+ *
+ * @params
+ * - `e` {Event} the event of current mouse
+ * - `target` {Element} the currentTarget of the event
+ * - `node` {DOM} the react-tooltip object
+ * - `place` {String} top / right / bottom / left
+ * - `effect` {String} float / solid
+ * - `offset` {Object} the offset to default position
+ *
+ * @return {Object}
+ * - `isNewState` {Bool} required
+ * - `newState` {Object}
+ * - `position` {Object} {left: {Number}, top: {Number}}
+ */
+function getPosition (e, target, node, place, desiredPlace, effect, offset) {
+  var _getDimensions = getDimensions(node),
+      tipWidth = _getDimensions.width,
+      tipHeight = _getDimensions.height;
+
+  var _getDimensions2 = getDimensions(target),
+      targetWidth = _getDimensions2.width,
+      targetHeight = _getDimensions2.height;
+
+  var _getCurrentOffset = getCurrentOffset(e, target, effect),
+      mouseX = _getCurrentOffset.mouseX,
+      mouseY = _getCurrentOffset.mouseY;
+
+  var defaultOffset = getDefaultPosition(effect, targetWidth, targetHeight, tipWidth, tipHeight);
+
+  var _calculateOffset = calculateOffset(offset),
+      extraOffsetX = _calculateOffset.extraOffsetX,
+      extraOffsetY = _calculateOffset.extraOffsetY;
+
+  var windowWidth = window.innerWidth;
+  var windowHeight = window.innerHeight;
+
+  var _getParent = getParent(node),
+      parentTop = _getParent.parentTop,
+      parentLeft = _getParent.parentLeft; // Get the edge offset of the tooltip
+
+
+  var getTipOffsetLeft = function getTipOffsetLeft(place) {
+    var offsetX = defaultOffset[place].l;
+    return mouseX + offsetX + extraOffsetX;
+  };
+
+  var getTipOffsetRight = function getTipOffsetRight(place) {
+    var offsetX = defaultOffset[place].r;
+    return mouseX + offsetX + extraOffsetX;
+  };
+
+  var getTipOffsetTop = function getTipOffsetTop(place) {
+    var offsetY = defaultOffset[place].t;
+    return mouseY + offsetY + extraOffsetY;
+  };
+
+  var getTipOffsetBottom = function getTipOffsetBottom(place) {
+    var offsetY = defaultOffset[place].b;
+    return mouseY + offsetY + extraOffsetY;
+  }; //
+  // Functions to test whether the tooltip's sides are inside
+  // the client window for a given orientation p
+  //
+  //  _____________
+  // |             | <-- Right side
+  // | p = 'left'  |\
+  // |             |/  |\
+  // |_____________|   |_\  <-- Mouse
+  //      / \           |
+  //       |
+  //       |
+  //  Bottom side
+  //
+
+
+  var outsideLeft = function outsideLeft(p) {
+    return getTipOffsetLeft(p) < 0;
+  };
+
+  var outsideRight = function outsideRight(p) {
+    return getTipOffsetRight(p) > windowWidth;
+  };
+
+  var outsideTop = function outsideTop(p) {
+    return getTipOffsetTop(p) < 0;
+  };
+
+  var outsideBottom = function outsideBottom(p) {
+    return getTipOffsetBottom(p) > windowHeight;
+  }; // Check whether the tooltip with orientation p is completely inside the client window
+
+
+  var outside = function outside(p) {
+    return outsideLeft(p) || outsideRight(p) || outsideTop(p) || outsideBottom(p);
+  };
+
+  var inside = function inside(p) {
+    return !outside(p);
+  };
+
+  var placesList = ['top', 'bottom', 'left', 'right'];
+  var insideList = [];
+
+  for (var i = 0; i < 4; i++) {
+    var p = placesList[i];
+
+    if (inside(p)) {
+      insideList.push(p);
+    }
+  }
+
+  var isNewState = false;
+  var newPlace;
+  var shouldUpdatePlace = desiredPlace !== place;
+
+  if (inside(desiredPlace) && shouldUpdatePlace) {
+    isNewState = true;
+    newPlace = desiredPlace;
+  } else if (insideList.length > 0 && outside(desiredPlace) && outside(place)) {
+    isNewState = true;
+    newPlace = insideList[0];
+  }
+
+  if (isNewState) {
+    return {
+      isNewState: true,
+      newState: {
+        place: newPlace
+      }
+    };
+  }
+
+  return {
+    isNewState: false,
+    position: {
+      left: parseInt(getTipOffsetLeft(place) - parentLeft, 10),
+      top: parseInt(getTipOffsetTop(place) - parentTop, 10)
+    }
+  };
+}
+
+var getDimensions = function getDimensions(node) {
+  var _node$getBoundingClie = node.getBoundingClientRect(),
+      height = _node$getBoundingClie.height,
+      width = _node$getBoundingClie.width;
+
+  return {
+    height: parseInt(height, 10),
+    width: parseInt(width, 10)
+  };
+}; // Get current mouse offset
+
+
+var getCurrentOffset = function getCurrentOffset(e, currentTarget, effect) {
+  var boundingClientRect = currentTarget.getBoundingClientRect();
+  var targetTop = boundingClientRect.top;
+  var targetLeft = boundingClientRect.left;
+
+  var _getDimensions3 = getDimensions(currentTarget),
+      targetWidth = _getDimensions3.width,
+      targetHeight = _getDimensions3.height;
+
+  if (effect === 'float') {
+    return {
+      mouseX: e.clientX,
+      mouseY: e.clientY
+    };
+  }
+
+  return {
+    mouseX: targetLeft + targetWidth / 2,
+    mouseY: targetTop + targetHeight / 2
+  };
+}; // List all possibility of tooltip final offset
+// This is useful in judging if it is necessary for tooltip to switch position when out of window
+
+
+var getDefaultPosition = function getDefaultPosition(effect, targetWidth, targetHeight, tipWidth, tipHeight) {
+  var top;
+  var right;
+  var bottom;
+  var left;
+  var disToMouse = 3;
+  var triangleHeight = 2;
+  var cursorHeight = 12; // Optimize for float bottom only, cause the cursor will hide the tooltip
+
+  if (effect === 'float') {
+    top = {
+      l: -(tipWidth / 2),
+      r: tipWidth / 2,
+      t: -(tipHeight + disToMouse + triangleHeight),
+      b: -disToMouse
+    };
+    bottom = {
+      l: -(tipWidth / 2),
+      r: tipWidth / 2,
+      t: disToMouse + cursorHeight,
+      b: tipHeight + disToMouse + triangleHeight + cursorHeight
+    };
+    left = {
+      l: -(tipWidth + disToMouse + triangleHeight),
+      r: -disToMouse,
+      t: -(tipHeight / 2),
+      b: tipHeight / 2
+    };
+    right = {
+      l: disToMouse,
+      r: tipWidth + disToMouse + triangleHeight,
+      t: -(tipHeight / 2),
+      b: tipHeight / 2
+    };
+  } else if (effect === 'solid') {
+    top = {
+      l: -(tipWidth / 2),
+      r: tipWidth / 2,
+      t: -(targetHeight / 2 + tipHeight + triangleHeight),
+      b: -(targetHeight / 2)
+    };
+    bottom = {
+      l: -(tipWidth / 2),
+      r: tipWidth / 2,
+      t: targetHeight / 2,
+      b: targetHeight / 2 + tipHeight + triangleHeight
+    };
+    left = {
+      l: -(tipWidth + targetWidth / 2 + triangleHeight),
+      r: -(targetWidth / 2),
+      t: -(tipHeight / 2),
+      b: tipHeight / 2
+    };
+    right = {
+      l: targetWidth / 2,
+      r: tipWidth + targetWidth / 2 + triangleHeight,
+      t: -(tipHeight / 2),
+      b: tipHeight / 2
+    };
+  }
+
+  return {
+    top: top,
+    bottom: bottom,
+    left: left,
+    right: right
+  };
+}; // Consider additional offset into position calculation
+
+
+var calculateOffset = function calculateOffset(offset) {
+  var extraOffsetX = 0;
+  var extraOffsetY = 0;
+
+  if (Object.prototype.toString.apply(offset) === '[object String]') {
+    offset = JSON.parse(offset.toString().replace(/'/g, '"'));
+  }
+
+  for (var key in offset) {
+    if (key === 'top') {
+      extraOffsetY -= parseInt(offset[key], 10);
+    } else if (key === 'bottom') {
+      extraOffsetY += parseInt(offset[key], 10);
+    } else if (key === 'left') {
+      extraOffsetX -= parseInt(offset[key], 10);
+    } else if (key === 'right') {
+      extraOffsetX += parseInt(offset[key], 10);
+    }
+  }
+
+  return {
+    extraOffsetX: extraOffsetX,
+    extraOffsetY: extraOffsetY
+  };
+}; // Get the offset of the parent elements
+
+
+var getParent = function getParent(currentTarget) {
+  var currentParent = currentTarget;
+
+  while (currentParent) {
+    var computedStyle = window.getComputedStyle(currentParent); // transform and will-change: transform change the containing block
+    // https://developer.mozilla.org/en-US/docs/Web/CSS/Containing_Block
+
+    if (computedStyle.getPropertyValue('transform') !== 'none' || computedStyle.getPropertyValue('will-change') === 'transform') break;
+    currentParent = currentParent.parentElement;
+  }
+
+  var parentTop = currentParent && currentParent.getBoundingClientRect().top || 0;
+  var parentLeft = currentParent && currentParent.getBoundingClientRect().left || 0;
+  return {
+    parentTop: parentTop,
+    parentLeft: parentLeft
+  };
+};
+
+/**
+ * To get the tooltip content
+ * it may comes from data-tip or this.props.children
+ * it should support multiline
+ *
+ * @params
+ * - `tip` {String} value of data-tip
+ * - `children` {ReactElement} this.props.children
+ * - `multiline` {Any} could be Bool(true/false) or String('true'/'false')
+ *
+ * @return
+ * - String or react component
+ */
+function getTipContent (tip, children, getContent, multiline) {
+  if (children) return children;
+  if (getContent !== undefined && getContent !== null) return getContent; // getContent can be 0, '', etc.
+
+  if (getContent === null) return null; // Tip not exist and children is null or undefined
+
+  var regexp = /<br\s*\/?>/;
+
+  if (!multiline || multiline === 'false' || !regexp.test(tip)) {
+    // No trim(), so that user can keep their input
+    return tip;
+  } // Multiline tooltip content
+
+
+  return tip.split(regexp).map(function (d, i) {
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
+      key: i,
+      className: "multi-line"
+    }, d);
+  });
+}
+
+/**
+ * Support aria- and role in ReactTooltip
+ *
+ * @params props {Object}
+ * @return {Object}
+ */
+function parseAria(props) {
+  var ariaObj = {};
+  Object.keys(props).filter(function (prop) {
+    // aria-xxx and role is acceptable
+    return /(^aria-\w+$|^role$)/.test(prop);
+  }).forEach(function (prop) {
+    ariaObj[prop] = props[prop];
+  });
+  return ariaObj;
+}
+
+/**
+ * Convert nodelist to array
+ * @see https://github.com/facebook/fbjs/blob/e66ba20ad5be433eb54423f2b097d829324d9de6/packages/fbjs/src/core/createArrayFromMixed.js#L24
+ * NodeLists are functions in Safari
+ */
+function nodeListToArray (nodeList) {
+  var length = nodeList.length;
+
+  if (nodeList.hasOwnProperty) {
+    return Array.prototype.slice.call(nodeList);
+  }
+
+  return new Array(length).fill().map(function (index) {
+    return nodeList[index];
+  });
+}
+
+function generateUUID() {
+  return 't' + Object(uuid__WEBPACK_IMPORTED_MODULE_2__["v4"])();
+}
+
+var baseCss = ".__react_component_tooltip {\n  border-radius: 3px;\n  display: inline-block;\n  font-size: 13px;\n  left: -999em;\n  opacity: 0;\n  padding: 8px 21px;\n  position: fixed;\n  pointer-events: none;\n  transition: opacity 0.3s ease-out;\n  top: -999em;\n  visibility: hidden;\n  z-index: 999;\n}\n.__react_component_tooltip.allow_hover, .__react_component_tooltip.allow_click {\n  pointer-events: auto;\n}\n.__react_component_tooltip::before, .__react_component_tooltip::after {\n  content: \"\";\n  width: 0;\n  height: 0;\n  position: absolute;\n}\n.__react_component_tooltip.show {\n  opacity: 0.9;\n  margin-top: 0;\n  margin-left: 0;\n  visibility: visible;\n}\n.__react_component_tooltip.place-top::before {\n  border-left: 10px solid transparent;\n  border-right: 10px solid transparent;\n  bottom: -8px;\n  left: 50%;\n  margin-left: -10px;\n}\n.__react_component_tooltip.place-bottom::before {\n  border-left: 10px solid transparent;\n  border-right: 10px solid transparent;\n  top: -8px;\n  left: 50%;\n  margin-left: -10px;\n}\n.__react_component_tooltip.place-left::before {\n  border-top: 6px solid transparent;\n  border-bottom: 6px solid transparent;\n  right: -8px;\n  top: 50%;\n  margin-top: -5px;\n}\n.__react_component_tooltip.place-right::before {\n  border-top: 6px solid transparent;\n  border-bottom: 6px solid transparent;\n  left: -8px;\n  top: 50%;\n  margin-top: -5px;\n}\n.__react_component_tooltip .multi-line {\n  display: block;\n  padding: 2px 0;\n  text-align: center;\n}";
+
+/**
+ * Default pop-up style values (text color, background color).
+ */
+var defaultColors = {
+  dark: {
+    text: '#fff',
+    background: '#222',
+    border: 'transparent',
+    arrow: '#222'
+  },
+  success: {
+    text: '#fff',
+    background: '#8DC572',
+    border: 'transparent',
+    arrow: '#8DC572'
+  },
+  warning: {
+    text: '#fff',
+    background: '#F0AD4E',
+    border: 'transparent',
+    arrow: '#F0AD4E'
+  },
+  error: {
+    text: '#fff',
+    background: '#BE6464',
+    border: 'transparent',
+    arrow: '#BE6464'
+  },
+  info: {
+    text: '#fff',
+    background: '#337AB7',
+    border: 'transparent',
+    arrow: '#337AB7'
+  },
+  light: {
+    text: '#222',
+    background: '#fff',
+    border: 'transparent',
+    arrow: '#fff'
+  }
+};
+function getDefaultPopupColors(type) {
+  return defaultColors[type] ? _objectSpread2({}, defaultColors[type]) : undefined;
+}
+
+/**
+ * Generates the specific tooltip style for use on render.
+ */
+
+function generateTooltipStyle(uuid, customColors, type, hasBorder) {
+  return generateStyle(uuid, getPopupColors(customColors, type, hasBorder));
+}
+/**
+ * Generates the tooltip style rules based on the element-specified "data-type" property.
+ */
+
+function generateStyle(uuid, colors) {
+  var textColor = colors.text;
+  var backgroundColor = colors.background;
+  var borderColor = colors.border;
+  var arrowColor = colors.arrow;
+  return "\n  \t.".concat(uuid, " {\n\t    color: ").concat(textColor, ";\n\t    background: ").concat(backgroundColor, ";\n\t    border: 1px solid ").concat(borderColor, ";\n  \t}\n\n  \t.").concat(uuid, ".place-top {\n        margin-top: -10px;\n    }\n    .").concat(uuid, ".place-top::before {\n        border-top: 8px solid ").concat(borderColor, ";\n    }\n    .").concat(uuid, ".place-top::after {\n        border-left: 8px solid transparent;\n        border-right: 8px solid transparent;\n        bottom: -6px;\n        left: 50%;\n        margin-left: -8px;\n        border-top-color: ").concat(arrowColor, ";\n        border-top-style: solid;\n        border-top-width: 6px;\n    }\n\n    .").concat(uuid, ".place-bottom {\n        margin-top: 10px;\n    }\n    .").concat(uuid, ".place-bottom::before {\n        border-bottom: 8px solid ").concat(borderColor, ";\n    }\n    .").concat(uuid, ".place-bottom::after {\n        border-left: 8px solid transparent;\n        border-right: 8px solid transparent;\n        top: -6px;\n        left: 50%;\n        margin-left: -8px;\n        border-bottom-color: ").concat(arrowColor, ";\n        border-bottom-style: solid;\n        border-bottom-width: 6px;\n    }\n\n    .").concat(uuid, ".place-left {\n        margin-left: -10px;\n    }\n    .").concat(uuid, ".place-left::before {\n        border-left: 8px solid ").concat(borderColor, ";\n    }\n    .").concat(uuid, ".place-left::after {\n        border-top: 5px solid transparent;\n        border-bottom: 5px solid transparent;\n        right: -6px;\n        top: 50%;\n        margin-top: -4px;\n        border-left-color: ").concat(arrowColor, ";\n        border-left-style: solid;\n        border-left-width: 6px;\n    }\n\n    .").concat(uuid, ".place-right {\n        margin-left: 10px;\n    }\n    .").concat(uuid, ".place-right::before {\n        border-right: 8px solid ").concat(borderColor, ";\n    }\n    .").concat(uuid, ".place-right::after {\n        border-top: 5px solid transparent;\n        border-bottom: 5px solid transparent;\n        left: -6px;\n        top: 50%;\n        margin-top: -4px;\n        border-right-color: ").concat(arrowColor, ";\n        border-right-style: solid;\n        border-right-width: 6px;\n    }\n  ");
+}
+
+function getPopupColors(customColors, type, hasBorder) {
+  var textColor = customColors.text;
+  var backgroundColor = customColors.background;
+  var borderColor = customColors.border;
+  var arrowColor = customColors.arrow ? customColors.arrow : customColors.background;
+  var colors = getDefaultPopupColors(type);
+
+  if (textColor) {
+    colors.text = textColor;
+  }
+
+  if (backgroundColor) {
+    colors.background = backgroundColor;
+  }
+
+  if (hasBorder) {
+    if (borderColor) {
+      colors.border = borderColor;
+    } else {
+      colors.border = type === 'light' ? 'black' : 'white';
+    }
+  }
+
+  if (arrowColor) {
+    colors.arrow = arrowColor;
+  }
+
+  return colors;
+}
+
+var _class, _class2, _temp;
+
+var ReactTooltip = staticMethods(_class = windowListener(_class = customEvent(_class = isCapture(_class = getEffect(_class = bodyMode(_class = trackRemoval(_class = (_temp = _class2 =
+/*#__PURE__*/
+function (_React$Component) {
+  _inherits(ReactTooltip, _React$Component);
+
+  _createClass(ReactTooltip, null, [{
+    key: "propTypes",
+    get: function get() {
+      return {
+        uuid: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.string,
+        children: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.any,
+        place: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.string,
+        type: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.string,
+        effect: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.string,
+        offset: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.object,
+        multiline: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.bool,
+        border: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.bool,
+        textColor: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.string,
+        backgroundColor: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.string,
+        borderColor: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.string,
+        arrowColor: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.string,
+        insecure: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.bool,
+        "class": prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.string,
+        className: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.string,
+        id: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.string,
+        html: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.bool,
+        delayHide: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.number,
+        delayUpdate: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.number,
+        delayShow: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.number,
+        event: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.string,
+        eventOff: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.string,
+        isCapture: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.bool,
+        globalEventOff: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.string,
+        getContent: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.any,
+        afterShow: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.func,
+        afterHide: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.func,
+        overridePosition: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.func,
+        disable: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.bool,
+        scrollHide: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.bool,
+        resizeHide: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.bool,
+        wrapper: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.string,
+        bodyMode: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.bool,
+        possibleCustomEvents: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.string,
+        possibleCustomEventsOff: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.string,
+        clickable: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.bool
+      };
+    }
+  }]);
+
+  function ReactTooltip(props) {
+    var _this;
+
+    _classCallCheck(this, ReactTooltip);
+
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(ReactTooltip).call(this, props));
+    _this.state = {
+      uuid: props.uuid || generateUUID(),
+      place: props.place || 'top',
+      // Direction of tooltip
+      desiredPlace: props.place || 'top',
+      type: 'dark',
+      // Color theme of tooltip
+      effect: 'float',
+      // float or fixed
+      show: false,
+      border: false,
+      customColors: {},
+      offset: {},
+      extraClass: '',
+      html: false,
+      delayHide: 0,
+      delayShow: 0,
+      event: props.event || null,
+      eventOff: props.eventOff || null,
+      currentEvent: null,
+      // Current mouse event
+      currentTarget: null,
+      // Current target of mouse event
+      ariaProps: parseAria(props),
+      // aria- and role attributes
+      isEmptyTip: false,
+      disable: false,
+      possibleCustomEvents: props.possibleCustomEvents || '',
+      possibleCustomEventsOff: props.possibleCustomEventsOff || '',
+      originTooltip: null,
+      isMultiline: false
+    };
+
+    _this.bind(['showTooltip', 'updateTooltip', 'hideTooltip', 'hideTooltipOnScroll', 'getTooltipContent', 'globalRebuild', 'globalShow', 'globalHide', 'onWindowResize', 'mouseOnToolTip']);
+
+    _this.mount = true;
+    _this.delayShowLoop = null;
+    _this.delayHideLoop = null;
+    _this.delayReshow = null;
+    _this.intervalUpdateContent = null;
+    return _this;
+  }
+  /**
+   * For unify the bind and unbind listener
+   */
+
+
+  _createClass(ReactTooltip, [{
+    key: "bind",
+    value: function bind(methodArray) {
+      var _this2 = this;
+
+      methodArray.forEach(function (method) {
+        _this2[method] = _this2[method].bind(_this2);
+      });
+    }
+  }, {
+    key: "componentDidMount",
+    value: function componentDidMount() {
+      var _this$props = this.props,
+          insecure = _this$props.insecure,
+          resizeHide = _this$props.resizeHide;
+      this.bindListener(); // Bind listener for tooltip
+
+      this.bindWindowEvents(resizeHide); // Bind global event for static method
+
+      this.injectStyles(); // Inject styles for each DOM root having tooltip.
+    }
+  }, {
+    key: "componentWillUnmount",
+    value: function componentWillUnmount() {
+      this.mount = false;
+      this.clearTimer();
+      this.unbindListener();
+      this.removeScrollListener(this.state.currentTarget);
+      this.unbindWindowEvents();
+    }
+    /* Look for the closest DOM root having tooltip and inject styles. */
+
+  }, {
+    key: "injectStyles",
+    value: function injectStyles() {
+      var tooltipRef = this.tooltipRef;
+
+      if (!tooltipRef) {
+        return;
+      }
+
+      var parentNode = tooltipRef.parentNode;
+
+      while (parentNode.parentNode) {
+        parentNode = parentNode.parentNode;
+      }
+
+      var domRoot;
+
+      switch (parentNode.constructor.name) {
+        case 'Document':
+        case 'HTMLDocument':
+          domRoot = parentNode.head;
+          break;
+
+        case 'ShadowRoot':
+        default:
+          domRoot = parentNode;
+          break;
+      } // Prevent styles duplication.
+
+
+      if (!domRoot.querySelector('style[data-react-tooltip]')) {
+        var style = document.createElement('style');
+        style.textContent = baseCss;
+        style.setAttribute('data-react-tooltip', 'true');
+        domRoot.appendChild(style);
+      }
+    }
+    /**
+     * Return if the mouse is on the tooltip.
+     * @returns {boolean} true - mouse is on the tooltip
+     */
+
+  }, {
+    key: "mouseOnToolTip",
+    value: function mouseOnToolTip() {
+      var show = this.state.show;
+
+      if (show && this.tooltipRef) {
+        /* old IE or Firefox work around */
+        if (!this.tooltipRef.matches) {
+          /* old IE work around */
+          if (this.tooltipRef.msMatchesSelector) {
+            this.tooltipRef.matches = this.tooltipRef.msMatchesSelector;
+          } else {
+            /* old Firefox work around */
+            this.tooltipRef.matches = this.tooltipRef.mozMatchesSelector;
+          }
+        }
+
+        return this.tooltipRef.matches(':hover');
+      }
+
+      return false;
+    }
+    /**
+     * Pick out corresponded target elements
+     */
+
+  }, {
+    key: "getTargetArray",
+    value: function getTargetArray(id) {
+      var targetArray = [];
+      var selector;
+
+      if (!id) {
+        selector = '[data-tip]:not([data-for])';
+      } else {
+        var escaped = id.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+        selector = "[data-tip][data-for=\"".concat(escaped, "\"]");
+      } // Scan document for shadow DOM elements
+
+
+      nodeListToArray(document.getElementsByTagName('*')).filter(function (element) {
+        return element.shadowRoot;
+      }).forEach(function (element) {
+        targetArray = targetArray.concat(nodeListToArray(element.shadowRoot.querySelectorAll(selector)));
+      });
+      return targetArray.concat(nodeListToArray(document.querySelectorAll(selector)));
+    }
+    /**
+     * Bind listener to the target elements
+     * These listeners used to trigger showing or hiding the tooltip
+     */
+
+  }, {
+    key: "bindListener",
+    value: function bindListener() {
+      var _this3 = this;
+
+      var _this$props2 = this.props,
+          id = _this$props2.id,
+          globalEventOff = _this$props2.globalEventOff,
+          isCapture = _this$props2.isCapture;
+      var targetArray = this.getTargetArray(id);
+      targetArray.forEach(function (target) {
+        if (target.getAttribute('currentItem') === null) {
+          target.setAttribute('currentItem', 'false');
+        }
+
+        _this3.unbindBasicListener(target);
+
+        if (_this3.isCustomEvent(target)) {
+          _this3.customUnbindListener(target);
+        }
+      });
+
+      if (this.isBodyMode()) {
+        this.bindBodyListener(targetArray);
+      } else {
+        targetArray.forEach(function (target) {
+          var isCaptureMode = _this3.isCapture(target);
+
+          var effect = _this3.getEffect(target);
+
+          if (_this3.isCustomEvent(target)) {
+            _this3.customBindListener(target);
+
+            return;
+          }
+
+          target.addEventListener('mouseenter', _this3.showTooltip, isCaptureMode);
+
+          if (effect === 'float') {
+            target.addEventListener('mousemove', _this3.updateTooltip, isCaptureMode);
+          }
+
+          target.addEventListener('mouseleave', _this3.hideTooltip, isCaptureMode);
+        });
+      } // Global event to hide tooltip
+
+
+      if (globalEventOff) {
+        window.removeEventListener(globalEventOff, this.hideTooltip);
+        window.addEventListener(globalEventOff, this.hideTooltip, isCapture);
+      } // Track removal of targetArray elements from DOM
+
+
+      this.bindRemovalTracker();
+    }
+    /**
+     * Unbind listeners on target elements
+     */
+
+  }, {
+    key: "unbindListener",
+    value: function unbindListener() {
+      var _this4 = this;
+
+      var _this$props3 = this.props,
+          id = _this$props3.id,
+          globalEventOff = _this$props3.globalEventOff;
+
+      if (this.isBodyMode()) {
+        this.unbindBodyListener();
+      } else {
+        var targetArray = this.getTargetArray(id);
+        targetArray.forEach(function (target) {
+          _this4.unbindBasicListener(target);
+
+          if (_this4.isCustomEvent(target)) _this4.customUnbindListener(target);
+        });
+      }
+
+      if (globalEventOff) window.removeEventListener(globalEventOff, this.hideTooltip);
+      this.unbindRemovalTracker();
+    }
+    /**
+     * Invoke this before bind listener and unmount the component
+     * it is necessary to invoke this even when binding custom event
+     * so that the tooltip can switch between custom and default listener
+     */
+
+  }, {
+    key: "unbindBasicListener",
+    value: function unbindBasicListener(target) {
+      var isCaptureMode = this.isCapture(target);
+      target.removeEventListener('mouseenter', this.showTooltip, isCaptureMode);
+      target.removeEventListener('mousemove', this.updateTooltip, isCaptureMode);
+      target.removeEventListener('mouseleave', this.hideTooltip, isCaptureMode);
+    }
+  }, {
+    key: "getTooltipContent",
+    value: function getTooltipContent() {
+      var _this$props4 = this.props,
+          getContent = _this$props4.getContent,
+          children = _this$props4.children; // Generate tooltip content
+
+      var content;
+
+      if (getContent) {
+        if (Array.isArray(getContent)) {
+          content = getContent[0] && getContent[0](this.state.originTooltip);
+        } else {
+          content = getContent(this.state.originTooltip);
+        }
+      }
+
+      return getTipContent(this.state.originTooltip, children, content, this.state.isMultiline);
+    }
+  }, {
+    key: "isEmptyTip",
+    value: function isEmptyTip(placeholder) {
+      return typeof placeholder === 'string' && placeholder === '' || placeholder === null;
+    }
+    /**
+     * When mouse enter, show the tooltip
+     */
+
+  }, {
+    key: "showTooltip",
+    value: function showTooltip(e, isGlobalCall) {
+      if (!this.tooltipRef) {
+        return;
+      }
+
+      if (isGlobalCall) {
+        // Don't trigger other elements belongs to other ReactTooltip
+        var targetArray = this.getTargetArray(this.props.id);
+        var isMyElement = targetArray.some(function (ele) {
+          return ele === e.currentTarget;
+        });
+        if (!isMyElement) return;
+      } // Get the tooltip content
+      // calculate in this phrase so that tip width height can be detected
+
+
+      var _this$props5 = this.props,
+          multiline = _this$props5.multiline,
+          getContent = _this$props5.getContent;
+      var originTooltip = e.currentTarget.getAttribute('data-tip');
+      var isMultiline = e.currentTarget.getAttribute('data-multiline') || multiline || false; // If it is focus event or called by ReactTooltip.show, switch to `solid` effect
+
+      var switchToSolid = e instanceof window.FocusEvent || isGlobalCall; // if it needs to skip adding hide listener to scroll
+
+      var scrollHide = true;
+
+      if (e.currentTarget.getAttribute('data-scroll-hide')) {
+        scrollHide = e.currentTarget.getAttribute('data-scroll-hide') === 'true';
+      } else if (this.props.scrollHide != null) {
+        scrollHide = this.props.scrollHide;
+      } // Make sure the correct place is set
+
+
+      var desiredPlace = e.currentTarget.getAttribute('data-place') || this.props.place || 'top';
+      var effect = switchToSolid && 'solid' || this.getEffect(e.currentTarget);
+      var offset = e.currentTarget.getAttribute('data-offset') || this.props.offset || {};
+      var result = getPosition(e, e.currentTarget, this.tooltipRef, desiredPlace, desiredPlace, effect, offset);
+
+      if (result.position && this.props.overridePosition) {
+        result.position = this.props.overridePosition(result.position, e, e.currentTarget, this.tooltipRef, desiredPlace, desiredPlace, effect, offset);
+      }
+
+      var place = result.isNewState ? result.newState.place : desiredPlace; // To prevent previously created timers from triggering
+
+      this.clearTimer();
+      var target = e.currentTarget;
+      var reshowDelay = this.state.show ? target.getAttribute('data-delay-update') || this.props.delayUpdate : 0;
+      var self = this;
+
+      var updateState = function updateState() {
+        self.setState({
+          originTooltip: originTooltip,
+          isMultiline: isMultiline,
+          desiredPlace: desiredPlace,
+          place: place,
+          type: target.getAttribute('data-type') || self.props.type || 'dark',
+          customColors: {
+            text: target.getAttribute('data-text-color') || self.props.textColor || null,
+            background: target.getAttribute('data-background-color') || self.props.backgroundColor || null,
+            border: target.getAttribute('data-border-color') || self.props.borderColor || null,
+            arrow: target.getAttribute('data-arrow-color') || self.props.arrowColor || null
+          },
+          effect: effect,
+          offset: offset,
+          html: (target.getAttribute('data-html') ? target.getAttribute('data-html') === 'true' : self.props.html) || false,
+          delayShow: target.getAttribute('data-delay-show') || self.props.delayShow || 0,
+          delayHide: target.getAttribute('data-delay-hide') || self.props.delayHide || 0,
+          delayUpdate: target.getAttribute('data-delay-update') || self.props.delayUpdate || 0,
+          border: (target.getAttribute('data-border') ? target.getAttribute('data-border') === 'true' : self.props.border) || false,
+          extraClass: target.getAttribute('data-class') || self.props["class"] || self.props.className || '',
+          disable: (target.getAttribute('data-tip-disable') ? target.getAttribute('data-tip-disable') === 'true' : self.props.disable) || false,
+          currentTarget: target
+        }, function () {
+          if (scrollHide) {
+            self.addScrollListener(self.state.currentTarget);
+          }
+
+          self.updateTooltip(e);
+
+          if (getContent && Array.isArray(getContent)) {
+            self.intervalUpdateContent = setInterval(function () {
+              if (self.mount) {
+                var _getContent = self.props.getContent;
+                var placeholder = getTipContent(originTooltip, '', _getContent[0](), isMultiline);
+                var isEmptyTip = self.isEmptyTip(placeholder);
+                self.setState({
+                  isEmptyTip: isEmptyTip
+                });
+                self.updatePosition();
+              }
+            }, getContent[1]);
+          }
+        });
+      }; // If there is no delay call immediately, don't allow events to get in first.
+
+
+      if (reshowDelay) {
+        this.delayReshow = setTimeout(updateState, reshowDelay);
+      } else {
+        updateState();
+      }
+    }
+    /**
+     * When mouse hover, update tool tip
+     */
+
+  }, {
+    key: "updateTooltip",
+    value: function updateTooltip(e) {
+      var _this5 = this;
+
+      var _this$state = this.state,
+          delayShow = _this$state.delayShow,
+          disable = _this$state.disable;
+      var afterShow = this.props.afterShow;
+      var placeholder = this.getTooltipContent();
+      var eventTarget = e.currentTarget || e.target; // Check if the mouse is actually over the tooltip, if so don't hide the tooltip
+
+      if (this.mouseOnToolTip()) {
+        return;
+      } // if the tooltip is empty, disable the tooltip
+
+
+      if (this.isEmptyTip(placeholder) || disable) {
+        return;
+      }
+
+      var delayTime = !this.state.show ? parseInt(delayShow, 10) : 0;
+
+      var updateState = function updateState() {
+        if (Array.isArray(placeholder) && placeholder.length > 0 || placeholder) {
+          var isInvisible = !_this5.state.show;
+
+          _this5.setState({
+            currentEvent: e,
+            currentTarget: eventTarget,
+            show: true
+          }, function () {
+            _this5.updatePosition();
+
+            if (isInvisible && afterShow) {
+              afterShow(e);
+            }
+          });
+        }
+      };
+
+      clearTimeout(this.delayShowLoop);
+
+      if (delayTime) {
+        this.delayShowLoop = setTimeout(updateState, delayTime);
+      } else {
+        updateState();
+      }
+    }
+    /*
+     * If we're mousing over the tooltip remove it when we leave.
+     */
+
+  }, {
+    key: "listenForTooltipExit",
+    value: function listenForTooltipExit() {
+      var show = this.state.show;
+
+      if (show && this.tooltipRef) {
+        this.tooltipRef.addEventListener('mouseleave', this.hideTooltip);
+      }
+    }
+  }, {
+    key: "removeListenerForTooltipExit",
+    value: function removeListenerForTooltipExit() {
+      var show = this.state.show;
+
+      if (show && this.tooltipRef) {
+        this.tooltipRef.removeEventListener('mouseleave', this.hideTooltip);
+      }
+    }
+    /**
+     * When mouse leave, hide tooltip
+     */
+
+  }, {
+    key: "hideTooltip",
+    value: function hideTooltip(e, hasTarget) {
+      var _this6 = this;
+
+      var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {
+        isScroll: false
+      };
+      var disable = this.state.disable;
+      var isScroll = options.isScroll;
+      var delayHide = isScroll ? 0 : this.state.delayHide;
+      var afterHide = this.props.afterHide;
+      var placeholder = this.getTooltipContent();
+      if (!this.mount) return;
+      if (this.isEmptyTip(placeholder) || disable) return; // if the tooltip is empty, disable the tooltip
+
+      if (hasTarget) {
+        // Don't trigger other elements belongs to other ReactTooltip
+        var targetArray = this.getTargetArray(this.props.id);
+        var isMyElement = targetArray.some(function (ele) {
+          return ele === e.currentTarget;
+        });
+        if (!isMyElement || !this.state.show) return;
+      }
+
+      var resetState = function resetState() {
+        var isVisible = _this6.state.show; // Check if the mouse is actually over the tooltip, if so don't hide the tooltip
+
+        if (_this6.mouseOnToolTip()) {
+          _this6.listenForTooltipExit();
+
+          return;
+        }
+
+        _this6.removeListenerForTooltipExit();
+
+        _this6.setState({
+          show: false
+        }, function () {
+          _this6.removeScrollListener(_this6.state.currentTarget);
+
+          if (isVisible && afterHide) {
+            afterHide(e);
+          }
+        });
+      };
+
+      this.clearTimer();
+
+      if (delayHide) {
+        this.delayHideLoop = setTimeout(resetState, parseInt(delayHide, 10));
+      } else {
+        resetState();
+      }
+    }
+    /**
+     * When scroll, hide tooltip
+     */
+
+  }, {
+    key: "hideTooltipOnScroll",
+    value: function hideTooltipOnScroll(event, hasTarget) {
+      this.hideTooltip(event, hasTarget, {
+        isScroll: true
+      });
+    }
+    /**
+     * Add scroll event listener when tooltip show
+     * automatically hide the tooltip when scrolling
+     */
+
+  }, {
+    key: "addScrollListener",
+    value: function addScrollListener(currentTarget) {
+      var isCaptureMode = this.isCapture(currentTarget);
+      window.addEventListener('scroll', this.hideTooltipOnScroll, isCaptureMode);
+    }
+  }, {
+    key: "removeScrollListener",
+    value: function removeScrollListener(currentTarget) {
+      var isCaptureMode = this.isCapture(currentTarget);
+      window.removeEventListener('scroll', this.hideTooltipOnScroll, isCaptureMode);
+    } // Calculation the position
+
+  }, {
+    key: "updatePosition",
+    value: function updatePosition() {
+      var _this7 = this;
+
+      var _this$state2 = this.state,
+          currentEvent = _this$state2.currentEvent,
+          currentTarget = _this$state2.currentTarget,
+          place = _this$state2.place,
+          desiredPlace = _this$state2.desiredPlace,
+          effect = _this$state2.effect,
+          offset = _this$state2.offset;
+      var node = this.tooltipRef;
+      var result = getPosition(currentEvent, currentTarget, node, place, desiredPlace, effect, offset);
+
+      if (result.position && this.props.overridePosition) {
+        result.position = this.props.overridePosition(result.position, currentEvent, currentTarget, node, place, desiredPlace, effect, offset);
+      }
+
+      if (result.isNewState) {
+        // Switch to reverse placement
+        return this.setState(result.newState, function () {
+          _this7.updatePosition();
+        });
+      } // Set tooltip position
+
+
+      node.style.left = result.position.left + 'px';
+      node.style.top = result.position.top + 'px';
+    }
+    /**
+     * CLear all kinds of timeout of interval
+     */
+
+  }, {
+    key: "clearTimer",
+    value: function clearTimer() {
+      clearTimeout(this.delayShowLoop);
+      clearTimeout(this.delayHideLoop);
+      clearTimeout(this.delayReshow);
+      clearInterval(this.intervalUpdateContent);
+    }
+  }, {
+    key: "hasCustomColors",
+    value: function hasCustomColors() {
+      var _this8 = this;
+
+      return Boolean(Object.keys(this.state.customColors).find(function (color) {
+        return color !== 'border' && _this8.state.customColors[color];
+      }) || this.state.border && this.state.customColors['border']);
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      var _this9 = this;
+
+      var _this$state3 = this.state,
+          extraClass = _this$state3.extraClass,
+          html = _this$state3.html,
+          ariaProps = _this$state3.ariaProps,
+          disable = _this$state3.disable;
+      var content = this.getTooltipContent();
+      var isEmptyTip = this.isEmptyTip(content);
+      var style = generateTooltipStyle(this.state.uuid, this.state.customColors, this.state.type, this.state.border);
+      var tooltipClass = '__react_component_tooltip' + " ".concat(this.state.uuid) + (this.state.show && !disable && !isEmptyTip ? ' show' : '') + (this.state.border ? ' border' : '') + " place-".concat(this.state.place) + // top, bottom, left, right
+      " type-".concat(this.hasCustomColors() ? 'custom' : this.state.type) + ( // dark, success, warning, error, info, light, custom
+      this.props.delayUpdate ? ' allow_hover' : '') + (this.props.clickable ? ' allow_click' : '');
+      var Wrapper = this.props.wrapper;
+
+      if (ReactTooltip.supportedWrappers.indexOf(Wrapper) < 0) {
+        Wrapper = ReactTooltip.defaultProps.wrapper;
+      }
+
+      var wrapperClassName = [tooltipClass, extraClass].filter(Boolean).join(' ');
+
+      if (html) {
+        var htmlContent = "".concat(content, "\n<style>").concat(style, "</style>");
+        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Wrapper, _extends({
+          className: "".concat(wrapperClassName),
+          id: this.props.id,
+          ref: function ref(_ref) {
+            return _this9.tooltipRef = _ref;
+          }
+        }, ariaProps, {
+          "data-id": "tooltip",
+          dangerouslySetInnerHTML: {
+            __html: htmlContent
+          }
+        }));
+      } else {
+        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Wrapper, _extends({
+          className: "".concat(wrapperClassName),
+          id: this.props.id
+        }, ariaProps, {
+          ref: function ref(_ref2) {
+            return _this9.tooltipRef = _ref2;
+          },
+          "data-id": "tooltip"
+        }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("style", {
+          dangerouslySetInnerHTML: {
+            __html: style
+          }
+        }), content);
+      }
+    }
+  }], [{
+    key: "getDerivedStateFromProps",
+    value: function getDerivedStateFromProps(nextProps, prevState) {
+      var ariaProps = prevState.ariaProps;
+      var newAriaProps = parseAria(nextProps);
+      var isChanged = Object.keys(newAriaProps).some(function (props) {
+        return newAriaProps[props] !== ariaProps[props];
+      });
+
+      if (!isChanged) {
+        return null;
+      }
+
+      return _objectSpread2({}, prevState, {
+        ariaProps: newAriaProps
+      });
+    }
+  }]);
+
+  return ReactTooltip;
+}(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component), _defineProperty(_class2, "defaultProps", {
+  insecure: true,
+  resizeHide: true,
+  wrapper: 'div',
+  clickable: false
+}), _defineProperty(_class2, "supportedWrappers", ['div', 'span']), _defineProperty(_class2, "displayName", 'ReactTooltip'), _temp)) || _class) || _class) || _class) || _class) || _class) || _class) || _class;
+
+/* harmony default export */ __webpack_exports__["default"] = (ReactTooltip);
+//# sourceMappingURL=index.es.js.map
+
+
+/***/ }),
+
+/***/ "./node_modules/react-tooltip/node_modules/uuid/dist/esm-browser/bytesToUuid.js":
+/*!**************************************************************************************!*\
+  !*** ./node_modules/react-tooltip/node_modules/uuid/dist/esm-browser/bytesToUuid.js ***!
+  \**************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/**
+ * Convert array of 16 byte values to UUID string format of the form:
+ * XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
+ */
+var byteToHex = [];
+
+for (var i = 0; i < 256; ++i) {
+  byteToHex[i] = (i + 0x100).toString(16).substr(1);
+}
+
+function bytesToUuid(buf, offset) {
+  var i = offset || 0;
+  var bth = byteToHex; // join used to fix memory issue caused by concatenation: https://bugs.chromium.org/p/v8/issues/detail?id=3175#c4
+
+  return [bth[buf[i++]], bth[buf[i++]], bth[buf[i++]], bth[buf[i++]], '-', bth[buf[i++]], bth[buf[i++]], '-', bth[buf[i++]], bth[buf[i++]], '-', bth[buf[i++]], bth[buf[i++]], '-', bth[buf[i++]], bth[buf[i++]], bth[buf[i++]], bth[buf[i++]], bth[buf[i++]], bth[buf[i++]]].join('');
+}
+
+/* harmony default export */ __webpack_exports__["default"] = (bytesToUuid);
+
+/***/ }),
+
+/***/ "./node_modules/react-tooltip/node_modules/uuid/dist/esm-browser/index.js":
+/*!********************************************************************************!*\
+  !*** ./node_modules/react-tooltip/node_modules/uuid/dist/esm-browser/index.js ***!
+  \********************************************************************************/
+/*! exports provided: v1, v3, v4, v5 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _v1_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./v1.js */ "./node_modules/react-tooltip/node_modules/uuid/dist/esm-browser/v1.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "v1", function() { return _v1_js__WEBPACK_IMPORTED_MODULE_0__["default"]; });
+
+/* harmony import */ var _v3_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./v3.js */ "./node_modules/react-tooltip/node_modules/uuid/dist/esm-browser/v3.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "v3", function() { return _v3_js__WEBPACK_IMPORTED_MODULE_1__["default"]; });
+
+/* harmony import */ var _v4_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./v4.js */ "./node_modules/react-tooltip/node_modules/uuid/dist/esm-browser/v4.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "v4", function() { return _v4_js__WEBPACK_IMPORTED_MODULE_2__["default"]; });
+
+/* harmony import */ var _v5_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./v5.js */ "./node_modules/react-tooltip/node_modules/uuid/dist/esm-browser/v5.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "v5", function() { return _v5_js__WEBPACK_IMPORTED_MODULE_3__["default"]; });
+
+
+
+
+
+
+/***/ }),
+
+/***/ "./node_modules/react-tooltip/node_modules/uuid/dist/esm-browser/md5.js":
+/*!******************************************************************************!*\
+  !*** ./node_modules/react-tooltip/node_modules/uuid/dist/esm-browser/md5.js ***!
+  \******************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/*
+ * Browser-compatible JavaScript MD5
+ *
+ * Modification of JavaScript MD5
+ * https://github.com/blueimp/JavaScript-MD5
+ *
+ * Copyright 2011, Sebastian Tschan
+ * https://blueimp.net
+ *
+ * Licensed under the MIT license:
+ * https://opensource.org/licenses/MIT
+ *
+ * Based on
+ * A JavaScript implementation of the RSA Data Security, Inc. MD5 Message
+ * Digest Algorithm, as defined in RFC 1321.
+ * Version 2.2 Copyright (C) Paul Johnston 1999 - 2009
+ * Other contributors: Greg Holt, Andrew Kepert, Ydnar, Lostinet
+ * Distributed under the BSD License
+ * See http://pajhome.org.uk/crypt/md5 for more info.
+ */
+function md5(bytes) {
+  if (typeof bytes == 'string') {
+    var msg = unescape(encodeURIComponent(bytes)); // UTF8 escape
+
+    bytes = new Array(msg.length);
+
+    for (var i = 0; i < msg.length; i++) {
+      bytes[i] = msg.charCodeAt(i);
+    }
+  }
+
+  return md5ToHexEncodedArray(wordsToMd5(bytesToWords(bytes), bytes.length * 8));
+}
+/*
+ * Convert an array of little-endian words to an array of bytes
+ */
+
+
+function md5ToHexEncodedArray(input) {
+  var i;
+  var x;
+  var output = [];
+  var length32 = input.length * 32;
+  var hexTab = '0123456789abcdef';
+  var hex;
+
+  for (i = 0; i < length32; i += 8) {
+    x = input[i >> 5] >>> i % 32 & 0xff;
+    hex = parseInt(hexTab.charAt(x >>> 4 & 0x0f) + hexTab.charAt(x & 0x0f), 16);
+    output.push(hex);
+  }
+
+  return output;
+}
+/*
+ * Calculate the MD5 of an array of little-endian words, and a bit length.
+ */
+
+
+function wordsToMd5(x, len) {
+  /* append padding */
+  x[len >> 5] |= 0x80 << len % 32;
+  x[(len + 64 >>> 9 << 4) + 14] = len;
+  var i;
+  var olda;
+  var oldb;
+  var oldc;
+  var oldd;
+  var a = 1732584193;
+  var b = -271733879;
+  var c = -1732584194;
+  var d = 271733878;
+
+  for (i = 0; i < x.length; i += 16) {
+    olda = a;
+    oldb = b;
+    oldc = c;
+    oldd = d;
+    a = md5ff(a, b, c, d, x[i], 7, -680876936);
+    d = md5ff(d, a, b, c, x[i + 1], 12, -389564586);
+    c = md5ff(c, d, a, b, x[i + 2], 17, 606105819);
+    b = md5ff(b, c, d, a, x[i + 3], 22, -1044525330);
+    a = md5ff(a, b, c, d, x[i + 4], 7, -176418897);
+    d = md5ff(d, a, b, c, x[i + 5], 12, 1200080426);
+    c = md5ff(c, d, a, b, x[i + 6], 17, -1473231341);
+    b = md5ff(b, c, d, a, x[i + 7], 22, -45705983);
+    a = md5ff(a, b, c, d, x[i + 8], 7, 1770035416);
+    d = md5ff(d, a, b, c, x[i + 9], 12, -1958414417);
+    c = md5ff(c, d, a, b, x[i + 10], 17, -42063);
+    b = md5ff(b, c, d, a, x[i + 11], 22, -1990404162);
+    a = md5ff(a, b, c, d, x[i + 12], 7, 1804603682);
+    d = md5ff(d, a, b, c, x[i + 13], 12, -40341101);
+    c = md5ff(c, d, a, b, x[i + 14], 17, -1502002290);
+    b = md5ff(b, c, d, a, x[i + 15], 22, 1236535329);
+    a = md5gg(a, b, c, d, x[i + 1], 5, -165796510);
+    d = md5gg(d, a, b, c, x[i + 6], 9, -1069501632);
+    c = md5gg(c, d, a, b, x[i + 11], 14, 643717713);
+    b = md5gg(b, c, d, a, x[i], 20, -373897302);
+    a = md5gg(a, b, c, d, x[i + 5], 5, -701558691);
+    d = md5gg(d, a, b, c, x[i + 10], 9, 38016083);
+    c = md5gg(c, d, a, b, x[i + 15], 14, -660478335);
+    b = md5gg(b, c, d, a, x[i + 4], 20, -405537848);
+    a = md5gg(a, b, c, d, x[i + 9], 5, 568446438);
+    d = md5gg(d, a, b, c, x[i + 14], 9, -1019803690);
+    c = md5gg(c, d, a, b, x[i + 3], 14, -187363961);
+    b = md5gg(b, c, d, a, x[i + 8], 20, 1163531501);
+    a = md5gg(a, b, c, d, x[i + 13], 5, -1444681467);
+    d = md5gg(d, a, b, c, x[i + 2], 9, -51403784);
+    c = md5gg(c, d, a, b, x[i + 7], 14, 1735328473);
+    b = md5gg(b, c, d, a, x[i + 12], 20, -1926607734);
+    a = md5hh(a, b, c, d, x[i + 5], 4, -378558);
+    d = md5hh(d, a, b, c, x[i + 8], 11, -2022574463);
+    c = md5hh(c, d, a, b, x[i + 11], 16, 1839030562);
+    b = md5hh(b, c, d, a, x[i + 14], 23, -35309556);
+    a = md5hh(a, b, c, d, x[i + 1], 4, -1530992060);
+    d = md5hh(d, a, b, c, x[i + 4], 11, 1272893353);
+    c = md5hh(c, d, a, b, x[i + 7], 16, -155497632);
+    b = md5hh(b, c, d, a, x[i + 10], 23, -1094730640);
+    a = md5hh(a, b, c, d, x[i + 13], 4, 681279174);
+    d = md5hh(d, a, b, c, x[i], 11, -358537222);
+    c = md5hh(c, d, a, b, x[i + 3], 16, -722521979);
+    b = md5hh(b, c, d, a, x[i + 6], 23, 76029189);
+    a = md5hh(a, b, c, d, x[i + 9], 4, -640364487);
+    d = md5hh(d, a, b, c, x[i + 12], 11, -421815835);
+    c = md5hh(c, d, a, b, x[i + 15], 16, 530742520);
+    b = md5hh(b, c, d, a, x[i + 2], 23, -995338651);
+    a = md5ii(a, b, c, d, x[i], 6, -198630844);
+    d = md5ii(d, a, b, c, x[i + 7], 10, 1126891415);
+    c = md5ii(c, d, a, b, x[i + 14], 15, -1416354905);
+    b = md5ii(b, c, d, a, x[i + 5], 21, -57434055);
+    a = md5ii(a, b, c, d, x[i + 12], 6, 1700485571);
+    d = md5ii(d, a, b, c, x[i + 3], 10, -1894986606);
+    c = md5ii(c, d, a, b, x[i + 10], 15, -1051523);
+    b = md5ii(b, c, d, a, x[i + 1], 21, -2054922799);
+    a = md5ii(a, b, c, d, x[i + 8], 6, 1873313359);
+    d = md5ii(d, a, b, c, x[i + 15], 10, -30611744);
+    c = md5ii(c, d, a, b, x[i + 6], 15, -1560198380);
+    b = md5ii(b, c, d, a, x[i + 13], 21, 1309151649);
+    a = md5ii(a, b, c, d, x[i + 4], 6, -145523070);
+    d = md5ii(d, a, b, c, x[i + 11], 10, -1120210379);
+    c = md5ii(c, d, a, b, x[i + 2], 15, 718787259);
+    b = md5ii(b, c, d, a, x[i + 9], 21, -343485551);
+    a = safeAdd(a, olda);
+    b = safeAdd(b, oldb);
+    c = safeAdd(c, oldc);
+    d = safeAdd(d, oldd);
+  }
+
+  return [a, b, c, d];
+}
+/*
+ * Convert an array bytes to an array of little-endian words
+ * Characters >255 have their high-byte silently ignored.
+ */
+
+
+function bytesToWords(input) {
+  var i;
+  var output = [];
+  output[(input.length >> 2) - 1] = undefined;
+
+  for (i = 0; i < output.length; i += 1) {
+    output[i] = 0;
+  }
+
+  var length8 = input.length * 8;
+
+  for (i = 0; i < length8; i += 8) {
+    output[i >> 5] |= (input[i / 8] & 0xff) << i % 32;
+  }
+
+  return output;
+}
+/*
+ * Add integers, wrapping at 2^32. This uses 16-bit operations internally
+ * to work around bugs in some JS interpreters.
+ */
+
+
+function safeAdd(x, y) {
+  var lsw = (x & 0xffff) + (y & 0xffff);
+  var msw = (x >> 16) + (y >> 16) + (lsw >> 16);
+  return msw << 16 | lsw & 0xffff;
+}
+/*
+ * Bitwise rotate a 32-bit number to the left.
+ */
+
+
+function bitRotateLeft(num, cnt) {
+  return num << cnt | num >>> 32 - cnt;
+}
+/*
+ * These functions implement the four basic operations the algorithm uses.
+ */
+
+
+function md5cmn(q, a, b, x, s, t) {
+  return safeAdd(bitRotateLeft(safeAdd(safeAdd(a, q), safeAdd(x, t)), s), b);
+}
+
+function md5ff(a, b, c, d, x, s, t) {
+  return md5cmn(b & c | ~b & d, a, b, x, s, t);
+}
+
+function md5gg(a, b, c, d, x, s, t) {
+  return md5cmn(b & d | c & ~d, a, b, x, s, t);
+}
+
+function md5hh(a, b, c, d, x, s, t) {
+  return md5cmn(b ^ c ^ d, a, b, x, s, t);
+}
+
+function md5ii(a, b, c, d, x, s, t) {
+  return md5cmn(c ^ (b | ~d), a, b, x, s, t);
+}
+
+/* harmony default export */ __webpack_exports__["default"] = (md5);
+
+/***/ }),
+
+/***/ "./node_modules/react-tooltip/node_modules/uuid/dist/esm-browser/rng.js":
+/*!******************************************************************************!*\
+  !*** ./node_modules/react-tooltip/node_modules/uuid/dist/esm-browser/rng.js ***!
+  \******************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return rng; });
+// Unique ID creation requires a high quality random # generator. In the browser we therefore
+// require the crypto API and do not support built-in fallback to lower quality random number
+// generators (like Math.random()).
+// getRandomValues needs to be invoked in a context where "this" is a Crypto implementation. Also,
+// find the complete implementation of crypto (msCrypto) on IE11.
+var getRandomValues = typeof crypto != 'undefined' && crypto.getRandomValues && crypto.getRandomValues.bind(crypto) || typeof msCrypto != 'undefined' && typeof msCrypto.getRandomValues == 'function' && msCrypto.getRandomValues.bind(msCrypto);
+var rnds8 = new Uint8Array(16); // eslint-disable-line no-undef
+
+function rng() {
+  if (!getRandomValues) {
+    throw new Error('crypto.getRandomValues() not supported. See https://github.com/uuidjs/uuid#getrandomvalues-not-supported');
+  }
+
+  return getRandomValues(rnds8);
+}
+
+/***/ }),
+
+/***/ "./node_modules/react-tooltip/node_modules/uuid/dist/esm-browser/sha1.js":
+/*!*******************************************************************************!*\
+  !*** ./node_modules/react-tooltip/node_modules/uuid/dist/esm-browser/sha1.js ***!
+  \*******************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+// Adapted from Chris Veness' SHA1 code at
+// http://www.movable-type.co.uk/scripts/sha1.html
+function f(s, x, y, z) {
+  switch (s) {
+    case 0:
+      return x & y ^ ~x & z;
+
+    case 1:
+      return x ^ y ^ z;
+
+    case 2:
+      return x & y ^ x & z ^ y & z;
+
+    case 3:
+      return x ^ y ^ z;
+  }
+}
+
+function ROTL(x, n) {
+  return x << n | x >>> 32 - n;
+}
+
+function sha1(bytes) {
+  var K = [0x5a827999, 0x6ed9eba1, 0x8f1bbcdc, 0xca62c1d6];
+  var H = [0x67452301, 0xefcdab89, 0x98badcfe, 0x10325476, 0xc3d2e1f0];
+
+  if (typeof bytes == 'string') {
+    var msg = unescape(encodeURIComponent(bytes)); // UTF8 escape
+
+    bytes = new Array(msg.length);
+
+    for (var i = 0; i < msg.length; i++) {
+      bytes[i] = msg.charCodeAt(i);
+    }
+  }
+
+  bytes.push(0x80);
+  var l = bytes.length / 4 + 2;
+  var N = Math.ceil(l / 16);
+  var M = new Array(N);
+
+  for (var i = 0; i < N; i++) {
+    M[i] = new Array(16);
+
+    for (var j = 0; j < 16; j++) {
+      M[i][j] = bytes[i * 64 + j * 4] << 24 | bytes[i * 64 + j * 4 + 1] << 16 | bytes[i * 64 + j * 4 + 2] << 8 | bytes[i * 64 + j * 4 + 3];
+    }
+  }
+
+  M[N - 1][14] = (bytes.length - 1) * 8 / Math.pow(2, 32);
+  M[N - 1][14] = Math.floor(M[N - 1][14]);
+  M[N - 1][15] = (bytes.length - 1) * 8 & 0xffffffff;
+
+  for (var i = 0; i < N; i++) {
+    var W = new Array(80);
+
+    for (var t = 0; t < 16; t++) {
+      W[t] = M[i][t];
+    }
+
+    for (var t = 16; t < 80; t++) {
+      W[t] = ROTL(W[t - 3] ^ W[t - 8] ^ W[t - 14] ^ W[t - 16], 1);
+    }
+
+    var a = H[0];
+    var b = H[1];
+    var c = H[2];
+    var d = H[3];
+    var e = H[4];
+
+    for (var t = 0; t < 80; t++) {
+      var s = Math.floor(t / 20);
+      var T = ROTL(a, 5) + f(s, b, c, d) + e + K[s] + W[t] >>> 0;
+      e = d;
+      d = c;
+      c = ROTL(b, 30) >>> 0;
+      b = a;
+      a = T;
+    }
+
+    H[0] = H[0] + a >>> 0;
+    H[1] = H[1] + b >>> 0;
+    H[2] = H[2] + c >>> 0;
+    H[3] = H[3] + d >>> 0;
+    H[4] = H[4] + e >>> 0;
+  }
+
+  return [H[0] >> 24 & 0xff, H[0] >> 16 & 0xff, H[0] >> 8 & 0xff, H[0] & 0xff, H[1] >> 24 & 0xff, H[1] >> 16 & 0xff, H[1] >> 8 & 0xff, H[1] & 0xff, H[2] >> 24 & 0xff, H[2] >> 16 & 0xff, H[2] >> 8 & 0xff, H[2] & 0xff, H[3] >> 24 & 0xff, H[3] >> 16 & 0xff, H[3] >> 8 & 0xff, H[3] & 0xff, H[4] >> 24 & 0xff, H[4] >> 16 & 0xff, H[4] >> 8 & 0xff, H[4] & 0xff];
+}
+
+/* harmony default export */ __webpack_exports__["default"] = (sha1);
+
+/***/ }),
+
+/***/ "./node_modules/react-tooltip/node_modules/uuid/dist/esm-browser/v1.js":
+/*!*****************************************************************************!*\
+  !*** ./node_modules/react-tooltip/node_modules/uuid/dist/esm-browser/v1.js ***!
+  \*****************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _rng_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./rng.js */ "./node_modules/react-tooltip/node_modules/uuid/dist/esm-browser/rng.js");
+/* harmony import */ var _bytesToUuid_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./bytesToUuid.js */ "./node_modules/react-tooltip/node_modules/uuid/dist/esm-browser/bytesToUuid.js");
+
+ // **`v1()` - Generate time-based UUID**
+//
+// Inspired by https://github.com/LiosK/UUID.js
+// and http://docs.python.org/library/uuid.html
+
+var _nodeId;
+
+var _clockseq; // Previous uuid creation time
+
+
+var _lastMSecs = 0;
+var _lastNSecs = 0; // See https://github.com/uuidjs/uuid for API details
+
+function v1(options, buf, offset) {
+  var i = buf && offset || 0;
+  var b = buf || [];
+  options = options || {};
+  var node = options.node || _nodeId;
+  var clockseq = options.clockseq !== undefined ? options.clockseq : _clockseq; // node and clockseq need to be initialized to random values if they're not
+  // specified.  We do this lazily to minimize issues related to insufficient
+  // system entropy.  See #189
+
+  if (node == null || clockseq == null) {
+    var seedBytes = options.random || (options.rng || _rng_js__WEBPACK_IMPORTED_MODULE_0__["default"])();
+
+    if (node == null) {
+      // Per 4.5, create and 48-bit node id, (47 random bits + multicast bit = 1)
+      node = _nodeId = [seedBytes[0] | 0x01, seedBytes[1], seedBytes[2], seedBytes[3], seedBytes[4], seedBytes[5]];
+    }
+
+    if (clockseq == null) {
+      // Per 4.2.2, randomize (14 bit) clockseq
+      clockseq = _clockseq = (seedBytes[6] << 8 | seedBytes[7]) & 0x3fff;
+    }
+  } // UUID timestamps are 100 nano-second units since the Gregorian epoch,
+  // (1582-10-15 00:00).  JSNumbers aren't precise enough for this, so
+  // time is handled internally as 'msecs' (integer milliseconds) and 'nsecs'
+  // (100-nanoseconds offset from msecs) since unix epoch, 1970-01-01 00:00.
+
+
+  var msecs = options.msecs !== undefined ? options.msecs : new Date().getTime(); // Per 4.2.1.2, use count of uuid's generated during the current clock
+  // cycle to simulate higher resolution clock
+
+  var nsecs = options.nsecs !== undefined ? options.nsecs : _lastNSecs + 1; // Time since last uuid creation (in msecs)
+
+  var dt = msecs - _lastMSecs + (nsecs - _lastNSecs) / 10000; // Per 4.2.1.2, Bump clockseq on clock regression
+
+  if (dt < 0 && options.clockseq === undefined) {
+    clockseq = clockseq + 1 & 0x3fff;
+  } // Reset nsecs if clock regresses (new clockseq) or we've moved onto a new
+  // time interval
+
+
+  if ((dt < 0 || msecs > _lastMSecs) && options.nsecs === undefined) {
+    nsecs = 0;
+  } // Per 4.2.1.2 Throw error if too many uuids are requested
+
+
+  if (nsecs >= 10000) {
+    throw new Error("uuid.v1(): Can't create more than 10M uuids/sec");
+  }
+
+  _lastMSecs = msecs;
+  _lastNSecs = nsecs;
+  _clockseq = clockseq; // Per 4.1.4 - Convert from unix epoch to Gregorian epoch
+
+  msecs += 12219292800000; // `time_low`
+
+  var tl = ((msecs & 0xfffffff) * 10000 + nsecs) % 0x100000000;
+  b[i++] = tl >>> 24 & 0xff;
+  b[i++] = tl >>> 16 & 0xff;
+  b[i++] = tl >>> 8 & 0xff;
+  b[i++] = tl & 0xff; // `time_mid`
+
+  var tmh = msecs / 0x100000000 * 10000 & 0xfffffff;
+  b[i++] = tmh >>> 8 & 0xff;
+  b[i++] = tmh & 0xff; // `time_high_and_version`
+
+  b[i++] = tmh >>> 24 & 0xf | 0x10; // include version
+
+  b[i++] = tmh >>> 16 & 0xff; // `clock_seq_hi_and_reserved` (Per 4.2.2 - include variant)
+
+  b[i++] = clockseq >>> 8 | 0x80; // `clock_seq_low`
+
+  b[i++] = clockseq & 0xff; // `node`
+
+  for (var n = 0; n < 6; ++n) {
+    b[i + n] = node[n];
+  }
+
+  return buf ? buf : Object(_bytesToUuid_js__WEBPACK_IMPORTED_MODULE_1__["default"])(b);
+}
+
+/* harmony default export */ __webpack_exports__["default"] = (v1);
+
+/***/ }),
+
+/***/ "./node_modules/react-tooltip/node_modules/uuid/dist/esm-browser/v3.js":
+/*!*****************************************************************************!*\
+  !*** ./node_modules/react-tooltip/node_modules/uuid/dist/esm-browser/v3.js ***!
+  \*****************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _v35_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./v35.js */ "./node_modules/react-tooltip/node_modules/uuid/dist/esm-browser/v35.js");
+/* harmony import */ var _md5_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./md5.js */ "./node_modules/react-tooltip/node_modules/uuid/dist/esm-browser/md5.js");
+
+
+var v3 = Object(_v35_js__WEBPACK_IMPORTED_MODULE_0__["default"])('v3', 0x30, _md5_js__WEBPACK_IMPORTED_MODULE_1__["default"]);
+/* harmony default export */ __webpack_exports__["default"] = (v3);
+
+/***/ }),
+
+/***/ "./node_modules/react-tooltip/node_modules/uuid/dist/esm-browser/v35.js":
+/*!******************************************************************************!*\
+  !*** ./node_modules/react-tooltip/node_modules/uuid/dist/esm-browser/v35.js ***!
+  \******************************************************************************/
+/*! exports provided: DNS, URL, default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DNS", function() { return DNS; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "URL", function() { return URL; });
+/* harmony import */ var _bytesToUuid_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./bytesToUuid.js */ "./node_modules/react-tooltip/node_modules/uuid/dist/esm-browser/bytesToUuid.js");
+
+
+function uuidToBytes(uuid) {
+  // Note: We assume we're being passed a valid uuid string
+  var bytes = [];
+  uuid.replace(/[a-fA-F0-9]{2}/g, function (hex) {
+    bytes.push(parseInt(hex, 16));
+  });
+  return bytes;
+}
+
+function stringToBytes(str) {
+  str = unescape(encodeURIComponent(str)); // UTF8 escape
+
+  var bytes = new Array(str.length);
+
+  for (var i = 0; i < str.length; i++) {
+    bytes[i] = str.charCodeAt(i);
+  }
+
+  return bytes;
+}
+
+var DNS = '6ba7b810-9dad-11d1-80b4-00c04fd430c8';
+var URL = '6ba7b811-9dad-11d1-80b4-00c04fd430c8';
+/* harmony default export */ __webpack_exports__["default"] = (function (name, version, hashfunc) {
+  var generateUUID = function generateUUID(value, namespace, buf, offset) {
+    var off = buf && offset || 0;
+    if (typeof value == 'string') value = stringToBytes(value);
+    if (typeof namespace == 'string') namespace = uuidToBytes(namespace);
+    if (!Array.isArray(value)) throw TypeError('value must be an array of bytes');
+    if (!Array.isArray(namespace) || namespace.length !== 16) throw TypeError('namespace must be uuid string or an Array of 16 byte values'); // Per 4.3
+
+    var bytes = hashfunc(namespace.concat(value));
+    bytes[6] = bytes[6] & 0x0f | version;
+    bytes[8] = bytes[8] & 0x3f | 0x80;
+
+    if (buf) {
+      for (var idx = 0; idx < 16; ++idx) {
+        buf[off + idx] = bytes[idx];
+      }
+    }
+
+    return buf || Object(_bytesToUuid_js__WEBPACK_IMPORTED_MODULE_0__["default"])(bytes);
+  }; // Function#name is not settable on some platforms (#270)
+
+
+  try {
+    generateUUID.name = name;
+  } catch (err) {} // For CommonJS default export support
+
+
+  generateUUID.DNS = DNS;
+  generateUUID.URL = URL;
+  return generateUUID;
+});
+
+/***/ }),
+
+/***/ "./node_modules/react-tooltip/node_modules/uuid/dist/esm-browser/v4.js":
+/*!*****************************************************************************!*\
+  !*** ./node_modules/react-tooltip/node_modules/uuid/dist/esm-browser/v4.js ***!
+  \*****************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _rng_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./rng.js */ "./node_modules/react-tooltip/node_modules/uuid/dist/esm-browser/rng.js");
+/* harmony import */ var _bytesToUuid_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./bytesToUuid.js */ "./node_modules/react-tooltip/node_modules/uuid/dist/esm-browser/bytesToUuid.js");
+
+
+
+function v4(options, buf, offset) {
+  var i = buf && offset || 0;
+
+  if (typeof options == 'string') {
+    buf = options === 'binary' ? new Array(16) : null;
+    options = null;
+  }
+
+  options = options || {};
+  var rnds = options.random || (options.rng || _rng_js__WEBPACK_IMPORTED_MODULE_0__["default"])(); // Per 4.4, set bits for version and `clock_seq_hi_and_reserved`
+
+  rnds[6] = rnds[6] & 0x0f | 0x40;
+  rnds[8] = rnds[8] & 0x3f | 0x80; // Copy bytes to buffer, if provided
+
+  if (buf) {
+    for (var ii = 0; ii < 16; ++ii) {
+      buf[i + ii] = rnds[ii];
+    }
+  }
+
+  return buf || Object(_bytesToUuid_js__WEBPACK_IMPORTED_MODULE_1__["default"])(rnds);
+}
+
+/* harmony default export */ __webpack_exports__["default"] = (v4);
+
+/***/ }),
+
+/***/ "./node_modules/react-tooltip/node_modules/uuid/dist/esm-browser/v5.js":
+/*!*****************************************************************************!*\
+  !*** ./node_modules/react-tooltip/node_modules/uuid/dist/esm-browser/v5.js ***!
+  \*****************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _v35_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./v35.js */ "./node_modules/react-tooltip/node_modules/uuid/dist/esm-browser/v35.js");
+/* harmony import */ var _sha1_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./sha1.js */ "./node_modules/react-tooltip/node_modules/uuid/dist/esm-browser/sha1.js");
+
+
+var v5 = Object(_v35_js__WEBPACK_IMPORTED_MODULE_0__["default"])('v5', 0x50, _sha1_js__WEBPACK_IMPORTED_MODULE_1__["default"]);
+/* harmony default export */ __webpack_exports__["default"] = (v5);
+
+/***/ }),
+
 /***/ "./node_modules/setimmediate/setImmediate.js":
 /*!***************************************************!*\
   !*** ./node_modules/setimmediate/setImmediate.js ***!
@@ -21043,1934 +23219,6 @@ exports.default = exports.SlideDown;
 }(typeof self === "undefined" ? typeof global === "undefined" ? this : global : self));
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../webpack/buildin/global.js */ "./node_modules/webpack/buildin/global.js"), __webpack_require__(/*! ./../process/browser.js */ "./node_modules/process/browser.js")))
-
-/***/ }),
-
-/***/ "./node_modules/superagent/lib/agent-base.js":
-/*!***************************************************!*\
-  !*** ./node_modules/superagent/lib/agent-base.js ***!
-  \***************************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-function Agent() {
-  this._defaults = [];
-}
-
-["use", "on", "once", "set", "query", "type", "accept", "auth", "withCredentials", "sortQuery", "retry", "ok", "redirects",
- "timeout", "buffer", "serialize", "parse", "ca", "key", "pfx", "cert"].forEach(fn => {
-  /** Default setting for all requests from this agent */
-  Agent.prototype[fn] = function(...args) {
-    this._defaults.push({fn, args});
-    return this;
-  }
-});
-
-Agent.prototype._setDefaults = function(req) {
-    this._defaults.forEach(def => {
-      req[def.fn].apply(req, def.args);
-    });
-};
-
-module.exports = Agent;
-
-
-/***/ }),
-
-/***/ "./node_modules/superagent/lib/client.js":
-/*!***********************************************!*\
-  !*** ./node_modules/superagent/lib/client.js ***!
-  \***********************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-/**
- * Root reference for iframes.
- */
-
-let root;
-if (typeof window !== 'undefined') { // Browser window
-  root = window;
-} else if (typeof self !== 'undefined') { // Web Worker
-  root = self;
-} else { // Other environments
-  console.warn("Using browser-only version of superagent in non-browser environment");
-  root = this;
-}
-
-const Emitter = __webpack_require__(/*! component-emitter */ "./node_modules/component-emitter/index.js");
-const RequestBase = __webpack_require__(/*! ./request-base */ "./node_modules/superagent/lib/request-base.js");
-const isObject = __webpack_require__(/*! ./is-object */ "./node_modules/superagent/lib/is-object.js");
-const ResponseBase = __webpack_require__(/*! ./response-base */ "./node_modules/superagent/lib/response-base.js");
-const Agent = __webpack_require__(/*! ./agent-base */ "./node_modules/superagent/lib/agent-base.js");
-
-/**
- * Noop.
- */
-
-function noop(){};
-
-/**
- * Expose `request`.
- */
-
-const request = exports = module.exports = function(method, url) {
-  // callback
-  if ('function' == typeof url) {
-    return new exports.Request('GET', method).end(url);
-  }
-
-  // url first
-  if (1 == arguments.length) {
-    return new exports.Request('GET', method);
-  }
-
-  return new exports.Request(method, url);
-};
-
-exports.Request = Request;
-
-/**
- * Determine XHR.
- */
-
-request.getXHR = () => {
-  if (root.XMLHttpRequest
-      && (!root.location || 'file:' != root.location.protocol
-          || !root.ActiveXObject)) {
-    return new XMLHttpRequest;
-  } else {
-    try { return new ActiveXObject('Microsoft.XMLHTTP'); } catch(e) {}
-    try { return new ActiveXObject('Msxml2.XMLHTTP.6.0'); } catch(e) {}
-    try { return new ActiveXObject('Msxml2.XMLHTTP.3.0'); } catch(e) {}
-    try { return new ActiveXObject('Msxml2.XMLHTTP'); } catch(e) {}
-  }
-  throw Error("Browser-only version of superagent could not find XHR");
-};
-
-/**
- * Removes leading and trailing whitespace, added to support IE.
- *
- * @param {String} s
- * @return {String}
- * @api private
- */
-
-const trim = ''.trim
-  ? s => s.trim()
-  : s => s.replace(/(^\s*|\s*$)/g, '');
-
-/**
- * Serialize the given `obj`.
- *
- * @param {Object} obj
- * @return {String}
- * @api private
- */
-
-function serialize(obj) {
-  if (!isObject(obj)) return obj;
-  const pairs = [];
-  for (const key in obj) {
-    pushEncodedKeyValuePair(pairs, key, obj[key]);
-  }
-  return pairs.join('&');
-}
-
-/**
- * Helps 'serialize' with serializing arrays.
- * Mutates the pairs array.
- *
- * @param {Array} pairs
- * @param {String} key
- * @param {Mixed} val
- */
-
-function pushEncodedKeyValuePair(pairs, key, val) {
-  if (val != null) {
-    if (Array.isArray(val)) {
-      val.forEach(v => {
-        pushEncodedKeyValuePair(pairs, key, v);
-      });
-    } else if (isObject(val)) {
-      for(const subkey in val) {
-        pushEncodedKeyValuePair(pairs, `${key}[${subkey}]`, val[subkey]);
-      }
-    } else {
-      pairs.push(encodeURIComponent(key)
-        + '=' + encodeURIComponent(val));
-    }
-  } else if (val === null) {
-    pairs.push(encodeURIComponent(key));
-  }
-}
-
-/**
- * Expose serialization method.
- */
-
-request.serializeObject = serialize;
-
-/**
-  * Parse the given x-www-form-urlencoded `str`.
-  *
-  * @param {String} str
-  * @return {Object}
-  * @api private
-  */
-
-function parseString(str) {
-  const obj = {};
-  const pairs = str.split('&');
-  let pair;
-  let pos;
-
-  for (let i = 0, len = pairs.length; i < len; ++i) {
-    pair = pairs[i];
-    pos = pair.indexOf('=');
-    if (pos == -1) {
-      obj[decodeURIComponent(pair)] = '';
-    } else {
-      obj[decodeURIComponent(pair.slice(0, pos))] =
-        decodeURIComponent(pair.slice(pos + 1));
-    }
-  }
-
-  return obj;
-}
-
-/**
- * Expose parser.
- */
-
-request.parseString = parseString;
-
-/**
- * Default MIME type map.
- *
- *     superagent.types.xml = 'application/xml';
- *
- */
-
-request.types = {
-  html: 'text/html',
-  json: 'application/json',
-  xml: 'text/xml',
-  urlencoded: 'application/x-www-form-urlencoded',
-  'form': 'application/x-www-form-urlencoded',
-  'form-data': 'application/x-www-form-urlencoded'
-};
-
-/**
- * Default serialization map.
- *
- *     superagent.serialize['application/xml'] = function(obj){
- *       return 'generated xml here';
- *     };
- *
- */
-
-request.serialize = {
-  'application/x-www-form-urlencoded': serialize,
-  'application/json': JSON.stringify
-};
-
-/**
-  * Default parsers.
-  *
-  *     superagent.parse['application/xml'] = function(str){
-  *       return { object parsed from str };
-  *     };
-  *
-  */
-
-request.parse = {
-  'application/x-www-form-urlencoded': parseString,
-  'application/json': JSON.parse
-};
-
-/**
- * Parse the given header `str` into
- * an object containing the mapped fields.
- *
- * @param {String} str
- * @return {Object}
- * @api private
- */
-
-function parseHeader(str) {
-  const lines = str.split(/\r?\n/);
-  const fields = {};
-  let index;
-  let line;
-  let field;
-  let val;
-
-  for (let i = 0, len = lines.length; i < len; ++i) {
-    line = lines[i];
-    index = line.indexOf(':');
-    if (index === -1) { // could be empty line, just skip it
-      continue;
-    }
-    field = line.slice(0, index).toLowerCase();
-    val = trim(line.slice(index + 1));
-    fields[field] = val;
-  }
-
-  return fields;
-}
-
-/**
- * Check if `mime` is json or has +json structured syntax suffix.
- *
- * @param {String} mime
- * @return {Boolean}
- * @api private
- */
-
-function isJSON(mime) {
-  // should match /json or +json
-  // but not /json-seq
-  return /[\/+]json($|[^-\w])/.test(mime);
-}
-
-/**
- * Initialize a new `Response` with the given `xhr`.
- *
- *  - set flags (.ok, .error, etc)
- *  - parse header
- *
- * Examples:
- *
- *  Aliasing `superagent` as `request` is nice:
- *
- *      request = superagent;
- *
- *  We can use the promise-like API, or pass callbacks:
- *
- *      request.get('/').end(function(res){});
- *      request.get('/', function(res){});
- *
- *  Sending data can be chained:
- *
- *      request
- *        .post('/user')
- *        .send({ name: 'tj' })
- *        .end(function(res){});
- *
- *  Or passed to `.send()`:
- *
- *      request
- *        .post('/user')
- *        .send({ name: 'tj' }, function(res){});
- *
- *  Or passed to `.post()`:
- *
- *      request
- *        .post('/user', { name: 'tj' })
- *        .end(function(res){});
- *
- * Or further reduced to a single call for simple cases:
- *
- *      request
- *        .post('/user', { name: 'tj' }, function(res){});
- *
- * @param {XMLHTTPRequest} xhr
- * @param {Object} options
- * @api private
- */
-
-function Response(req) {
-  this.req = req;
-  this.xhr = this.req.xhr;
-  // responseText is accessible only if responseType is '' or 'text' and on older browsers
-  this.text = ((this.req.method !='HEAD' && (this.xhr.responseType === '' || this.xhr.responseType === 'text')) || typeof this.xhr.responseType === 'undefined')
-     ? this.xhr.responseText
-     : null;
-  this.statusText = this.req.xhr.statusText;
-  let status = this.xhr.status;
-  // handle IE9 bug: http://stackoverflow.com/questions/10046972/msie-returns-status-code-of-1223-for-ajax-request
-  if (status === 1223) {
-    status = 204;
-  }
-  this._setStatusProperties(status);
-  this.header = this.headers = parseHeader(this.xhr.getAllResponseHeaders());
-  // getAllResponseHeaders sometimes falsely returns "" for CORS requests, but
-  // getResponseHeader still works. so we get content-type even if getting
-  // other headers fails.
-  this.header['content-type'] = this.xhr.getResponseHeader('content-type');
-  this._setHeaderProperties(this.header);
-
-  if (null === this.text && req._responseType) {
-    this.body = this.xhr.response;
-  } else {
-    this.body = this.req.method != 'HEAD'
-      ? this._parseBody(this.text ? this.text : this.xhr.response)
-      : null;
-  }
-}
-
-ResponseBase(Response.prototype);
-
-/**
- * Parse the given body `str`.
- *
- * Used for auto-parsing of bodies. Parsers
- * are defined on the `superagent.parse` object.
- *
- * @param {String} str
- * @return {Mixed}
- * @api private
- */
-
-Response.prototype._parseBody = function(str) {
-  let parse = request.parse[this.type];
-  if (this.req._parser) {
-    return this.req._parser(this, str);
-  }
-  if (!parse && isJSON(this.type)) {
-    parse = request.parse['application/json'];
-  }
-  return parse && str && (str.length || str instanceof Object)
-    ? parse(str)
-    : null;
-};
-
-/**
- * Return an `Error` representative of this response.
- *
- * @return {Error}
- * @api public
- */
-
-Response.prototype.toError = function(){
-  const req = this.req;
-  const method = req.method;
-  const url = req.url;
-
-  const msg = `cannot ${method} ${url} (${this.status})`;
-  const err = new Error(msg);
-  err.status = this.status;
-  err.method = method;
-  err.url = url;
-
-  return err;
-};
-
-/**
- * Expose `Response`.
- */
-
-request.Response = Response;
-
-/**
- * Initialize a new `Request` with the given `method` and `url`.
- *
- * @param {String} method
- * @param {String} url
- * @api public
- */
-
-function Request(method, url) {
-  const self = this;
-  this._query = this._query || [];
-  this.method = method;
-  this.url = url;
-  this.header = {}; // preserves header name case
-  this._header = {}; // coerces header names to lowercase
-  this.on('end', () => {
-    let err = null;
-    let res = null;
-
-    try {
-      res = new Response(self);
-    } catch(e) {
-      err = new Error('Parser is unable to parse the response');
-      err.parse = true;
-      err.original = e;
-      // issue #675: return the raw response if the response parsing fails
-      if (self.xhr) {
-        // ie9 doesn't have 'response' property
-        err.rawResponse = typeof self.xhr.responseType == 'undefined' ? self.xhr.responseText : self.xhr.response;
-        // issue #876: return the http status code if the response parsing fails
-        err.status = self.xhr.status ? self.xhr.status : null;
-        err.statusCode = err.status; // backwards-compat only
-      } else {
-        err.rawResponse = null;
-        err.status = null;
-      }
-
-      return self.callback(err);
-    }
-
-    self.emit('response', res);
-
-    let new_err;
-    try {
-      if (!self._isResponseOK(res)) {
-        new_err = new Error(res.statusText || 'Unsuccessful HTTP response');
-      }
-    } catch(custom_err) {
-      new_err = custom_err; // ok() callback can throw
-    }
-
-    // #1000 don't catch errors from the callback to avoid double calling it
-    if (new_err) {
-      new_err.original = err;
-      new_err.response = res;
-      new_err.status = res.status;
-      self.callback(new_err, res);
-    } else {
-      self.callback(null, res);
-    }
-  });
-}
-
-/**
- * Mixin `Emitter` and `RequestBase`.
- */
-
-Emitter(Request.prototype);
-RequestBase(Request.prototype);
-
-/**
- * Set Content-Type to `type`, mapping values from `request.types`.
- *
- * Examples:
- *
- *      superagent.types.xml = 'application/xml';
- *
- *      request.post('/')
- *        .type('xml')
- *        .send(xmlstring)
- *        .end(callback);
- *
- *      request.post('/')
- *        .type('application/xml')
- *        .send(xmlstring)
- *        .end(callback);
- *
- * @param {String} type
- * @return {Request} for chaining
- * @api public
- */
-
-Request.prototype.type = function(type){
-  this.set('Content-Type', request.types[type] || type);
-  return this;
-};
-
-/**
- * Set Accept to `type`, mapping values from `request.types`.
- *
- * Examples:
- *
- *      superagent.types.json = 'application/json';
- *
- *      request.get('/agent')
- *        .accept('json')
- *        .end(callback);
- *
- *      request.get('/agent')
- *        .accept('application/json')
- *        .end(callback);
- *
- * @param {String} accept
- * @return {Request} for chaining
- * @api public
- */
-
-Request.prototype.accept = function(type){
-  this.set('Accept', request.types[type] || type);
-  return this;
-};
-
-/**
- * Set Authorization field value with `user` and `pass`.
- *
- * @param {String} user
- * @param {String} [pass] optional in case of using 'bearer' as type
- * @param {Object} options with 'type' property 'auto', 'basic' or 'bearer' (default 'basic')
- * @return {Request} for chaining
- * @api public
- */
-
-Request.prototype.auth = function(user, pass, options){
-  if (1 === arguments.length) pass = '';
-  if (typeof pass === 'object' && pass !== null) { // pass is optional and can be replaced with options
-    options = pass;
-    pass = '';
-  }
-  if (!options) {
-    options = {
-      type: 'function' === typeof btoa ? 'basic' : 'auto',
-    };
-  }
-
-  const encoder = string => {
-    if ('function' === typeof btoa) {
-      return btoa(string);
-    }
-    throw new Error('Cannot use basic auth, btoa is not a function');
-  };
-
-  return this._auth(user, pass, options, encoder);
-};
-
-/**
- * Add query-string `val`.
- *
- * Examples:
- *
- *   request.get('/shoes')
- *     .query('size=10')
- *     .query({ color: 'blue' })
- *
- * @param {Object|String} val
- * @return {Request} for chaining
- * @api public
- */
-
-Request.prototype.query = function(val){
-  if ('string' != typeof val) val = serialize(val);
-  if (val) this._query.push(val);
-  return this;
-};
-
-/**
- * Queue the given `file` as an attachment to the specified `field`,
- * with optional `options` (or filename).
- *
- * ``` js
- * request.post('/upload')
- *   .attach('content', new Blob(['<a id="a"><b id="b">hey!</b></a>'], { type: "text/html"}))
- *   .end(callback);
- * ```
- *
- * @param {String} field
- * @param {Blob|File} file
- * @param {String|Object} options
- * @return {Request} for chaining
- * @api public
- */
-
-Request.prototype.attach = function(field, file, options){
-  if (file) {
-    if (this._data) {
-      throw Error("superagent can't mix .send() and .attach()");
-    }
-
-    this._getFormData().append(field, file, options || file.name);
-  }
-  return this;
-};
-
-Request.prototype._getFormData = function(){
-  if (!this._formData) {
-    this._formData = new root.FormData();
-  }
-  return this._formData;
-};
-
-/**
- * Invoke the callback with `err` and `res`
- * and handle arity check.
- *
- * @param {Error} err
- * @param {Response} res
- * @api private
- */
-
-Request.prototype.callback = function(err, res){
-  if (this._shouldRetry(err, res)) {
-    return this._retry();
-  }
-
-  const fn = this._callback;
-  this.clearTimeout();
-
-  if (err) {
-    if (this._maxRetries) err.retries = this._retries - 1;
-    this.emit('error', err);
-  }
-
-  fn(err, res);
-};
-
-/**
- * Invoke callback with x-domain error.
- *
- * @api private
- */
-
-Request.prototype.crossDomainError = function(){
-  const err = new Error('Request has been terminated\nPossible causes: the network is offline, Origin is not allowed by Access-Control-Allow-Origin, the page is being unloaded, etc.');
-  err.crossDomain = true;
-
-  err.status = this.status;
-  err.method = this.method;
-  err.url = this.url;
-
-  this.callback(err);
-};
-
-// This only warns, because the request is still likely to work
-Request.prototype.buffer = Request.prototype.ca = Request.prototype.agent = function(){
-  console.warn("This is not supported in browser version of superagent");
-  return this;
-};
-
-// This throws, because it can't send/receive data as expected
-Request.prototype.pipe = Request.prototype.write = () => {
-  throw Error("Streaming is not supported in browser version of superagent");
-};
-
-/**
- * Check if `obj` is a host object,
- * we don't want to serialize these :)
- *
- * @param {Object} obj
- * @return {Boolean}
- * @api private
- */
-Request.prototype._isHost = function _isHost(obj) {
-  // Native objects stringify to [object File], [object Blob], [object FormData], etc.
-  return obj && 'object' === typeof obj && !Array.isArray(obj) && Object.prototype.toString.call(obj) !== '[object Object]';
-}
-
-/**
- * Initiate request, invoking callback `fn(res)`
- * with an instanceof `Response`.
- *
- * @param {Function} fn
- * @return {Request} for chaining
- * @api public
- */
-
-Request.prototype.end = function(fn){
-  if (this._endCalled) {
-    console.warn("Warning: .end() was called twice. This is not supported in superagent");
-  }
-  this._endCalled = true;
-
-  // store callback
-  this._callback = fn || noop;
-
-  // querystring
-  this._finalizeQueryString();
-
-  this._end();
-};
-
-Request.prototype._end = function() {
-  if (this._aborted) return this.callback(Error("The request has been aborted even before .end() was called"));
-
-  const self = this;
-  const xhr = (this.xhr = request.getXHR());
-  let data = this._formData || this._data;
-
-  this._setTimeouts();
-
-  // state change
-  xhr.onreadystatechange = () => {
-    const readyState = xhr.readyState;
-    if (readyState >= 2 && self._responseTimeoutTimer) {
-      clearTimeout(self._responseTimeoutTimer);
-    }
-    if (4 != readyState) {
-      return;
-    }
-
-    // In IE9, reads to any property (e.g. status) off of an aborted XHR will
-    // result in the error "Could not complete the operation due to error c00c023f"
-    let status;
-    try { status = xhr.status } catch(e) { status = 0; }
-
-    if (!status) {
-      if (self.timedout || self._aborted) return;
-      return self.crossDomainError();
-    }
-    self.emit('end');
-  };
-
-  // progress
-  const handleProgress = (direction, e) => {
-    if (e.total > 0) {
-      e.percent = e.loaded / e.total * 100;
-    }
-    e.direction = direction;
-    self.emit('progress', e);
-  };
-  if (this.hasListeners('progress')) {
-    try {
-      xhr.onprogress = handleProgress.bind(null, 'download');
-      if (xhr.upload) {
-        xhr.upload.onprogress = handleProgress.bind(null, 'upload');
-      }
-    } catch(e) {
-      // Accessing xhr.upload fails in IE from a web worker, so just pretend it doesn't exist.
-      // Reported here:
-      // https://connect.microsoft.com/IE/feedback/details/837245/xmlhttprequest-upload-throws-invalid-argument-when-used-from-web-worker-context
-    }
-  }
-
-  // initiate request
-  try {
-    if (this.username && this.password) {
-      xhr.open(this.method, this.url, true, this.username, this.password);
-    } else {
-      xhr.open(this.method, this.url, true);
-    }
-  } catch (err) {
-    // see #1149
-    return this.callback(err);
-  }
-
-  // CORS
-  if (this._withCredentials) xhr.withCredentials = true;
-
-  // body
-  if (!this._formData && 'GET' != this.method && 'HEAD' != this.method && 'string' != typeof data && !this._isHost(data)) {
-    // serialize stuff
-    const contentType = this._header['content-type'];
-    let serialize = this._serializer || request.serialize[contentType ? contentType.split(';')[0] : ''];
-    if (!serialize && isJSON(contentType)) {
-      serialize = request.serialize['application/json'];
-    }
-    if (serialize) data = serialize(data);
-  }
-
-  // set header fields
-  for (const field in this.header) {
-    if (null == this.header[field]) continue;
-
-    if (this.header.hasOwnProperty(field))
-      xhr.setRequestHeader(field, this.header[field]);
-  }
-
-  if (this._responseType) {
-    xhr.responseType = this._responseType;
-  }
-
-  // send stuff
-  this.emit('request', this);
-
-  // IE11 xhr.send(undefined) sends 'undefined' string as POST payload (instead of nothing)
-  // We need null here if data is undefined
-  xhr.send(typeof data !== 'undefined' ? data : null);
-};
-
-request.agent = () => new Agent();
-
-["GET", "POST", "OPTIONS", "PATCH", "PUT", "DELETE"].forEach(method => {
-  Agent.prototype[method.toLowerCase()] = function(url, fn) {
-    const req = new request.Request(method, url);
-    this._setDefaults(req);
-    if (fn) {
-      req.end(fn);
-    }
-    return req;
-  };
-});
-
-Agent.prototype.del = Agent.prototype['delete'];
-
-/**
- * GET `url` with optional callback `fn(res)`.
- *
- * @param {String} url
- * @param {Mixed|Function} [data] or fn
- * @param {Function} [fn]
- * @return {Request}
- * @api public
- */
-
-request.get = (url, data, fn) => {
-  const req = request('GET', url);
-  if ('function' == typeof data) (fn = data), (data = null);
-  if (data) req.query(data);
-  if (fn) req.end(fn);
-  return req;
-};
-
-/**
- * HEAD `url` with optional callback `fn(res)`.
- *
- * @param {String} url
- * @param {Mixed|Function} [data] or fn
- * @param {Function} [fn]
- * @return {Request}
- * @api public
- */
-
-request.head = (url, data, fn) => {
-  const req = request('HEAD', url);
-  if ('function' == typeof data) (fn = data), (data = null);
-  if (data) req.query(data);
-  if (fn) req.end(fn);
-  return req;
-};
-
-/**
- * OPTIONS query to `url` with optional callback `fn(res)`.
- *
- * @param {String} url
- * @param {Mixed|Function} [data] or fn
- * @param {Function} [fn]
- * @return {Request}
- * @api public
- */
-
-request.options = (url, data, fn) => {
-  const req = request('OPTIONS', url);
-  if ('function' == typeof data) (fn = data), (data = null);
-  if (data) req.send(data);
-  if (fn) req.end(fn);
-  return req;
-};
-
-/**
- * DELETE `url` with optional `data` and callback `fn(res)`.
- *
- * @param {String} url
- * @param {Mixed} [data]
- * @param {Function} [fn]
- * @return {Request}
- * @api public
- */
-
-function del(url, data, fn) {
-  const req = request('DELETE', url);
-  if ('function' == typeof data) (fn = data), (data = null);
-  if (data) req.send(data);
-  if (fn) req.end(fn);
-  return req;
-}
-
-request['del'] = del;
-request['delete'] = del;
-
-/**
- * PATCH `url` with optional `data` and callback `fn(res)`.
- *
- * @param {String} url
- * @param {Mixed} [data]
- * @param {Function} [fn]
- * @return {Request}
- * @api public
- */
-
-request.patch = (url, data, fn) => {
-  const req = request('PATCH', url);
-  if ('function' == typeof data) (fn = data), (data = null);
-  if (data) req.send(data);
-  if (fn) req.end(fn);
-  return req;
-};
-
-/**
- * POST `url` with optional `data` and callback `fn(res)`.
- *
- * @param {String} url
- * @param {Mixed} [data]
- * @param {Function} [fn]
- * @return {Request}
- * @api public
- */
-
-request.post = (url, data, fn) => {
-  const req = request('POST', url);
-  if ('function' == typeof data) (fn = data), (data = null);
-  if (data) req.send(data);
-  if (fn) req.end(fn);
-  return req;
-};
-
-/**
- * PUT `url` with optional `data` and callback `fn(res)`.
- *
- * @param {String} url
- * @param {Mixed|Function} [data] or fn
- * @param {Function} [fn]
- * @return {Request}
- * @api public
- */
-
-request.put = (url, data, fn) => {
-  const req = request('PUT', url);
-  if ('function' == typeof data) (fn = data), (data = null);
-  if (data) req.send(data);
-  if (fn) req.end(fn);
-  return req;
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/superagent/lib/is-object.js":
-/*!**************************************************!*\
-  !*** ./node_modules/superagent/lib/is-object.js ***!
-  \**************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-/**
- * Check if `obj` is an object.
- *
- * @param {Object} obj
- * @return {Boolean}
- * @api private
- */
-
-function isObject(obj) {
-  return null !== obj && 'object' === typeof obj;
-}
-
-module.exports = isObject;
-
-
-/***/ }),
-
-/***/ "./node_modules/superagent/lib/request-base.js":
-/*!*****************************************************!*\
-  !*** ./node_modules/superagent/lib/request-base.js ***!
-  \*****************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-/**
- * Module of mixed-in functions shared between node and client code
- */
-const isObject = __webpack_require__(/*! ./is-object */ "./node_modules/superagent/lib/is-object.js");
-
-/**
- * Expose `RequestBase`.
- */
-
-module.exports = RequestBase;
-
-/**
- * Initialize a new `RequestBase`.
- *
- * @api public
- */
-
-function RequestBase(obj) {
-  if (obj) return mixin(obj);
-}
-
-/**
- * Mixin the prototype properties.
- *
- * @param {Object} obj
- * @return {Object}
- * @api private
- */
-
-function mixin(obj) {
-  for (const key in RequestBase.prototype) {
-    obj[key] = RequestBase.prototype[key];
-  }
-  return obj;
-}
-
-/**
- * Clear previous timeout.
- *
- * @return {Request} for chaining
- * @api public
- */
-
-RequestBase.prototype.clearTimeout = function _clearTimeout(){
-  clearTimeout(this._timer);
-  clearTimeout(this._responseTimeoutTimer);
-  delete this._timer;
-  delete this._responseTimeoutTimer;
-  return this;
-};
-
-/**
- * Override default response body parser
- *
- * This function will be called to convert incoming data into request.body
- *
- * @param {Function}
- * @api public
- */
-
-RequestBase.prototype.parse = function parse(fn){
-  this._parser = fn;
-  return this;
-};
-
-/**
- * Set format of binary response body.
- * In browser valid formats are 'blob' and 'arraybuffer',
- * which return Blob and ArrayBuffer, respectively.
- *
- * In Node all values result in Buffer.
- *
- * Examples:
- *
- *      req.get('/')
- *        .responseType('blob')
- *        .end(callback);
- *
- * @param {String} val
- * @return {Request} for chaining
- * @api public
- */
-
-RequestBase.prototype.responseType = function(val){
-  this._responseType = val;
-  return this;
-};
-
-/**
- * Override default request body serializer
- *
- * This function will be called to convert data set via .send or .attach into payload to send
- *
- * @param {Function}
- * @api public
- */
-
-RequestBase.prototype.serialize = function serialize(fn){
-  this._serializer = fn;
-  return this;
-};
-
-/**
- * Set timeouts.
- *
- * - response timeout is time between sending request and receiving the first byte of the response. Includes DNS and connection time.
- * - deadline is the time from start of the request to receiving response body in full. If the deadline is too short large files may not load at all on slow connections.
- *
- * Value of 0 or false means no timeout.
- *
- * @param {Number|Object} ms or {response, deadline}
- * @return {Request} for chaining
- * @api public
- */
-
-RequestBase.prototype.timeout = function timeout(options){
-  if (!options || 'object' !== typeof options) {
-    this._timeout = options;
-    this._responseTimeout = 0;
-    return this;
-  }
-
-  for(const option in options) {
-    switch(option) {
-      case 'deadline':
-        this._timeout = options.deadline;
-        break;
-      case 'response':
-        this._responseTimeout = options.response;
-        break;
-      default:
-        console.warn("Unknown timeout option", option);
-    }
-  }
-  return this;
-};
-
-/**
- * Set number of retry attempts on error.
- *
- * Failed requests will be retried 'count' times if timeout or err.code >= 500.
- *
- * @param {Number} count
- * @param {Function} [fn]
- * @return {Request} for chaining
- * @api public
- */
-
-RequestBase.prototype.retry = function retry(count, fn){
-  // Default to 1 if no count passed or true
-  if (arguments.length === 0 || count === true) count = 1;
-  if (count <= 0) count = 0;
-  this._maxRetries = count;
-  this._retries = 0;
-  this._retryCallback = fn;
-  return this;
-};
-
-const ERROR_CODES = [
-  'ECONNRESET',
-  'ETIMEDOUT',
-  'EADDRINFO',
-  'ESOCKETTIMEDOUT'
-];
-
-/**
- * Determine if a request should be retried.
- * (Borrowed from segmentio/superagent-retry)
- *
- * @param {Error} err
- * @param {Response} [res]
- * @returns {Boolean}
- */
-RequestBase.prototype._shouldRetry = function(err, res) {
-  if (!this._maxRetries || this._retries++ >= this._maxRetries) {
-    return false;
-  }
-  if (this._retryCallback) {
-    try {
-      const override = this._retryCallback(err, res);
-      if (override === true) return true;
-      if (override === false) return false;
-      // undefined falls back to defaults
-    } catch(e) {
-      console.error(e);
-    }
-  }
-  if (res && res.status && res.status >= 500 && res.status != 501) return true;
-  if (err) {
-    if (err.code && ~ERROR_CODES.indexOf(err.code)) return true;
-    // Superagent timeout
-    if (err.timeout && err.code == 'ECONNABORTED') return true;
-    if (err.crossDomain) return true;
-  }
-  return false;
-};
-
-/**
- * Retry request
- *
- * @return {Request} for chaining
- * @api private
- */
-
-RequestBase.prototype._retry = function() {
-
-  this.clearTimeout();
-
-  // node
-  if (this.req) {
-    this.req = null;
-    this.req = this.request();
-  }
-
-  this._aborted = false;
-  this.timedout = false;
-
-  return this._end();
-};
-
-/**
- * Promise support
- *
- * @param {Function} resolve
- * @param {Function} [reject]
- * @return {Request}
- */
-
-RequestBase.prototype.then = function then(resolve, reject) {
-  if (!this._fullfilledPromise) {
-    const self = this;
-    if (this._endCalled) {
-      console.warn("Warning: superagent request was sent twice, because both .end() and .then() were called. Never call .end() if you use promises");
-    }
-    this._fullfilledPromise = new Promise((innerResolve, innerReject) => {
-      self.on('error', innerReject);
-      self.on('abort', () => {
-        const err = new Error('Aborted');
-        err.code = "ABORTED";
-        err.status = this.status;
-        err.method = this.method;
-        err.url = this.url;
-        innerReject(err);
-      });
-      self.end((err, res) => {
-        if (err) innerReject(err);
-        else innerResolve(res);
-      });
-    });
-  }
-  return this._fullfilledPromise.then(resolve, reject);
-};
-
-RequestBase.prototype['catch'] = function(cb) {
-  return this.then(undefined, cb);
-};
-
-/**
- * Allow for extension
- */
-
-RequestBase.prototype.use = function use(fn) {
-  fn(this);
-  return this;
-};
-
-RequestBase.prototype.ok = function(cb) {
-  if ('function' !== typeof cb) throw Error("Callback required");
-  this._okCallback = cb;
-  return this;
-};
-
-RequestBase.prototype._isResponseOK = function(res) {
-  if (!res) {
-    return false;
-  }
-
-  if (this._okCallback) {
-    return this._okCallback(res);
-  }
-
-  return res.status >= 200 && res.status < 300;
-};
-
-/**
- * Get request header `field`.
- * Case-insensitive.
- *
- * @param {String} field
- * @return {String}
- * @api public
- */
-
-RequestBase.prototype.get = function(field){
-  return this._header[field.toLowerCase()];
-};
-
-/**
- * Get case-insensitive header `field` value.
- * This is a deprecated internal API. Use `.get(field)` instead.
- *
- * (getHeader is no longer used internally by the superagent code base)
- *
- * @param {String} field
- * @return {String}
- * @api private
- * @deprecated
- */
-
-RequestBase.prototype.getHeader = RequestBase.prototype.get;
-
-/**
- * Set header `field` to `val`, or multiple fields with one object.
- * Case-insensitive.
- *
- * Examples:
- *
- *      req.get('/')
- *        .set('Accept', 'application/json')
- *        .set('X-API-Key', 'foobar')
- *        .end(callback);
- *
- *      req.get('/')
- *        .set({ Accept: 'application/json', 'X-API-Key': 'foobar' })
- *        .end(callback);
- *
- * @param {String|Object} field
- * @param {String} val
- * @return {Request} for chaining
- * @api public
- */
-
-RequestBase.prototype.set = function(field, val){
-  if (isObject(field)) {
-    for (const key in field) {
-      this.set(key, field[key]);
-    }
-    return this;
-  }
-  this._header[field.toLowerCase()] = val;
-  this.header[field] = val;
-  return this;
-};
-
-/**
- * Remove header `field`.
- * Case-insensitive.
- *
- * Example:
- *
- *      req.get('/')
- *        .unset('User-Agent')
- *        .end(callback);
- *
- * @param {String} field
- */
-RequestBase.prototype.unset = function(field){
-  delete this._header[field.toLowerCase()];
-  delete this.header[field];
-  return this;
-};
-
-/**
- * Write the field `name` and `val`, or multiple fields with one object
- * for "multipart/form-data" request bodies.
- *
- * ``` js
- * request.post('/upload')
- *   .field('foo', 'bar')
- *   .end(callback);
- *
- * request.post('/upload')
- *   .field({ foo: 'bar', baz: 'qux' })
- *   .end(callback);
- * ```
- *
- * @param {String|Object} name
- * @param {String|Blob|File|Buffer|fs.ReadStream} val
- * @return {Request} for chaining
- * @api public
- */
-RequestBase.prototype.field = function(name, val) {
-  // name should be either a string or an object.
-  if (null === name || undefined === name) {
-    throw new Error('.field(name, val) name can not be empty');
-  }
-
-  if (this._data) {
-    throw new Error(".field() can't be used if .send() is used. Please use only .send() or only .field() & .attach()");
-  }
-
-  if (isObject(name)) {
-    for (const key in name) {
-      this.field(key, name[key]);
-    }
-    return this;
-  }
-
-  if (Array.isArray(val)) {
-    for (const i in val) {
-      this.field(name, val[i]);
-    }
-    return this;
-  }
-
-  // val should be defined now
-  if (null === val || undefined === val) {
-    throw new Error('.field(name, val) val can not be empty');
-  }
-  if ('boolean' === typeof val) {
-    val = '' + val;
-  }
-  this._getFormData().append(name, val);
-  return this;
-};
-
-/**
- * Abort the request, and clear potential timeout.
- *
- * @return {Request}
- * @api public
- */
-RequestBase.prototype.abort = function(){
-  if (this._aborted) {
-    return this;
-  }
-  this._aborted = true;
-  this.xhr && this.xhr.abort(); // browser
-  this.req && this.req.abort(); // node
-  this.clearTimeout();
-  this.emit('abort');
-  return this;
-};
-
-RequestBase.prototype._auth = function(user, pass, options, base64Encoder) {
-  switch (options.type) {
-    case 'basic':
-      this.set('Authorization', `Basic ${base64Encoder(`${user}:${pass}`)}`);
-      break;
-
-    case 'auto':
-      this.username = user;
-      this.password = pass;
-      break;
-
-    case 'bearer': // usage would be .auth(accessToken, { type: 'bearer' })
-      this.set('Authorization', `Bearer ${user}`);
-      break;
-  }
-  return this;
-};
-
-/**
- * Enable transmission of cookies with x-domain requests.
- *
- * Note that for this to work the origin must not be
- * using "Access-Control-Allow-Origin" with a wildcard,
- * and also must set "Access-Control-Allow-Credentials"
- * to "true".
- *
- * @api public
- */
-
-RequestBase.prototype.withCredentials = function(on) {
-  // This is browser-only functionality. Node side is no-op.
-  if (on == undefined) on = true;
-  this._withCredentials = on;
-  return this;
-};
-
-/**
- * Set the max redirects to `n`. Does noting in browser XHR implementation.
- *
- * @param {Number} n
- * @return {Request} for chaining
- * @api public
- */
-
-RequestBase.prototype.redirects = function(n){
-  this._maxRedirects = n;
-  return this;
-};
-
-/**
- * Maximum size of buffered response body, in bytes. Counts uncompressed size.
- * Default 200MB.
- *
- * @param {Number} n
- * @return {Request} for chaining
- */
-RequestBase.prototype.maxResponseSize = function(n){
-  if ('number' !== typeof n) {
-    throw TypeError("Invalid argument");
-  }
-  this._maxResponseSize = n;
-  return this;
-};
-
-/**
- * Convert to a plain javascript object (not JSON string) of scalar properties.
- * Note as this method is designed to return a useful non-this value,
- * it cannot be chained.
- *
- * @return {Object} describing method, url, and data of this request
- * @api public
- */
-
-RequestBase.prototype.toJSON = function() {
-  return {
-    method: this.method,
-    url: this.url,
-    data: this._data,
-    headers: this._header,
-  };
-};
-
-/**
- * Send `data` as the request body, defaulting the `.type()` to "json" when
- * an object is given.
- *
- * Examples:
- *
- *       // manual json
- *       request.post('/user')
- *         .type('json')
- *         .send('{"name":"tj"}')
- *         .end(callback)
- *
- *       // auto json
- *       request.post('/user')
- *         .send({ name: 'tj' })
- *         .end(callback)
- *
- *       // manual x-www-form-urlencoded
- *       request.post('/user')
- *         .type('form')
- *         .send('name=tj')
- *         .end(callback)
- *
- *       // auto x-www-form-urlencoded
- *       request.post('/user')
- *         .type('form')
- *         .send({ name: 'tj' })
- *         .end(callback)
- *
- *       // defaults to x-www-form-urlencoded
- *      request.post('/user')
- *        .send('name=tobi')
- *        .send('species=ferret')
- *        .end(callback)
- *
- * @param {String|Object} data
- * @return {Request} for chaining
- * @api public
- */
-
-RequestBase.prototype.send = function(data){
-  const isObj = isObject(data);
-  let type = this._header['content-type'];
-
-  if (this._formData) {
-    throw new Error(".send() can't be used if .attach() or .field() is used. Please use only .send() or only .field() & .attach()");
-  }
-
-  if (isObj && !this._data) {
-    if (Array.isArray(data)) {
-      this._data = [];
-    } else if (!this._isHost(data)) {
-      this._data = {};
-    }
-  } else if (data && this._data && this._isHost(this._data)) {
-    throw Error("Can't merge these send calls");
-  }
-
-  // merge
-  if (isObj && isObject(this._data)) {
-    for (const key in data) {
-      this._data[key] = data[key];
-    }
-  } else if ('string' == typeof data) {
-    // default to x-www-form-urlencoded
-    if (!type) this.type('form');
-    type = this._header['content-type'];
-    if ('application/x-www-form-urlencoded' == type) {
-      this._data = this._data
-        ? `${this._data}&${data}`
-        : data;
-    } else {
-      this._data = (this._data || '') + data;
-    }
-  } else {
-    this._data = data;
-  }
-
-  if (!isObj || this._isHost(data)) {
-    return this;
-  }
-
-  // default to json
-  if (!type) this.type('json');
-  return this;
-};
-
-/**
- * Sort `querystring` by the sort function
- *
- *
- * Examples:
- *
- *       // default order
- *       request.get('/user')
- *         .query('name=Nick')
- *         .query('search=Manny')
- *         .sortQuery()
- *         .end(callback)
- *
- *       // customized sort function
- *       request.get('/user')
- *         .query('name=Nick')
- *         .query('search=Manny')
- *         .sortQuery(function(a, b){
- *           return a.length - b.length;
- *         })
- *         .end(callback)
- *
- *
- * @param {Function} sort
- * @return {Request} for chaining
- * @api public
- */
-
-RequestBase.prototype.sortQuery = function(sort) {
-  // _sort default to true but otherwise can be a function or boolean
-  this._sort = typeof sort === 'undefined' ? true : sort;
-  return this;
-};
-
-/**
- * Compose querystring to append to req.url
- *
- * @api private
- */
-RequestBase.prototype._finalizeQueryString = function(){
-  const query = this._query.join('&');
-  if (query) {
-    this.url += (this.url.indexOf('?') >= 0 ? '&' : '?') + query;
-  }
-  this._query.length = 0; // Makes the call idempotent
-
-  if (this._sort) {
-    const index = this.url.indexOf('?');
-    if (index >= 0) {
-      const queryArr = this.url.substring(index + 1).split('&');
-      if ('function' === typeof this._sort) {
-        queryArr.sort(this._sort);
-      } else {
-        queryArr.sort();
-      }
-      this.url = this.url.substring(0, index) + '?' + queryArr.join('&');
-    }
-  }
-};
-
-// For backwards compat only
-RequestBase.prototype._appendQueryString = () => {console.trace("Unsupported");}
-
-/**
- * Invoke callback with timeout error.
- *
- * @api private
- */
-
-RequestBase.prototype._timeoutError = function(reason, timeout, errno){
-  if (this._aborted) {
-    return;
-  }
-  const err = new Error(`${reason + timeout}ms exceeded`);
-  err.timeout = timeout;
-  err.code = 'ECONNABORTED';
-  err.errno = errno;
-  this.timedout = true;
-  this.abort();
-  this.callback(err);
-};
-
-RequestBase.prototype._setTimeouts = function() {
-  const self = this;
-
-  // deadline
-  if (this._timeout && !this._timer) {
-    this._timer = setTimeout(() => {
-      self._timeoutError('Timeout of ', self._timeout, 'ETIME');
-    }, this._timeout);
-  }
-  // response timeout
-  if (this._responseTimeout && !this._responseTimeoutTimer) {
-    this._responseTimeoutTimer = setTimeout(() => {
-      self._timeoutError('Response timeout of ', self._responseTimeout, 'ETIMEDOUT');
-    }, this._responseTimeout);
-  }
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/superagent/lib/response-base.js":
-/*!******************************************************!*\
-  !*** ./node_modules/superagent/lib/response-base.js ***!
-  \******************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-/**
- * Module dependencies.
- */
-
-const utils = __webpack_require__(/*! ./utils */ "./node_modules/superagent/lib/utils.js");
-
-/**
- * Expose `ResponseBase`.
- */
-
-module.exports = ResponseBase;
-
-/**
- * Initialize a new `ResponseBase`.
- *
- * @api public
- */
-
-function ResponseBase(obj) {
-  if (obj) return mixin(obj);
-}
-
-/**
- * Mixin the prototype properties.
- *
- * @param {Object} obj
- * @return {Object}
- * @api private
- */
-
-function mixin(obj) {
-  for (const key in ResponseBase.prototype) {
-    obj[key] = ResponseBase.prototype[key];
-  }
-  return obj;
-}
-
-/**
- * Get case-insensitive `field` value.
- *
- * @param {String} field
- * @return {String}
- * @api public
- */
-
-ResponseBase.prototype.get = function(field) {
-  return this.header[field.toLowerCase()];
-};
-
-/**
- * Set header related properties:
- *
- *   - `.type` the content type without params
- *
- * A response of "Content-Type: text/plain; charset=utf-8"
- * will provide you with a `.type` of "text/plain".
- *
- * @param {Object} header
- * @api private
- */
-
-ResponseBase.prototype._setHeaderProperties = function(header){
-    // TODO: moar!
-    // TODO: make this a util
-
-    // content-type
-    const ct = header['content-type'] || '';
-    this.type = utils.type(ct);
-
-    // params
-    const params = utils.params(ct);
-    for (const key in params) this[key] = params[key];
-
-    this.links = {};
-
-    // links
-    try {
-        if (header.link) {
-            this.links = utils.parseLinks(header.link);
-        }
-    } catch (err) {
-        // ignore
-    }
-};
-
-/**
- * Set flags such as `.ok` based on `status`.
- *
- * For example a 2xx response will give you a `.ok` of __true__
- * whereas 5xx will be __false__ and `.error` will be __true__. The
- * `.clientError` and `.serverError` are also available to be more
- * specific, and `.statusType` is the class of error ranging from 1..5
- * sometimes useful for mapping respond colors etc.
- *
- * "sugar" properties are also defined for common cases. Currently providing:
- *
- *   - .noContent
- *   - .badRequest
- *   - .unauthorized
- *   - .notAcceptable
- *   - .notFound
- *
- * @param {Number} status
- * @api private
- */
-
-ResponseBase.prototype._setStatusProperties = function(status){
-    const type = status / 100 | 0;
-
-    // status / class
-    this.status = this.statusCode = status;
-    this.statusType = type;
-
-    // basics
-    this.info = 1 == type;
-    this.ok = 2 == type;
-    this.redirect = 3 == type;
-    this.clientError = 4 == type;
-    this.serverError = 5 == type;
-    this.error = (4 == type || 5 == type)
-        ? this.toError()
-        : false;
-
-    // sugar
-    this.created = 201 == status;
-    this.accepted = 202 == status;
-    this.noContent = 204 == status;
-    this.badRequest = 400 == status;
-    this.unauthorized = 401 == status;
-    this.notAcceptable = 406 == status;
-    this.forbidden = 403 == status;
-    this.notFound = 404 == status;
-    this.unprocessableEntity = 422 == status;
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/superagent/lib/utils.js":
-/*!**********************************************!*\
-  !*** ./node_modules/superagent/lib/utils.js ***!
-  \**********************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-/**
- * Return the mime type for the given `str`.
- *
- * @param {String} str
- * @return {String}
- * @api private
- */
-
-exports.type = str => str.split(/ *; */).shift();
-
-/**
- * Return header field parameters.
- *
- * @param {String} str
- * @return {Object}
- * @api private
- */
-
-exports.params = str => str.split(/ *; */).reduce((obj, str) => {
-  const parts = str.split(/ *= */);
-  const key = parts.shift();
-  const val = parts.shift();
-
-  if (key && val) obj[key] = val;
-  return obj;
-}, {});
-
-/**
- * Parse Link header fields.
- *
- * @param {String} str
- * @return {Object}
- * @api private
- */
-
-exports.parseLinks = str => str.split(/ *, */).reduce((obj, str) => {
-  const parts = str.split(/ *; */);
-  const url = parts[0].slice(1, -1);
-  const rel = parts[1].split(/ *= */)[1].slice(1, -1);
-  obj[rel] = url;
-  return obj;
-}, {});
-
-/**
- * Strip content related fields from `header`.
- *
- * @param {Object} header
- * @return {Object} header
- * @api private
- */
-
-exports.cleanHeader = (header, changesOrigin) => {
-  delete header['content-type'];
-  delete header['content-length'];
-  delete header['transfer-encoding'];
-  delete header['host'];
-  // secuirty
-  if (changesOrigin) {
-    delete header['authorization'];
-    delete header['cookie'];
-  }
-  return header;
-};
-
 
 /***/ }),
 
@@ -24173,3837 +24421,14 @@ module.exports = g;
 
 /***/ }),
 
-/***/ "./node_modules/wpapi/lib/autodiscovery.js":
+/***/ "./node_modules/wpapi/browser/wpapi.min.js":
 /*!*************************************************!*\
-  !*** ./node_modules/wpapi/lib/autodiscovery.js ***!
+  !*** ./node_modules/wpapi/browser/wpapi.min.js ***!
   \*************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-"use strict";
-/**
- * Utility methods used when querying a site in order to discover its available
- * API endpoints
- *
- * @module autodiscovery
- */
-
-
-const parseLinkHeader = __webpack_require__( /*! li */ "./node_modules/li/lib/index.js" ).parse;
-
-/**
- * Attempt to locate a `rel="https://api.w.org"` link relation header
- *
- * @method locateAPIRootHeader
- * @param {Object} response A response object with a link or headers property
- * @returns {String} The URL of the located API root
- */
-function locateAPIRootHeader( response ) {
-	// See https://developer.wordpress.org/rest-api/using-the-rest-api/discovery/
-	const rel = 'https://api.w.org/';
-
-	// Extract & parse the response link headers
-	const link = response.link || ( response.headers && response.headers.link );
-	const headers = parseLinkHeader( link );
-
-	const apiHeader = headers && headers[ rel ];
-
-	if ( apiHeader ) {
-		return apiHeader;
-	}
-
-	throw new Error( `No header link found with rel="${ rel }"` );
-}
-
-module.exports = {
-	locateAPIRootHeader: locateAPIRootHeader,
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/wpapi/lib/constructors/wp-request.js":
-/*!***********************************************************!*\
-  !*** ./node_modules/wpapi/lib/constructors/wp-request.js ***!
-  \***********************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-const qs = __webpack_require__( /*! qs */ "./node_modules/wpapi/node_modules/qs/lib/index.js" );
-
-const alphaNumericSort = __webpack_require__( /*! ../util/alphanumeric-sort */ "./node_modules/wpapi/lib/util/alphanumeric-sort.js" );
-const keyValToObj = __webpack_require__( /*! ../util/key-val-to-obj */ "./node_modules/wpapi/lib/util/key-val-to-obj.js" );
-const paramSetter = __webpack_require__( /*! ../util/parameter-setter */ "./node_modules/wpapi/lib/util/parameter-setter.js" );
-const objectReduce = __webpack_require__( /*! ../util/object-reduce */ "./node_modules/wpapi/lib/util/object-reduce.js" );
-const unique = __webpack_require__( /*! ../util/unique */ "./node_modules/wpapi/lib/util/unique.js" );
-
-/**
- * WPRequest is the base API request object constructor
- *
- * @constructor WPRequest
- * @param {Object} options A hash of options for the WPRequest instance
- * @param {String} options.endpoint The endpoint URI for the invoking WPAPI instance
- * @param {Object} options.transport An object of http transport methods (get, post, etc)
- * @param {String} [options.username] A username for authenticating API requests
- * @param {String} [options.password] A password for authenticating API requests
- * @param {String} [options.nonce] A WP nonce for use with cookie authentication
- */
-function WPRequest( options ) {
-	/**
-	 * Configuration options for the request
-	 *
-	 * @property _options
-	 * @type Object
-	 * @private
-	 * @default {}
-	 */
-	this._options = [
-		// Whitelisted options keys
-		'auth',
-		'endpoint',
-		'headers',
-		'username',
-		'password',
-		'nonce',
-	].reduce( ( localOptions, key ) => {
-		if ( options && options[ key ] ) {
-			localOptions[ key ] = options[ key ];
-		}
-		return localOptions;
-	}, {} );
-
-	/**
-	 * The HTTP transport methods (.get, .post, .put, .delete, .head) to use for this request
-	 *
-	 * @property transport
-	 * @type {Object}
-	 * @private
-	 */
-	this.transport = options && options.transport;
-
-	/**
-	 * A hash of query parameters
-	 * This is used to store the values for supported query parameters like ?_embed
-	 *
-	 * @property _params
-	 * @type Object
-	 * @private
-	 * @default {}
-	 */
-	this._params = {};
-
-	/**
-	 * Methods supported by this API request instance:
-	 * Individual endpoint handlers specify their own subset of supported methods
-	 *
-	 * @property _supportedMethods
-	 * @type Array
-	 * @private
-	 * @default [ 'head', 'get', 'put', 'post', 'delete' ]
-	 */
-	this._supportedMethods = [ 'head', 'get', 'put', 'post', 'delete' ];
-
-	/**
-	 * A hash of values to assemble into the API request path
-	 * (This will be overwritten by each specific endpoint handler constructor)
-	 *
-	 * @property _path
-	 * @type Object
-	 * @private
-	 * @default {}
-	 */
-	this._path = {};
-}
-
-// Private helper methods
-// ======================
-
-/**
- * Identity function for use within invokeAndPromisify()
- * @private
- */
-const identity = value => value;
-
-/**
- * Process arrays of taxonomy terms into query parameters.
- * All terms listed in the arrays will be required (AND behavior).
- *
- * This method will not be called with any values unless we are handling
- * an endpoint with the filter mixin; however, since parameter handling
- * (and therefore `_renderQuery()`) are part of WPRequest itself, this
- * helper method lives here alongside the code where it is used.
- *
- * @example
- *     prepareTaxonomies({
- *         tag: [ 'tag1 ', 'tag2' ], // by term slug
- *         cat: [ 7 ] // by term ID
- *     }) === {
- *         tag: 'tag1+tag2',
- *         cat: '7'
- *     }
- *
- * @private
- * @param {Object} taxonomyFilters An object of taxonomy term arrays, keyed by taxonomy name
- * @returns {Object} An object of prepareFilters-ready query arg and query param value pairs
- */
-function prepareTaxonomies( taxonomyFilters ) {
-	if ( ! taxonomyFilters ) {
-		return {};
-	}
-
-	return objectReduce(
-		taxonomyFilters,
-		( result, terms, key ) => {
-			// Trim whitespace and concatenate multiple terms with +
-			result[ key ] = terms
-				// Coerce term into a string so that trim() won't fail
-				.map( term => ( term + '' ).trim().toLowerCase() )
-				.join( '+' );
-
-			return result;
-		},
-		{}
-	);
-}
-
-/**
- * Return an object with any properties with undefined, null or empty string
- * values removed.
- *
- * @example
- *
- *     populated({
- *       a: 'a',
- *       b: '',
- *       c: null
- *     }); // { a: 'a' }
- *
- * @private
- * @param {Object} obj An object of key/value pairs
- * @returns {Object} That object with all empty values removed
- */
-const populated = ( obj ) => {
-	if ( ! obj ) {
-		return obj;
-	}
-	return objectReduce(
-		obj,
-		( values, val, key ) => {
-			if ( val !== undefined && val !== null && val !== '' ) {
-				values[ key ] = val;
-			}
-			return values;
-		},
-		{}
-	);
-};
-
-/**
- * Assert whether a provided URL component is "valid" by checking it against
- * an array of registered path component validator methods for that level of
- * the URL path.
- *
- * @private
- * @param {object[]} levelDefinitions An array of Level Definition objects
- * @param {string}   levelContents    The URL path string that has been specified
- *                                    for use on the provided level
- * @returns {boolean} Whether the provided input matches any of the provided
- * level validation functions
- */
-const validatePathLevel = ( levelDefinitions, levelContents ) => {
-	// One "level" may have multiple options, as a route tree is a branching
-	// structure. We consider a level "valid" if the provided levelContents
-	// match any of the available validators.
-	const valid = levelDefinitions.reduce( ( anyOptionValid, levelOption ) => {
-		if ( ! levelOption.validate ) {
-			// If there is no validator function, the level is implicitly valid
-			return true;
-		}
-		return anyOptionValid || levelOption.validate( levelContents );
-	}, false );
-
-	if ( ! valid ) {
-		throw new Error( [
-			'Invalid path component:',
-			levelContents,
-			// awkward pluralization support:
-			'does not match' + ( levelDefinitions.length > 1 ? ' any of' : '' ),
-			levelDefinitions.reduce(
-				( components, levelOption ) => components.concat( levelOption.component ),
-				[]
-			).join( ', ' ),
-		].join( ' ' ) );
-	}
-};
-
-// (Semi-)Private Prototype Methods
-// ================================
-
-/**
- * Process the endpoint query's filter objects into a valid query string.
- * Nested objects and Array properties are rendered with indexed array syntax.
- *
- * @example
- *     _renderQuery({ p1: 'val1', p2: 'val2' });  // ?p1=val1&p2=val2
- *     _renderQuery({ obj: { prop: 'val' } });    // ?obj[prop]=val
- *     _renderQuery({ arr: [ 'val1', 'val2' ] }); // ?arr[0]=val1&arr[1]=val2
- *
- * @private
- *
- * @method _renderQuery
- * @returns {String} A query string representing the specified filter parameters
- */
-WPRequest.prototype._renderQuery = function() {
-	// Build the full query parameters object
-	const queryParams = {
-		...populated( this._params ),
-	};
-
-	// Prepare any taxonomies and merge with other filter values
-	const taxonomies = prepareTaxonomies( this._taxonomyFilters );
-	queryParams.filter = {
-		...populated( this._filters ),
-		...taxonomies,
-	};
-
-	// Parse query parameters object into a query string, sorting the object
-	// properties by alphabetical order (consistent property ordering can make
-	// for easier caching of request URIs)
-	const queryString = qs.stringify( queryParams, { arrayFormat: 'brackets' } )
-		.split( '&' )
-		.sort()
-		.join( '&' );
-
-	// Check if the endpoint contains a previous query and set the query character accordingly.
-	const queryCharacter = /\?/.test( this._options.endpoint ) ? '&' : '?';
-
-	// Prepend a "?" (or a "&") if a query is present, and return.
-	return ( queryString === '' ) ? '' : queryCharacter + queryString;
-};
-
-/**
- * Validate & assemble a path string from the request object's _path
- *
- * @private
- * @returns {String} The rendered path
- */
-WPRequest.prototype._renderPath = function() {
-	// Call validatePath: if the provided path components are not well-formed,
-	// an error will be thrown
-	this.validatePath();
-
-	const pathParts = this._path;
-	const orderedPathParts = Object.keys( pathParts )
-		.sort( ( a, b ) => {
-			const intA = parseInt( a, 10 );
-			const intB = parseInt( b, 10 );
-			return intA - intB;
-		} )
-		.map( pathPartKey => pathParts[ pathPartKey ] );
-
-	// Combine all parts of the path together, filtered to omit any components
-	// that are unspecified or empty strings, to create the full path template
-	const path = [
-		this._namespace,
-	].concat( orderedPathParts ).filter( identity ).join( '/' );
-
-	return path;
-};
-
-// Public Prototype Methods
-// ========================
-
-/**
- * Parse the request into a WordPress API request URI string
- *
- * @method
- * @returns {String} The URI for the HTTP request to be sent
- */
-WPRequest.prototype.toString = function() {
-	// Render the path to a string
-	const path = this._renderPath();
-
-	// Render the query string
-	const queryStr = this._renderQuery();
-
-	return this._options.endpoint + path + queryStr;
-};
-
-/**
- * Set a component of the resource URL itself (as opposed to a query parameter)
- *
- * If a path component has already been set at this level, throw an error:
- * requests are meant to be transient, so any re-writing of a previously-set
- * path part value is likely to be a mistake.
- *
- * @method
- * @chainable
- * @param {Number|String} level A "level" of the path to set, e.g. "1" or "2"
- * @param {Number|String} val   The value to set at that path part level
- * @returns {WPRequest} The WPRequest instance (for chaining)
- */
-WPRequest.prototype.setPathPart = function( level, val ) {
-	if ( this._path[ level ] ) {
-		throw new Error( 'Cannot overwrite value ' + this._path[ level ] );
-	}
-	this._path[ level ] = val;
-
-	return this;
-};
-
-/**
- * Validate whether the specified path parts are valid for this endpoint
- *
- * "Path parts" are non-query-string URL segments, like "some" "path" in the URL
- * `mydomain.com/some/path?and=a&query=string&too`. Because a well-formed path
- * is necessary to execute a successful API request, we throw an error if the
- * user has omitted a value (such as `/some/[missing component]/url`) or has
- * provided a path part value that does not match the regular expression the
- * API uses to goven that segment.
- *
- * @method
- * @chainable
- * @returns {WPRequest} The WPRequest instance (for chaining), if no errors were found
- */
-WPRequest.prototype.validatePath = function() {
-	// Iterate through all _specified_ levels of this endpoint
-	const specifiedLevels = Object.keys( this._path )
-		.map( level => parseInt( level, 10 ) )
-		.filter( pathPartKey => ! isNaN( pathPartKey ) );
-
-	const maxLevel = Math.max.apply( null, specifiedLevels );
-
-	// Ensure that all necessary levels are specified
-	const path = [];
-	let valid = true;
-
-	for ( let level = 0; level <= maxLevel; level++ ) {
-
-		if ( ! this._levels || ! this._levels[ level ] ) {
-			continue;
-		}
-
-		if ( this._path[ level ] ) {
-			// Validate the provided path level against all available path validators
-			validatePathLevel( this._levels[ level ], this._path[ level ] );
-
-			// Add the path value to the array
-			path.push( this._path[ level ] );
-		} else {
-			path.push( ' ??? ' );
-			valid = false;
-		}
-	}
-
-	if ( ! valid ) {
-		throw new Error( 'Incomplete URL! Missing component: /' + path.join( '/' ) );
-	}
-
-	return this;
-};
-
-/**
- * Set a parameter to render into the final query URI.
- *
- * @method
- * @chainable
- * @param {String|Object} props The name of the parameter to set, or an object containing
- *                              parameter keys and their corresponding values
- * @param {String|Number|Array} [value] The value of the parameter being set
- * @returns {WPRequest} The WPRequest instance (for chaining)
- */
-WPRequest.prototype.param = function( props, value ) {
-	if ( ! props || typeof props === 'string' && value === undefined ) {
-		// We have no property to set, or no value to set for that property
-		return this;
-	}
-
-	// We can use the same iterator function below to handle explicit key-value
-	// pairs if we convert them into to an object we can iterate over:
-	if ( typeof props === 'string' ) {
-		props = keyValToObj( props, value );
-	}
-
-	// Iterate through the properties
-	Object.keys( props ).forEach( ( key ) => {
-		let value = props[ key ];
-
-		// Arrays should be de-duped and sorted
-		if ( Array.isArray( value ) ) {
-			value = unique( value ).sort( alphaNumericSort );
-		}
-
-		// Set the value
-		this._params[ key ] = value;
-	} );
-
-	return this;
-};
-
-// Globally-applicable parameters that impact the shape of the request or response
-// ===============================================================================
-
-/**
- * Set the context of the request. Used primarily to expose private values on a
- * request object by setting the context to "edit".
- *
- * @method
- * @chainable
- * @param {String} context The context to set on the request
- * @returns {WPRequest} The WPRequest instance (for chaining)
- */
-WPRequest.prototype.context = paramSetter( 'context' );
-
-/**
- * Convenience wrapper for `.context( 'edit' )`
- *
- * @method
- * @chainable
- * @returns {WPRequest} The WPRequest instance (for chaining)
- */
-WPRequest.prototype.edit = function() {
-	return this.context( 'edit' );
-};
-
-/**
- * Return embedded resources as part of the response payload.
- *
- * @method
- * @chainable
- * @returns {WPRequest} The WPRequest instance (for chaining)
- */
-WPRequest.prototype.embed = function() {
-	return this.param( '_embed', true );
-};
-
-// Parameters supported by all/nearly all default collections
-// ==========================================================
-
-/**
- * Set the pagination of a request. Use in conjunction with `.perPage()` for explicit
- * pagination handling. (The number of pages in a response can be retrieved from the
- * response's `_paging.totalPages` property.)
- *
- * @method
- * @chainable
- * @param {Number} pageNumber The page number of results to retrieve
- * @returns The request instance (for chaining)
- */
-WPRequest.prototype.page = paramSetter( 'page' );
-
-/**
- * Set the number of items to be returned in a page of responses.
- *
- * @method
- * @chainable
- * @param {Number} itemsPerPage The number of items to return in one page of results
- * @returns The request instance (for chaining)
- */
-WPRequest.prototype.perPage = paramSetter( 'per_page' );
-
-/**
- * Set an arbitrary offset to retrieve items from a specific point in a collection.
- *
- * @method
- * @chainable
- * @param {Number} offsetNumber The number of items by which to offset the response
- * @returns The request instance (for chaining)
- */
-WPRequest.prototype.offset = paramSetter( 'offset' );
-
-/**
- * Change the sort direction of a returned collection
- *
- * @example <caption>order comments chronologically (oldest first)</caption>
- *
- *     site.comments().order( 'asc' )...
- *
- * @method
- * @chainable
- * @param {String} direction The order to use when sorting the response
- * @returns The request instance (for chaining)
- */
-WPRequest.prototype.order = paramSetter( 'order' );
-
-/**
- * Order a collection by a specific field
- *
- * @method
- * @chainable
- * @param {String} field The field by which to order the response
- * @returns The request instance (for chaining)
- */
-WPRequest.prototype.orderby = paramSetter( 'orderby' );
-
-/**
- * Filter results to those matching the specified search terms.
- *
- * @method
- * @chainable
- * @param {String} searchString A string to search for within post content
- * @returns The request instance (for chaining)
- */
-WPRequest.prototype.search = paramSetter( 'search' );
-
-/**
- * Include specific resource IDs in the response collection.
- *
- * @method
- * @chainable
- * @param {Number|Number[]} ids An ID or array of IDs to include
- * @returns The request instance (for chaining)
- */
-WPRequest.prototype.include = paramSetter( 'include' );
-
-/**
- * Exclude specific resource IDs in the response collection.
- *
- * @method
- * @chainable
- * @param {Number|Number[]} ids An ID or array of IDs to exclude
- * @returns The request instance (for chaining)
- */
-WPRequest.prototype.exclude = paramSetter( 'exclude' );
-
-/**
- * Query a collection for members with a specific slug.
- *
- * @method
- * @chainable
- * @param {String} slug A post slug (slug), e.g. "hello-world"
- * @returns The request instance (for chaining)
- */
-WPRequest.prototype.slug = paramSetter( 'slug' );
-
-// HTTP Transport Prototype Methods
-// ================================
-
-// Chaining methods
-// ================
-
-/**
- * Set the namespace of the request, e.g. to specify the API root for routes
- * registered by wp core v2 ("wp/v2") or by any given plugin. Any previously-
- * set namespace will be overwritten by subsequent calls to the method.
- *
- * @method
- * @chainable
- * @param {String} namespace A namespace string, e.g. "wp/v2"
- * @returns {WPRequest} The WPRequest instance (for chaining)
- */
-WPRequest.prototype.namespace = function( namespace ) {
-	this._namespace = namespace;
-	return this;
-};
-
-/**
- * Set a request to use authentication, and optionally provide auth credentials
- *
- * If auth credentials were already specified when the WPAPI instance was created, calling
- * `.auth` on the request chain will set that request to use the existing credentials:
- *
- * @example <caption>use existing credentials</caption>
- *
- *     request.auth().get...
- *
- * Alternatively, a username & password (or nonce) can be explicitly passed into `.auth`:
- *
- * @example <caption>use explicit basic authentication credentials</caption>
- *
- *     request.auth({
- *       username: 'admin',
- *       password: 'super secure'
- *     }).get...
- *
- * @example <caption>use a nonce for cookie authentication</caption>
- *
- *     request.auth({
- *       nonce: 'somenonce'
- *     })...
- *
- * @method
- * @chainable
- * @param {Object} credentials            An object with 'username' and 'password' string
- *                                        properties, or else a 'nonce' property
- * @param {String} [credentials.username] A WP-API Basic HTTP Authentication username
- * @param {String} [credentials.password] A WP-API Basic HTTP Authentication password
- * @param {String} [credentials.nonce]    A WP nonce for use with cookie authentication
- * @returns {WPRequest} The WPRequest instance (for chaining)
- */
-WPRequest.prototype.auth = function( credentials ) {
-	if ( typeof credentials === 'object' ) {
-		if ( typeof credentials.username === 'string' ) {
-			this._options.username = credentials.username;
-		}
-
-		if ( typeof credentials.password === 'string' ) {
-			this._options.password = credentials.password;
-		}
-
-		if ( credentials.nonce ) {
-			this._options.nonce = credentials.nonce;
-		}
-	}
-
-	// Set the "auth" options flag that will force authentication on this request
-	this._options.auth = true;
-
-	return this;
-};
-
-/**
- * Specify a file or a file buffer to attach to the request, for use when
- * creating a new Media item
- *
- * @example <caption>within a server context</caption>
- *
- *     wp.media()
- *       // Pass .file() the file system path to a file to upload
- *       .file( '/path/to/file.jpg' )
- *       .create({})...
- *
- * @example <caption>within a browser context</caption>
- *
- *     wp.media()
- *       // Pass .file() the file reference from an HTML file input
- *       .file( document.querySelector( 'input[type="file"]' ).files[0] )
- *       .create({})...
- *
- * @method
- * @chainable
- * @param {string|object} file   A path to a file (in Node) or an file object
- *                               (Node or Browser) to attach to the request
- * @param {string}        [name] An (optional) filename to use for the file
- * @returns {WPRequest} The WPRequest instance (for chaining)
- */
-WPRequest.prototype.file = function( file, name ) {
-	this._attachment = file;
-	// Explicitly set to undefined if not provided, to override any previously-
-	// set attachment name property that might exist from a prior `.file()` call
-	this._attachmentName = name ? name : undefined;
-	return this;
-};
-
-// HTTP Methods: Public Interface
-// ==============================
-
-/**
- * Specify one or more headers to send with the dispatched HTTP request.
- *
- * @example <caption>Set a single header to be used on this request</caption>
- *
- *     request.setHeaders( 'Authorization', 'Bearer trustme' )...
- *
- * @example <caption>Set multiple headers to be used by this request</caption>
- *
- *     request.setHeaders({
- *       Authorization: 'Bearer comeonwereoldfriendsright',
- *       'Accept-Language': 'en-CA'
- *     })...
- *
- * @since 1.1.0
- * @method
- * @chainable
- * @param {String|Object} headers The name of the header to set, or an object of
- *                                header names and their associated string values
- * @param {String}        [value] The value of the header being set
- * @returns {WPRequest} The WPRequest instance (for chaining)
- */
-WPRequest.prototype.setHeaders = function( headers, value ) {
-	// We can use the same iterator function below to handle explicit key-value
-	// pairs if we convert them into to an object we can iterate over:
-	if ( typeof headers === 'string' ) {
-		headers = keyValToObj( headers, value );
-	}
-
-	this._options.headers = {
-		...( this._options.headers || {} ),
-		...headers,
-	};
-
-	return this;
-};
-
-/**
- * Get (download the data for) the specified resource
- *
- * @method
- * @async
- * @param {Function} [callback] A callback to invoke with the results of the GET request
- * @returns {Promise} A promise to the results of the HTTP request
- */
-WPRequest.prototype.get = function( callback ) {
-	return this.transport.get( this, callback );
-};
-
-/**
- * Get the headers for the specified resource
- *
- * @method
- * @async
- * @param {Function} [callback] A callback to invoke with the results of the HEAD request
- * @returns {Promise} A promise to the header results of the HTTP request
- */
-WPRequest.prototype.headers = function( callback ) {
-	return this.transport.head( this, callback );
-};
-
-/**
- * Create the specified resource with the provided data
- *
- * This is the public interface for creating POST requests
- *
- * @method
- * @async
- * @param {Object} data The data for the POST request
- * @param {Function} [callback] A callback to invoke with the results of the POST request
- * @returns {Promise} A promise to the results of the HTTP request
- */
-WPRequest.prototype.create = function( data, callback ) {
-	return this.transport.post( this, data, callback );
-};
-
-/**
- * Update the specified resource with the provided data
- *
- * This is the public interface for creating PUT requests
- *
- * @method
- * @async
- * @private
- * @param {Object} data The data for the PUT request
- * @param {Function} [callback] A callback to invoke with the results of the PUT request
- * @returns {Promise} A promise to the results of the HTTP request
- */
-WPRequest.prototype.update = function( data, callback ) {
-	return this.transport.put( this, data, callback );
-};
-
-/**
- * Delete the specified resource
- *
- * @method
- * @async
- * @param {Object} [data] Data to send along with the DELETE request
- * @param {Function} [callback] A callback to invoke with the results of the DELETE request
- * @returns {Promise} A promise to the results of the HTTP request
- */
-WPRequest.prototype.delete = function( data, callback ) {
-	return this.transport.delete( this, data, callback );
-};
-
-/**
- * Calling .then on a query chain will invoke the query as a GET and return a promise
- *
- * @method
- * @async
- * @param {Function} [successCallback] A callback to handle the data returned from the GET request
- * @param {Function} [failureCallback] A callback to handle any errors encountered by the request
- * @returns {Promise} A promise to the results of the HTTP request
- */
-WPRequest.prototype.then = function( successCallback, failureCallback ) {
-	return this.transport.get( this ).then( successCallback, failureCallback );
-};
-
-module.exports = WPRequest;
-
-
-/***/ }),
-
-/***/ "./node_modules/wpapi/lib/data/default-routes.json":
-/*!*********************************************************!*\
-  !*** ./node_modules/wpapi/lib/data/default-routes.json ***!
-  \*********************************************************/
-/*! exports provided: /, /oembed/1.0, /oembed/1.0/embed, /oembed/1.0/proxy, /wp/v2, /wp/v2/posts, /wp/v2/posts/(?P<id>[\d]+), /wp/v2/posts/(?P<parent>[\d]+)/revisions, /wp/v2/posts/(?P<parent>[\d]+)/revisions/(?P<id>[\d]+), /wp/v2/posts/(?P<id>[\d]+)/autosaves, /wp/v2/posts/(?P<parent>[\d]+)/autosaves/(?P<id>[\d]+), /wp/v2/pages, /wp/v2/pages/(?P<id>[\d]+), /wp/v2/pages/(?P<parent>[\d]+)/revisions, /wp/v2/pages/(?P<parent>[\d]+)/revisions/(?P<id>[\d]+), /wp/v2/pages/(?P<id>[\d]+)/autosaves, /wp/v2/pages/(?P<parent>[\d]+)/autosaves/(?P<id>[\d]+), /wp/v2/media, /wp/v2/media/(?P<id>[\d]+), /wp/v2/blocks, /wp/v2/blocks/(?P<id>[\d]+), /wp/v2/blocks/(?P<id>[\d]+)/autosaves, /wp/v2/blocks/(?P<parent>[\d]+)/autosaves/(?P<id>[\d]+), /wp/v2/types, /wp/v2/types/(?P<type>[\w-]+), /wp/v2/statuses, /wp/v2/statuses/(?P<status>[\w-]+), /wp/v2/taxonomies, /wp/v2/taxonomies/(?P<taxonomy>[\w-]+), /wp/v2/categories, /wp/v2/categories/(?P<id>[\d]+), /wp/v2/tags, /wp/v2/tags/(?P<id>[\d]+), /wp/v2/users, /wp/v2/users/(?P<id>[\d]+), /wp/v2/users/me, /wp/v2/comments, /wp/v2/comments/(?P<id>[\d]+), /wp/v2/search, /wp/v2/block-renderer/(?P<name>core/block), /wp/v2/block-renderer/(?P<name>core/latest-comments), /wp/v2/block-renderer/(?P<name>core/archives), /wp/v2/block-renderer/(?P<name>core/categories), /wp/v2/block-renderer/(?P<name>core/latest-posts), /wp/v2/block-renderer/(?P<name>core/shortcode), /wp/v2/settings, /wp/v2/themes, default */
-/***/ (function(module) {
-
-module.exports = JSON.parse("{\"/\":{\"namespace\":\"\",\"methods\":[\"GET\"],\"endpoints\":[{\"methods\":[\"GET\"],\"args\":{\"context\":{}}}]},\"/oembed/1.0\":{\"namespace\":\"oembed/1.0\",\"methods\":[\"GET\"],\"endpoints\":[{\"methods\":[\"GET\"],\"args\":{\"namespace\":{},\"context\":{}}}]},\"/oembed/1.0/embed\":{\"namespace\":\"oembed/1.0\",\"methods\":[\"GET\"],\"endpoints\":[{\"methods\":[\"GET\"],\"args\":{\"url\":{},\"format\":{},\"maxwidth\":{}}}]},\"/oembed/1.0/proxy\":{\"namespace\":\"oembed/1.0\",\"methods\":[\"GET\"],\"endpoints\":[{\"methods\":[\"GET\"],\"args\":{\"url\":{},\"format\":{},\"maxwidth\":{},\"maxheight\":{},\"discover\":{}}}]},\"/wp/v2\":{\"namespace\":\"wp/v2\",\"methods\":[\"GET\"],\"endpoints\":[{\"methods\":[\"GET\"],\"args\":{\"namespace\":{},\"context\":{}}}]},\"/wp/v2/posts\":{\"namespace\":\"wp/v2\",\"methods\":[\"GET\",\"POST\"],\"endpoints\":[{\"methods\":[\"GET\"],\"args\":{\"context\":{},\"page\":{},\"per_page\":{},\"search\":{},\"after\":{},\"author\":{},\"author_exclude\":{},\"before\":{},\"exclude\":{},\"include\":{},\"offset\":{},\"order\":{},\"orderby\":{},\"slug\":{},\"status\":{},\"categories\":{},\"categories_exclude\":{},\"tags\":{},\"tags_exclude\":{},\"sticky\":{}}},{\"methods\":[\"POST\"],\"args\":{}}]},\"/wp/v2/posts/(?P<id>[\\\\d]+)\":{\"namespace\":\"wp/v2\",\"methods\":[\"GET\",\"POST\",\"PUT\",\"PATCH\",\"DELETE\"],\"endpoints\":[{\"methods\":[\"GET\"],\"args\":{\"id\":{},\"context\":{},\"password\":{}}},{\"methods\":[\"POST\",\"PUT\",\"PATCH\"],\"args\":{}},{\"methods\":[\"DELETE\"],\"args\":{}}]},\"/wp/v2/posts/(?P<parent>[\\\\d]+)/revisions\":{\"namespace\":\"wp/v2\",\"methods\":[\"GET\"],\"endpoints\":[{\"methods\":[\"GET\"],\"args\":{\"parent\":{},\"context\":{},\"page\":{},\"per_page\":{},\"search\":{},\"exclude\":{},\"include\":{},\"offset\":{},\"order\":{},\"orderby\":{}}}]},\"/wp/v2/posts/(?P<parent>[\\\\d]+)/revisions/(?P<id>[\\\\d]+)\":{\"namespace\":\"wp/v2\",\"methods\":[\"GET\",\"DELETE\"],\"endpoints\":[{\"methods\":[\"GET\"],\"args\":{\"parent\":{},\"id\":{},\"context\":{}}},{\"methods\":[\"DELETE\"],\"args\":{}}]},\"/wp/v2/posts/(?P<id>[\\\\d]+)/autosaves\":{\"namespace\":\"wp/v2\",\"methods\":[\"GET\",\"POST\"],\"endpoints\":[{\"methods\":[\"GET\"],\"args\":{\"parent\":{},\"context\":{}}},{\"methods\":[\"POST\"],\"args\":{}}]},\"/wp/v2/posts/(?P<parent>[\\\\d]+)/autosaves/(?P<id>[\\\\d]+)\":{\"namespace\":\"wp/v2\",\"methods\":[\"GET\"],\"endpoints\":[{\"methods\":[\"GET\"],\"args\":{\"parent\":{},\"id\":{},\"context\":{}}}]},\"/wp/v2/pages\":{\"namespace\":\"wp/v2\",\"methods\":[\"GET\",\"POST\"],\"endpoints\":[{\"methods\":[\"GET\"],\"args\":{\"context\":{},\"page\":{},\"per_page\":{},\"search\":{},\"after\":{},\"author\":{},\"author_exclude\":{},\"before\":{},\"exclude\":{},\"include\":{},\"menu_order\":{},\"offset\":{},\"order\":{},\"orderby\":{},\"parent\":{},\"parent_exclude\":{},\"slug\":{},\"status\":{}}},{\"methods\":[\"POST\"],\"args\":{}}]},\"/wp/v2/pages/(?P<id>[\\\\d]+)\":{\"namespace\":\"wp/v2\",\"methods\":[\"GET\",\"POST\",\"PUT\",\"PATCH\",\"DELETE\"],\"endpoints\":[{\"methods\":[\"GET\"],\"args\":{\"id\":{},\"context\":{},\"password\":{}}},{\"methods\":[\"POST\",\"PUT\",\"PATCH\"],\"args\":{}},{\"methods\":[\"DELETE\"],\"args\":{}}]},\"/wp/v2/pages/(?P<parent>[\\\\d]+)/revisions\":{\"namespace\":\"wp/v2\",\"methods\":[\"GET\"],\"endpoints\":[{\"methods\":[\"GET\"],\"args\":{\"parent\":{},\"context\":{},\"page\":{},\"per_page\":{},\"search\":{},\"exclude\":{},\"include\":{},\"offset\":{},\"order\":{},\"orderby\":{}}}]},\"/wp/v2/pages/(?P<parent>[\\\\d]+)/revisions/(?P<id>[\\\\d]+)\":{\"namespace\":\"wp/v2\",\"methods\":[\"GET\",\"DELETE\"],\"endpoints\":[{\"methods\":[\"GET\"],\"args\":{\"parent\":{},\"id\":{},\"context\":{}}},{\"methods\":[\"DELETE\"],\"args\":{}}]},\"/wp/v2/pages/(?P<id>[\\\\d]+)/autosaves\":{\"namespace\":\"wp/v2\",\"methods\":[\"GET\",\"POST\"],\"endpoints\":[{\"methods\":[\"GET\"],\"args\":{\"parent\":{},\"context\":{}}},{\"methods\":[\"POST\"],\"args\":{}}]},\"/wp/v2/pages/(?P<parent>[\\\\d]+)/autosaves/(?P<id>[\\\\d]+)\":{\"namespace\":\"wp/v2\",\"methods\":[\"GET\"],\"endpoints\":[{\"methods\":[\"GET\"],\"args\":{\"parent\":{},\"id\":{},\"context\":{}}}]},\"/wp/v2/media\":{\"namespace\":\"wp/v2\",\"methods\":[\"GET\",\"POST\"],\"endpoints\":[{\"methods\":[\"GET\"],\"args\":{\"context\":{},\"page\":{},\"per_page\":{},\"search\":{},\"after\":{},\"author\":{},\"author_exclude\":{},\"before\":{},\"exclude\":{},\"include\":{},\"offset\":{},\"order\":{},\"orderby\":{},\"parent\":{},\"parent_exclude\":{},\"slug\":{},\"status\":{},\"media_type\":{},\"mime_type\":{}}},{\"methods\":[\"POST\"],\"args\":{}}]},\"/wp/v2/media/(?P<id>[\\\\d]+)\":{\"namespace\":\"wp/v2\",\"methods\":[\"GET\",\"POST\",\"PUT\",\"PATCH\",\"DELETE\"],\"endpoints\":[{\"methods\":[\"GET\"],\"args\":{\"id\":{},\"context\":{}}},{\"methods\":[\"POST\",\"PUT\",\"PATCH\"],\"args\":{}},{\"methods\":[\"DELETE\"],\"args\":{}}]},\"/wp/v2/blocks\":{\"namespace\":\"wp/v2\",\"methods\":[\"GET\",\"POST\"],\"endpoints\":[{\"methods\":[\"GET\"],\"args\":{\"context\":{},\"page\":{},\"per_page\":{},\"search\":{},\"after\":{},\"before\":{},\"exclude\":{},\"include\":{},\"offset\":{},\"order\":{},\"orderby\":{},\"slug\":{},\"status\":{}}},{\"methods\":[\"POST\"],\"args\":{}}]},\"/wp/v2/blocks/(?P<id>[\\\\d]+)\":{\"namespace\":\"wp/v2\",\"methods\":[\"GET\",\"POST\",\"PUT\",\"PATCH\",\"DELETE\"],\"endpoints\":[{\"methods\":[\"GET\"],\"args\":{\"id\":{},\"context\":{},\"password\":{}}},{\"methods\":[\"POST\",\"PUT\",\"PATCH\"],\"args\":{}},{\"methods\":[\"DELETE\"],\"args\":{}}]},\"/wp/v2/blocks/(?P<id>[\\\\d]+)/autosaves\":{\"namespace\":\"wp/v2\",\"methods\":[\"GET\",\"POST\"],\"endpoints\":[{\"methods\":[\"GET\"],\"args\":{\"parent\":{},\"context\":{}}},{\"methods\":[\"POST\"],\"args\":{}}]},\"/wp/v2/blocks/(?P<parent>[\\\\d]+)/autosaves/(?P<id>[\\\\d]+)\":{\"namespace\":\"wp/v2\",\"methods\":[\"GET\"],\"endpoints\":[{\"methods\":[\"GET\"],\"args\":{\"parent\":{},\"id\":{},\"context\":{}}}]},\"/wp/v2/types\":{\"namespace\":\"wp/v2\",\"methods\":[\"GET\"],\"endpoints\":[{\"methods\":[\"GET\"],\"args\":{\"context\":{}}}]},\"/wp/v2/types/(?P<type>[\\\\w-]+)\":{\"namespace\":\"wp/v2\",\"methods\":[\"GET\"],\"endpoints\":[{\"methods\":[\"GET\"],\"args\":{\"type\":{},\"context\":{}}}]},\"/wp/v2/statuses\":{\"namespace\":\"wp/v2\",\"methods\":[\"GET\"],\"endpoints\":[{\"methods\":[\"GET\"],\"args\":{\"context\":{}}}]},\"/wp/v2/statuses/(?P<status>[\\\\w-]+)\":{\"namespace\":\"wp/v2\",\"methods\":[\"GET\"],\"endpoints\":[{\"methods\":[\"GET\"],\"args\":{\"status\":{},\"context\":{}}}]},\"/wp/v2/taxonomies\":{\"namespace\":\"wp/v2\",\"methods\":[\"GET\"],\"endpoints\":[{\"methods\":[\"GET\"],\"args\":{\"context\":{},\"type\":{}}}]},\"/wp/v2/taxonomies/(?P<taxonomy>[\\\\w-]+)\":{\"namespace\":\"wp/v2\",\"methods\":[\"GET\"],\"endpoints\":[{\"methods\":[\"GET\"],\"args\":{\"taxonomy\":{},\"context\":{}}}]},\"/wp/v2/categories\":{\"namespace\":\"wp/v2\",\"methods\":[\"GET\",\"POST\"],\"endpoints\":[{\"methods\":[\"GET\"],\"args\":{\"context\":{},\"page\":{},\"per_page\":{},\"search\":{},\"exclude\":{},\"include\":{},\"order\":{},\"orderby\":{},\"hide_empty\":{},\"parent\":{},\"post\":{},\"slug\":{}}},{\"methods\":[\"POST\"],\"args\":{}}]},\"/wp/v2/categories/(?P<id>[\\\\d]+)\":{\"namespace\":\"wp/v2\",\"methods\":[\"GET\",\"POST\",\"PUT\",\"PATCH\",\"DELETE\"],\"endpoints\":[{\"methods\":[\"GET\"],\"args\":{\"id\":{},\"context\":{}}},{\"methods\":[\"POST\",\"PUT\",\"PATCH\"],\"args\":{}},{\"methods\":[\"DELETE\"],\"args\":{}}]},\"/wp/v2/tags\":{\"namespace\":\"wp/v2\",\"methods\":[\"GET\",\"POST\"],\"endpoints\":[{\"methods\":[\"GET\"],\"args\":{\"context\":{},\"page\":{},\"per_page\":{},\"search\":{},\"exclude\":{},\"include\":{},\"offset\":{},\"order\":{},\"orderby\":{},\"hide_empty\":{},\"post\":{},\"slug\":{}}},{\"methods\":[\"POST\"],\"args\":{}}]},\"/wp/v2/tags/(?P<id>[\\\\d]+)\":{\"namespace\":\"wp/v2\",\"methods\":[\"GET\",\"POST\",\"PUT\",\"PATCH\",\"DELETE\"],\"endpoints\":[{\"methods\":[\"GET\"],\"args\":{\"id\":{},\"context\":{}}},{\"methods\":[\"POST\",\"PUT\",\"PATCH\"],\"args\":{}},{\"methods\":[\"DELETE\"],\"args\":{}}]},\"/wp/v2/users\":{\"namespace\":\"wp/v2\",\"methods\":[\"GET\",\"POST\"],\"endpoints\":[{\"methods\":[\"GET\"],\"args\":{\"context\":{},\"page\":{},\"per_page\":{},\"search\":{},\"exclude\":{},\"include\":{},\"offset\":{},\"order\":{},\"orderby\":{},\"slug\":{},\"roles\":{},\"who\":{}}},{\"methods\":[\"POST\"],\"args\":{}}]},\"/wp/v2/users/(?P<id>[\\\\d]+)\":{\"namespace\":\"wp/v2\",\"methods\":[\"GET\",\"POST\",\"PUT\",\"PATCH\",\"DELETE\"],\"endpoints\":[{\"methods\":[\"GET\"],\"args\":{\"id\":{},\"context\":{}}},{\"methods\":[\"POST\",\"PUT\",\"PATCH\"],\"args\":{}},{\"methods\":[\"DELETE\"],\"args\":{}}]},\"/wp/v2/users/me\":{\"namespace\":\"wp/v2\",\"methods\":[\"GET\",\"POST\",\"PUT\",\"PATCH\",\"DELETE\"],\"endpoints\":[{\"methods\":[\"GET\"],\"args\":{\"context\":{}}},{\"methods\":[\"POST\",\"PUT\",\"PATCH\"],\"args\":{}},{\"methods\":[\"DELETE\"],\"args\":{}}]},\"/wp/v2/comments\":{\"namespace\":\"wp/v2\",\"methods\":[\"GET\",\"POST\"],\"endpoints\":[{\"methods\":[\"GET\"],\"args\":{\"context\":{},\"page\":{},\"per_page\":{},\"search\":{},\"after\":{},\"author\":{},\"author_exclude\":{},\"author_email\":{},\"before\":{},\"exclude\":{},\"include\":{},\"offset\":{},\"order\":{},\"orderby\":{},\"parent\":{},\"parent_exclude\":{},\"post\":{},\"status\":{},\"type\":{},\"password\":{}}},{\"methods\":[\"POST\"],\"args\":{}}]},\"/wp/v2/comments/(?P<id>[\\\\d]+)\":{\"namespace\":\"wp/v2\",\"methods\":[\"GET\",\"POST\",\"PUT\",\"PATCH\",\"DELETE\"],\"endpoints\":[{\"methods\":[\"GET\"],\"args\":{\"id\":{},\"context\":{},\"password\":{}}},{\"methods\":[\"POST\",\"PUT\",\"PATCH\"],\"args\":{}},{\"methods\":[\"DELETE\"],\"args\":{}}]},\"/wp/v2/search\":{\"namespace\":\"wp/v2\",\"methods\":[\"GET\"],\"endpoints\":[{\"methods\":[\"GET\"],\"args\":{\"context\":{},\"page\":{},\"per_page\":{},\"search\":{},\"type\":{},\"subtype\":{}}}]},\"/wp/v2/block-renderer/(?P<name>core/block)\":{\"namespace\":\"wp/v2\",\"methods\":[\"GET\"],\"endpoints\":[{\"methods\":[\"GET\"],\"args\":{\"name\":{},\"context\":{},\"attributes\":{},\"post_id\":{}}}]},\"/wp/v2/block-renderer/(?P<name>core/latest-comments)\":{\"namespace\":\"wp/v2\",\"methods\":[\"GET\"],\"endpoints\":[{\"methods\":[\"GET\"],\"args\":{\"name\":{},\"context\":{},\"attributes\":{},\"post_id\":{}}}]},\"/wp/v2/block-renderer/(?P<name>core/archives)\":{\"namespace\":\"wp/v2\",\"methods\":[\"GET\"],\"endpoints\":[{\"methods\":[\"GET\"],\"args\":{\"name\":{},\"context\":{},\"attributes\":{},\"post_id\":{}}}]},\"/wp/v2/block-renderer/(?P<name>core/categories)\":{\"namespace\":\"wp/v2\",\"methods\":[\"GET\"],\"endpoints\":[{\"methods\":[\"GET\"],\"args\":{\"name\":{},\"context\":{},\"attributes\":{},\"post_id\":{}}}]},\"/wp/v2/block-renderer/(?P<name>core/latest-posts)\":{\"namespace\":\"wp/v2\",\"methods\":[\"GET\"],\"endpoints\":[{\"methods\":[\"GET\"],\"args\":{\"name\":{},\"context\":{},\"attributes\":{},\"post_id\":{}}}]},\"/wp/v2/block-renderer/(?P<name>core/shortcode)\":{\"namespace\":\"wp/v2\",\"methods\":[\"GET\"],\"endpoints\":[{\"methods\":[\"GET\"],\"args\":{\"name\":{},\"context\":{},\"attributes\":{},\"post_id\":{}}}]},\"/wp/v2/settings\":{\"namespace\":\"wp/v2\",\"methods\":[\"GET\",\"POST\",\"PUT\",\"PATCH\"],\"endpoints\":[{\"methods\":[\"GET\"],\"args\":{}},{\"methods\":[\"POST\",\"PUT\",\"PATCH\"],\"args\":{}}]},\"/wp/v2/themes\":{\"namespace\":\"wp/v2\",\"methods\":[\"GET\"],\"endpoints\":[{\"methods\":[\"GET\"],\"args\":{\"context\":{},\"page\":{},\"per_page\":{},\"search\":{},\"status\":{}}}]}}");
-
-/***/ }),
-
-/***/ "./node_modules/wpapi/lib/endpoint-factories.js":
-/*!******************************************************!*\
-  !*** ./node_modules/wpapi/lib/endpoint-factories.js ***!
-  \******************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/**
- * Take a WP route string (with PCRE named capture groups), `such as /author/(?P<id>\d+)`,
- * and generate request handler factory methods for each represented endpoint.
- *
- * @module endpoint-factories
- */
-
-
-const createResourceHandlerSpec = __webpack_require__( /*! ./resource-handler-spec */ "./node_modules/wpapi/lib/resource-handler-spec.js" ).create;
-const createEndpointRequest = __webpack_require__( /*! ./endpoint-request */ "./node_modules/wpapi/lib/endpoint-request.js" ).create;
-const objectReduce = __webpack_require__( /*! ./util/object-reduce */ "./node_modules/wpapi/lib/util/object-reduce.js" );
-
-/**
- * Given an array of route definitions and a specific namespace for those routes,
- * recurse through the node tree representing all possible routes within the
- * provided namespace to define path value setters (and corresponding property
- * validators) for all possible variants of each resource's API endpoints.
- *
- * @method generate
- * @param {string} namespace         The namespace string for these routes
- * @param {object} routesByNamespace A dictionary of namespace - route definition
- *                                   object pairs as generated from buildRouteTree,
- *                                   where each route definition object is a dictionary
- *                                   keyed by route definition strings
- * @returns {object} A dictionary of endpoint request handler factories
- */
-function generateEndpointFactories( routesByNamespace ) {
-
-	return objectReduce( routesByNamespace, ( namespaces, routeDefinitions, namespace ) => {
-
-		// Create
-		namespaces[ namespace ] = objectReduce( routeDefinitions, ( handlers, routeDef, resource ) => {
-
-			const handlerSpec = createResourceHandlerSpec( routeDef, resource );
-
-			const EndpointRequest = createEndpointRequest( handlerSpec, resource, namespace );
-
-			// "handler" object is now fully prepared; create the factory method that
-			// will instantiate and return a handler instance
-			handlers[ resource ] = function( options ) {
-				return new EndpointRequest( {
-					...this._options,
-					...options,
-				} );
-			};
-
-			// Expose the constructor as a property on the factory function, so that
-			// auto-generated endpoint request constructors may be further customized
-			// when needed
-			handlers[ resource ].Ctor = EndpointRequest;
-
-			return handlers;
-		}, {} );
-
-		return namespaces;
-	}, {} );
-}
-
-module.exports = {
-	generate: generateEndpointFactories,
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/wpapi/lib/endpoint-request.js":
-/*!****************************************************!*\
-  !*** ./node_modules/wpapi/lib/endpoint-request.js ***!
-  \****************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/**
- * @module endpoint-request
- */
-
-
-const WPRequest = __webpack_require__( /*! ./constructors/wp-request */ "./node_modules/wpapi/lib/constructors/wp-request.js" );
-const mixins = __webpack_require__( /*! ./mixins */ "./node_modules/wpapi/lib/mixins/index.js" );
-
-const applyMixin = __webpack_require__( /*! ./util/apply-mixin */ "./node_modules/wpapi/lib/util/apply-mixin.js" );
-
-/**
- * Create an endpoint request handler constructor for a specific resource tree
- *
- * @method create
- * @param {Object} handlerSpec A resource handler specification object
- * @param {String} resource    The root resource of requests created from the returned factory
- * @param {String} namespace   The namespace string for the returned factory's handlers
- * @returns {Function} A constructor inheriting from {@link WPRequest}
- */
-function createEndpointRequest( handlerSpec, resource, namespace ) {
-
-	// Create the constructor function for this endpoint
-	class EndpointRequest extends WPRequest {
-		constructor( options ) {
-			super( options );
-
-			/**
-			 * Semi-private instance property specifying the available URL path options
-			 * for this endpoint request handler, keyed by ascending whole numbers.
-			 *
-			 * @property _levels
-			 * @type {object}
-			 * @private
-			 */
-			this._levels = handlerSpec._levels;
-
-			// Configure handler for this endpoint's root URL path & set namespace
-			this
-				.setPathPart( 0, resource )
-				.namespace( namespace );
-		}
-	}
-
-	// Mix in all available shortcut methods for GET request query parameters that
-	// are valid within this endpoint tree
-	if ( typeof handlerSpec._getArgs === 'object' ) {
-		Object.keys( handlerSpec._getArgs ).forEach( ( supportedQueryParam ) => {
-			const mixinsForParam = mixins[ supportedQueryParam ];
-
-			// Only proceed if there is a mixin available AND the specified mixins will
-			// not overwrite any previously-set prototype method
-			if ( typeof mixinsForParam === 'object' ) {
-				Object.keys( mixinsForParam ).forEach( ( methodName ) => {
-					applyMixin( EndpointRequest.prototype, methodName, mixinsForParam[ methodName ] );
-				} );
-			}
-		} );
-	}
-
-	Object.keys( handlerSpec._setters ).forEach( ( setterFnName ) => {
-		// Only assign setter functions if they do not overwrite preexisting methods
-		if ( ! EndpointRequest.prototype[ setterFnName ] ) {
-			EndpointRequest.prototype[ setterFnName ] = handlerSpec._setters[ setterFnName ];
-		}
-	} );
-
-	return EndpointRequest;
-}
-
-module.exports = {
-	create: createEndpointRequest,
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/wpapi/lib/http-transport.js":
-/*!**************************************************!*\
-  !*** ./node_modules/wpapi/lib/http-transport.js ***!
-  \**************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/**
- * @module http-transport
- */
-
-
-const agent = __webpack_require__( /*! superagent */ "./node_modules/superagent/lib/client.js" );
-const parseLinkHeader = __webpack_require__( /*! li */ "./node_modules/li/lib/index.js" ).parse;
-
-const WPRequest = __webpack_require__( /*! ./constructors/wp-request */ "./node_modules/wpapi/lib/constructors/wp-request.js" );
-const checkMethodSupport = __webpack_require__( /*! ./util/check-method-support */ "./node_modules/wpapi/lib/util/check-method-support.js" );
-const objectReduce = __webpack_require__( /*! ./util/object-reduce */ "./node_modules/wpapi/lib/util/object-reduce.js" );
-const isEmptyObject = __webpack_require__( /*! ./util/is-empty-object */ "./node_modules/wpapi/lib/util/is-empty-object.js" );
-
-/**
- * Set any provided headers on the outgoing request object. Runs after _auth.
- *
- * @method _setHeaders
- * @private
- * @param {Object} request A superagent request object
- * @param {Object} options A WPRequest _options object
- * @param {Object} A superagent request object, with any available headers set
- */
-function _setHeaders( request, options ) {
-	// If there's no headers, do nothing
-	if ( ! options.headers ) {
-		return request;
-	}
-
-	return objectReduce(
-		options.headers,
-		( request, value, key ) => request.set( key, value ),
-		request
-	);
-}
-
-/**
- * Conditionally set basic authentication on a server request object.
- *
- * @method _auth
- * @private
- * @param {Object} request A superagent request object
- * @param {Object} options A WPRequest _options object
- * @param {Boolean} forceAuthentication whether to force authentication on the request
- * @param {Object} A superagent request object, conditionally configured to use basic auth
- */
-function _auth( request, options, forceAuthentication ) {
-	// If we're not supposed to authenticate, don't even start
-	if ( ! forceAuthentication && ! options.auth && ! options.nonce ) {
-		return request;
-	}
-
-	// Enable nonce in options for Cookie authentication http://wp-api.org/guides/authentication.html
-	if ( options.nonce ) {
-		request.set( 'X-WP-Nonce', options.nonce );
-		return request;
-	}
-
-	// Retrieve the username & password from the request options if they weren't provided
-	const username = options.username;
-	const password = options.password;
-
-	// If no username or no password, can't authenticate
-	if ( ! username || ! password ) {
-		return request;
-	}
-
-	// Can authenticate: set basic auth parameters on the request
-	return request.auth( username, password );
-}
-
-// Pagination-Related Helpers
-// ==========================
-
-/**
- * Extract the body property from the superagent response, or else try to parse
- * the response text to get a JSON object.
- *
- * @private
- * @param {Object} response      The response object from the HTTP request
- * @param {String} response.text The response content as text
- * @param {Object} response.body The response content as a JS object
- * @returns {Object} The response content as a JS object
- */
-function extractResponseBody( response ) {
-	let responseBody = response.body;
-	if ( isEmptyObject( responseBody ) && response.type === 'text/html' ) {
-		// Response may have come back as HTML due to caching plugin; try to parse
-		// the response text into JSON
-		try {
-			responseBody = JSON.parse( response.text );
-		} catch ( e ) {
-			// Swallow errors, it's OK to fall back to returning the body
-		}
-	}
-	return responseBody;
-}
-
-/**
- * If the response is not paged, return the body as-is. If pagination
- * information is present in the response headers, parse those headers into
- * a custom `_paging` property on the response body. `_paging` contains links
- * to the previous and next pages in the collection, as well as metadata
- * about the size and number of pages in the collection.
- *
- * The structure of the `_paging` property is as follows:
- *
- * - `total` {Integer} The total number of records in the collection
- * - `totalPages` {Integer} The number of pages available
- * - `links` {Object} The parsed "links" headers, separated into individual URI strings
- * - `next` {WPRequest} A WPRequest object bound to the "next" page (if page exists)
- * - `prev` {WPRequest} A WPRequest object bound to the "previous" page (if page exists)
- *
- * @private
- * @param {Object} result           The response object from the HTTP request
- * @param {Object} options          The options hash from the original request
- * @param {String} options.endpoint The base URL of the requested API endpoint
- * @param {Object} httpTransport    The HTTP transport object used by the original request
- * @returns {Object} The pagination metadata object for this HTTP request, or else null
- */
-function createPaginationObject( result, options, httpTransport ) {
-	let _paging = null;
-
-	if ( ! result.headers ) {
-		// No headers: return as-is
-		return _paging;
-	}
-
-	// Guard against capitalization inconsistencies in returned headers
-	Object.keys( result.headers ).forEach( ( header ) => {
-		result.headers[ header.toLowerCase() ] = result.headers[ header ];
-	} );
-
-	if ( ! result.headers[ 'x-wp-totalpages' ] ) {
-		// No paging: return as-is
-		return _paging;
-	}
-
-	const totalPages = +result.headers[ 'x-wp-totalpages' ];
-
-	if ( ! totalPages || totalPages === 0 ) {
-		// No paging: return as-is
-		return _paging;
-	}
-
-	// Decode the link header object
-	const links = result.headers.link ?
-		parseLinkHeader( result.headers.link ) :
-		{};
-
-	// Store pagination data from response headers on the response collection
-	_paging = {
-		total: +result.headers[ 'x-wp-total' ],
-		totalPages: totalPages,
-		links: links,
-	};
-
-	// Create a WPRequest instance pre-bound to the "next" page, if available
-	if ( links.next ) {
-		_paging.next = new WPRequest( {
-			...options,
-			transport: httpTransport,
-			endpoint: links.next,
-		} );
-	}
-
-	// Create a WPRequest instance pre-bound to the "prev" page, if available
-	if ( links.prev ) {
-		_paging.prev = new WPRequest( {
-			...options,
-			transport: httpTransport,
-			endpoint: links.prev,
-		} );
-	}
-
-	return _paging;
-}
-
-// HTTP-Related Helpers
-// ====================
-
-/**
- * Submit the provided superagent request object, invoke a callback (if it was
- * provided), and return a promise to the response from the HTTP request.
- *
- * @private
- * @param {Object} request A superagent request object
- * @param {Function} callback A callback function (optional)
- * @param {Function} transform A function to transform the result data
- * @returns {Promise} A promise to the superagent request
- */
-function invokeAndPromisify( request, callback, transform ) {
-	return new Promise( ( resolve, reject ) => {
-		// Fire off the result
-		request.end( ( err, result ) => {
-
-			// Return the results as a promise
-			if ( err || result.error ) {
-				reject( err || result.error );
-			} else {
-				resolve( result );
-			}
-		} );
-	} ).then( transform ).then( ( result ) => {
-		// If a node-style callback was provided, call it, but also return the
-		// result value for use via the returned Promise
-		if ( callback && typeof callback === 'function' ) {
-			callback( null, result );
-		}
-		return result;
-	}, ( err ) => {
-		// If the API provided an error object, it will be available within the
-		// superagent response object as response.body (containing the response
-		// JSON). If that object exists, it will have a .code property if it is
-		// truly an API error (non-API errors will not have a .code).
-		if ( err.response && err.response.body && err.response.body.code ) {
-			// Forward API error response JSON on to the calling method: omit
-			// all transport-specific (superagent-specific) properties
-			err = err.response.body;
-		}
-		// If a callback was provided, ensure it is called with the error; otherwise
-		// re-throw the error so that it can be handled by a Promise .catch or .then
-		if ( callback && typeof callback === 'function' ) {
-			callback( err );
-		} else {
-			throw err;
-		}
-	} );
-}
-
-/**
- * Return the body of the request, augmented with pagination information if the
- * result is a paged collection.
- *
- * @private
- * @param {WPRequest} wpreq The WPRequest representing the returned HTTP response
- * @param {Object} result The results from the HTTP request
- * @returns {Object} The "body" property of the result, conditionally augmented with
- *                  pagination information if the result is a partial collection.
- */
-function returnBody( wpreq, result ) {
-	const body = extractResponseBody( result );
-	const _paging = createPaginationObject( result, wpreq._options, wpreq.transport );
-	if ( _paging ) {
-		body._paging = _paging;
-	}
-	return body;
-}
-
-/**
- * Extract and return the headers property from a superagent response object
- *
- * @private
- * @param {Object} result The results from the HTTP request
- * @returns {Object} The "headers" property of the result
- */
-function returnHeaders( result ) {
-	return result.headers;
-}
-
-// HTTP Methods: Private HTTP-verb versions
-// ========================================
-
-/**
- * @method get
- * @async
- * @param {WPRequest} wpreq A WPRequest query object
- * @param {Function} [callback] A callback to invoke with the results of the GET request
- * @returns {Promise} A promise to the results of the HTTP request
- */
-function _httpGet( wpreq, callback ) {
-	checkMethodSupport( 'get', wpreq );
-	const url = wpreq.toString();
-
-	let request = _auth( agent.get( url ), wpreq._options );
-	request = _setHeaders( request, wpreq._options );
-
-	return invokeAndPromisify( request, callback, returnBody.bind( null, wpreq ) );
-}
-
-/**
- * Invoke an HTTP "POST" request against the provided endpoint
- * @method post
- * @async
- * @param {WPRequest} wpreq A WPRequest query object
- * @param {Object} data The data for the POST request
- * @param {Function} [callback] A callback to invoke with the results of the POST request
- * @returns {Promise} A promise to the results of the HTTP request
- */
-function _httpPost( wpreq, data, callback ) {
-	checkMethodSupport( 'post', wpreq );
-	const url = wpreq.toString();
-	data = data || {};
-	let request = _auth( agent.post( url ), wpreq._options, true );
-	request = _setHeaders( request, wpreq._options );
-
-	if ( wpreq._attachment ) {
-		// Data must be form-encoded alongside image attachment
-		request = objectReduce(
-			data,
-			( req, value, key ) => req.field( key, value ),
-			request.attach( 'file', wpreq._attachment, wpreq._attachmentName )
-		);
-	} else {
-		request = request.send( data );
-	}
-
-	return invokeAndPromisify( request, callback, returnBody.bind( null, wpreq ) );
-}
-
-/**
- * @method put
- * @async
- * @param {WPRequest} wpreq A WPRequest query object
- * @param {Object} data The data for the PUT request
- * @param {Function} [callback] A callback to invoke with the results of the PUT request
- * @returns {Promise} A promise to the results of the HTTP request
- */
-function _httpPut( wpreq, data, callback ) {
-	checkMethodSupport( 'put', wpreq );
-	const url = wpreq.toString();
-	data = data || {};
-
-	let request = _auth( agent.put( url ), wpreq._options, true ).send( data );
-	request = _setHeaders( request, wpreq._options );
-
-	return invokeAndPromisify( request, callback, returnBody.bind( null, wpreq ) );
-}
-
-/**
- * @method delete
- * @async
- * @param {WPRequest} wpreq A WPRequest query object
- * @param {Object} [data] Data to send along with the DELETE request
- * @param {Function} [callback] A callback to invoke with the results of the DELETE request
- * @returns {Promise} A promise to the results of the HTTP request
- */
-function _httpDelete( wpreq, data, callback ) {
-	if ( ! callback && typeof data === 'function' ) {
-		callback = data;
-		data = null;
-	}
-	checkMethodSupport( 'delete', wpreq );
-	const url = wpreq.toString();
-	let request = _auth( agent.del( url ), wpreq._options, true ).send( data );
-	request = _setHeaders( request, wpreq._options );
-
-	return invokeAndPromisify( request, callback, returnBody.bind( null, wpreq ) );
-}
-
-/**
- * @method head
- * @async
- * @param {WPRequest} wpreq A WPRequest query object
- * @param {Function} [callback] A callback to invoke with the results of the HEAD request
- * @returns {Promise} A promise to the header results of the HTTP request
- */
-function _httpHead( wpreq, callback ) {
-	checkMethodSupport( 'head', wpreq );
-	const url = wpreq.toString();
-	let request = _auth( agent.head( url ), wpreq._options );
-	request = _setHeaders( request, wpreq._options );
-
-	return invokeAndPromisify( request, callback, returnHeaders );
-}
-
-module.exports = {
-	delete: _httpDelete,
-	get: _httpGet,
-	head: _httpHead,
-	post: _httpPost,
-	put: _httpPut,
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/wpapi/lib/mixins/filters.js":
-/*!**************************************************!*\
-  !*** ./node_modules/wpapi/lib/mixins/filters.js ***!
-  \**************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/**
- * @module mixins/filters
- */
-
-
-const alphaNumericSort = __webpack_require__( /*! ../util/alphanumeric-sort */ "./node_modules/wpapi/lib/util/alphanumeric-sort.js" );
-const keyValToObj = __webpack_require__( /*! ../util/key-val-to-obj */ "./node_modules/wpapi/lib/util/key-val-to-obj.js" );
-const unique = __webpack_require__( /*! ../util/unique */ "./node_modules/wpapi/lib/util/unique.js" );
-
-/**
- * Filter methods that can be mixed in to a request constructor's prototype to
- * allow that request to take advantage of the `?filter[]=` aliases for WP_Query
- * parameters for collection endpoints, when available.
- *
- * @mixin filters
- */
-const filterMixins = {};
-
-// Filter Methods
-// ==============
-
-/**
- * Specify key-value pairs by which to filter the API results (commonly used
- * to retrieve only posts meeting certain criteria, such as posts within a
- * particular category or by a particular author).
- *
- * @example
- *
- *     // Set a single property:
- *     wp.filter( 'post_type', 'cpt_event' )...
- *
- *     // Set multiple properties at once:
- *     wp.filter({
- *         post_status: 'publish',
- *         category_name: 'news'
- *     })...
- *
- *     // Chain calls to .filter():
- *     wp.filter( 'post_status', 'publish' ).filter( 'category_name', 'news' )...
- *
- * @method filter
- * @chainable
- * @param {String|Object} props A filter property name string, or object of name/value pairs
- * @param {String|Number|Array} [value] The value(s) corresponding to the provided filter property
- * @returns The request instance (for chaining)
- */
-filterMixins.filter = function( props, value ) {
-	if ( ! props || typeof props === 'string' && value === undefined ) {
-		// We have no filter to set, or no value to set for that filter
-		return this;
-	}
-
-	// convert the property name string `props` and value `value` into an object
-	if ( typeof props === 'string' ) {
-		props = keyValToObj( props, value );
-	}
-
-	this._filters = {
-		...this._filters,
-		...props,
-	};
-
-	return this;
-};
-
-/**
- * Restrict the query results to posts matching one or more taxonomy terms.
- *
- * @method taxonomy
- * @chainable
- * @param {String} taxonomy The name of the taxonomy to filter by
- * @param {String|Number|Array} term A string or integer, or array thereof, representing terms
- * @returns The request instance (for chaining)
- */
-filterMixins.taxonomy = function( taxonomy, term ) {
-	const termIsArray = Array.isArray( term );
-
-	const termIsNumber = termIsArray ?
-		term.reduce(
-			( allAreNumbers, term ) => allAreNumbers && typeof term === 'number',
-			true
-		) :
-		typeof term === 'number';
-
-	const termIsString = termIsArray ?
-		term.reduce(
-			( allAreStrings, term ) => allAreStrings && typeof term === 'string',
-			true
-		) :
-		typeof term === 'string';
-
-	if ( ! termIsString && ! termIsNumber ) {
-		throw new Error( 'term must be a number, string, or array of numbers or strings' );
-	}
-
-	if ( taxonomy === 'category' ) {
-		if ( termIsString ) {
-			// Query param for filtering by category slug is "category_name"
-			taxonomy = 'category_name';
-		} else {
-			// The boolean check above ensures that if taxonomy === 'category' and
-			// term is not a string, then term must be a number and therefore an ID:
-			// Query param for filtering by category ID is "cat"
-			taxonomy = 'cat';
-		}
-	} else if ( taxonomy === 'post_tag' ) {
-		// tag is used in place of post_tag in the public query variables
-		taxonomy = 'tag';
-	}
-
-	// Ensure the taxonomy filters object is available
-	this._taxonomyFilters = this._taxonomyFilters || {};
-
-	// Ensure there's an array of terms available for this taxonomy
-	const taxonomyTerms = ( this._taxonomyFilters[ taxonomy ] || [] )
-		// Insert the provided terms into the specified taxonomy's terms array
-		.concat( term )
-		// Sort array
-		.sort( alphaNumericSort );
-
-	// De-dupe
-	this._taxonomyFilters[ taxonomy ] = unique( taxonomyTerms, true );
-
-	return this;
-};
-
-/**
- * Query for posts published in a given year.
- *
- * @method year
- * @chainable
- * @param {Number} year integer representation of year requested
- * @returns The request instance (for chaining)
- */
-filterMixins.year = function( year ) {
-	return filterMixins.filter.call( this, 'year', year );
-};
-
-/**
- * Query for posts published in a given month, either by providing the number
- * of the requested month (e.g. 3), or the month's name as a string (e.g. "March")
- *
- * @method month
- * @chainable
- * @param {Number|String} month Integer for month (1) or month string ("January")
- * @returns The request instance (for chaining)
- */
-filterMixins.month = function( month ) {
-	let monthDate;
-	if ( typeof month === 'string' ) {
-		// Append a arbitrary day and year to the month to parse the string into a Date
-		monthDate = new Date( Date.parse( month + ' 1, 2012' ) );
-
-		// If the generated Date is NaN, then the passed string is not a valid month
-		if ( isNaN( monthDate ) ) {
-			return this;
-		}
-
-		// JS Dates are 0 indexed, but the WP API requires a 1-indexed integer
-		month = monthDate.getMonth() + 1;
-	}
-
-	// If month is a Number, add the monthnum filter to the request
-	if ( typeof month === 'number' ) {
-		return filterMixins.filter.call( this, 'monthnum', month );
-	}
-
-	return this;
-};
-
-/**
- * Add the day filter into the request to retrieve posts for a given day
- *
- * @method day
- * @chainable
- * @param {Number} day Integer representation of the day requested
- * @returns The request instance (for chaining)
- */
-filterMixins.day = function( day ) {
-	return filterMixins.filter.call( this, 'day', day );
-};
-
-/**
- * Specify that we are requesting a page by its path (specific to Page resources)
- *
- * @method path
- * @chainable
- * @param {String} path The root-relative URL path for a page
- * @returns The request instance (for chaining)
- */
-filterMixins.path = function( path ) {
-	return filterMixins.filter.call( this, 'pagename', path );
-};
-
-module.exports = filterMixins;
-
-
-/***/ }),
-
-/***/ "./node_modules/wpapi/lib/mixins/index.js":
-/*!************************************************!*\
-  !*** ./node_modules/wpapi/lib/mixins/index.js ***!
-  \************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/**
- * This module defines a mapping between supported GET request query parameter
- * arguments and their corresponding mixin, if available.
- */
-
-
-const filterMixins = __webpack_require__( /*! ./filters */ "./node_modules/wpapi/lib/mixins/filters.js" );
-const parameterMixins = __webpack_require__( /*! ./parameters */ "./node_modules/wpapi/lib/mixins/parameters.js" );
-
-// `.context`, `.embed`, and `.edit` (a shortcut for `context(edit, true)`) are
-// supported by default in WPRequest, as is the base `.param` method. Any GET
-// argument parameters not covered here must be set directly by using `.param`.
-
-// The initial mixins we define are the ones where either a single property
-// accepted by the API endpoint corresponds to multiple individual mixin
-// functions, or where the name we use for the function diverges from that
-// of the query parameter that the mixin sets.
-const mixins = {
-	categories: {
-		categories: parameterMixins.categories,
-		/** @deprecated use .categories() */
-		category: parameterMixins.category,
-	},
-	categories_exclude: {
-		excludeCategories: parameterMixins.excludeCategories,
-	},
-	tags: {
-		tags: parameterMixins.tags,
-		/** @deprecated use .tags() */
-		tag: parameterMixins.tag,
-	},
-	tags_exclude: {
-		excludeTags: parameterMixins.excludeTags,
-	},
-	filter: filterMixins,
-	post: {
-		post: parameterMixins.post,
-		/** @deprecated use .post() */
-		forPost: parameterMixins.post,
-	},
-};
-
-// All of these parameter mixins use a setter function named identically to the
-// property that the function sets, but they must still be provided in wrapper
-// objects so that the mixin can be `.assign`ed correctly: wrap & assign each
-// setter to the mixins dictionary object.
-[
-	'after',
-	'author',
-	'before',
-	'parent',
-	'password',
-	'status',
-	'sticky',
-].forEach( ( mixinName ) => {
-	mixins[ mixinName ] = {};
-	mixins[ mixinName ][ mixinName ] = parameterMixins[ mixinName ];
-} );
-
-module.exports = mixins;
-
-
-/***/ }),
-
-/***/ "./node_modules/wpapi/lib/mixins/parameters.js":
-/*!*****************************************************!*\
-  !*** ./node_modules/wpapi/lib/mixins/parameters.js ***!
-  \*****************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/**
- * Filter methods that can be mixed in to a request constructor's prototype to
- * allow that request to take advantage of top-level query parameters for
- * collection endpoints. These are most relevant to posts, pages and CPTs, but
- * pagination helpers are applicable to any collection.
- *
- * @module mixins/parameters
- */
-
-
-const paramSetter = __webpack_require__( /*! ../util/parameter-setter */ "./node_modules/wpapi/lib/util/parameter-setter.js" );
-const argumentIsNumeric = __webpack_require__( /*! ../util/argument-is-numeric */ "./node_modules/wpapi/lib/util/argument-is-numeric.js" );
-
-/**
- * @mixin parameters
- */
-const parameterMixins = {};
-
-const filters = __webpack_require__( /*! ./filters */ "./node_modules/wpapi/lib/mixins/filters.js" );
-// Needed for .author mixin, as author by ID is a parameter and by Name is a filter
-const filter = filters.filter;
-// Needed for .tag and .category mixin, for deprecated query-by-slug support
-const taxonomy = filters.taxonomy;
-
-// Parameter Methods
-// =================
-
-/**
- * Query for posts by a specific author.
- * This method will replace any previous 'author' query parameters that had been set.
- *
- * Note that this method will either set the "author" top-level query parameter,
- * or else the "author_name" filter parameter (when querying by nicename): this is
- * irregular as most parameter helper methods either set a top level parameter or a
- * filter, not both.
- *
- * _Usage with the author nicename string is deprecated._ Query by author ID instead.
- * If the "rest-filter" plugin is not installed, the name query will have no effect.
- *
- * @method author
- * @chainable
- * @param {String|Number} author The nicename or ID for a particular author
- * @returns The request instance (for chaining)
- */
-parameterMixins.author = function( author ) {
-	if ( author === undefined ) {
-		return this;
-	}
-	if ( typeof author === 'string' ) {
-		this.param( 'author', null );
-		return filter.call( this, 'author_name', author );
-	}
-	if ( typeof author === 'number' ) {
-		filter.call( this, 'author_name', null );
-		return this.param( 'author', author );
-	}
-	if ( author === null ) {
-		filter.call( this, 'author_name', null );
-		return this.param( 'author', null );
-	}
-	throw new Error( 'author must be either a nicename string or numeric ID' );
-};
-
-/**
- * Search for hierarchical taxonomy terms that are children of the parent term
- * indicated by the provided term ID
- *
- * @example
- *
- *     wp.pages().parent( 3 ).then(function( pages ) {
- *       // console.log( 'all of these pages are nested below page ID#3:' );
- *       // console.log( pages );
- *     });
- *
- *     wp.categories().parent( 42 ).then(function( categories ) {
- *       console.log( 'all of these categories are sub-items of cat ID#42:' );
- *       console.log( categories );
- *     });
- *
- * @method parent
- * @chainable
- * @param {Number} parentId The ID of a (hierarchical) taxonomy term
- * @returns The request instance (for chaining)
- */
-parameterMixins.parent = paramSetter( 'parent' );
-
-/**
- * Specify the post for which to retrieve terms (relevant for *e.g.* taxonomy
- * and comment collection endpoints).
- *
- * @method post
- * @chainable
- * @param {String|Number} post The ID of the post for which to retrieve terms
- * @returns The request instance (for chaining)
- */
-parameterMixins.post = paramSetter( 'post' );
-
-/**
- * Specify the password to use to access the content of a password-protected post
- *
- * @method password
- * @chainable
- * @param {string} password A string password to access protected content within a post
- * @returns The request instance (for chaining)
- */
-parameterMixins.password = paramSetter( 'password' );
-
-/**
- * Specify for which post statuses to return posts in a response collection
- *
- * See https://codex.wordpress.org/Post_Status -- the default post status
- * values in WordPress which are most relevant to the API are 'publish',
- * 'future', 'draft', 'pending', 'private', and 'trash'. This parameter also
- * supports passing the special value "any" to return all statuses.
- *
- * @method status
- * @chainable
- * @param {string|string[]} status A status name string or array of strings
- * @returns The request instance (for chaining)
- */
-parameterMixins.status = paramSetter( 'status' );
-
-/**
- * Specify whether to return only, or to completely exclude, sticky posts
- *
- * @method sticky
- * @chainable
- * @param {boolean} sticky A boolean value for whether ONLY sticky posts (true) or
- *                         NO sticky posts (false) should be returned in the query
- * @returns The request instance (for chaining)
- */
-parameterMixins.sticky = paramSetter( 'sticky' );
-
-// Taxonomy Term Filter Methods
-// ============================
-
-/**
- * Retrieve only records associated with one of the provided categories
- *
- * @method categories
- * @chainable
- * @param {String|Number|Array} categories A term ID integer or numeric string, or array thereof
- * @returns The request instance (for chaining)
- */
-parameterMixins.categories = paramSetter( 'categories' );
-
-/**
- * Legacy wrapper for `.categories()` that uses `?filter` to query by slug if available
- *
- * @method tag
- * @deprecated Use `.categories()` and query by category IDs
- * @chainable
- * @param {String|Number|Array} tag A category term slug string, numeric ID, or array of numeric IDs
- * @returns The request instance (for chaining)
- */
-parameterMixins.category = function( category ) {
-	if ( argumentIsNumeric( category ) ) {
-		return parameterMixins.categories.call( this, category );
-	}
-	return taxonomy.call( this, 'category', category );
-};
-
-/**
- * Exclude records associated with any of the provided category IDs
- *
- * @method excludeCategories
- * @chainable
- * @param {String|Number|Array} category A term ID integer or numeric string, or array thereof
- * @returns The request instance (for chaining)
- */
-parameterMixins.excludeCategories = paramSetter( 'categories_exclude' );
-
-/**
- * Retrieve only records associated with one of the provided tag IDs
- *
- * @method tags
- * @chainable
- * @param {String|Number|Array} tags A term ID integer or numeric string, or array thereof
- * @returns The request instance (for chaining)
- */
-parameterMixins.tags = paramSetter( 'tags' );
-
-/**
- * Legacy wrapper for `.tags()` that uses `?filter` to query by slug if available
- *
- * @method tag
- * @deprecated Use `.tags()` and query by term IDs
- * @chainable
- * @param {String|Number|Array} tag A tag term slug string, numeric ID, or array of numeric IDs
- * @returns The request instance (for chaining)
- */
-parameterMixins.tag = function( tag ) {
-	if ( argumentIsNumeric( tag ) ) {
-		return parameterMixins.tags.call( this, tag );
-	}
-	return taxonomy.call( this, 'tag', tag );
-};
-
-/**
- * Exclude records associated with any of the provided tag IDs
- *
- * @method excludeTags
- * @chainable
- * @param {String|Number|Array} category A term ID integer or numeric string, or array thereof
- * @returns The request instance (for chaining)
- */
-parameterMixins.excludeTags = paramSetter( 'tags_exclude' );
-
-// Date Methods
-// ============
-
-/**
- * Retrieve only records published before a specified date
- *
- * @example <caption>Provide an ISO 8601-compliant date string</caption>
- *
- *     wp.posts().before('2016-03-22')...
- *
- * @example <caption>Provide a JavaScript Date object</caption>
- *
- *     wp.posts().before( new Date( 2016, 03, 22 ) )...
- *
- * @method before
- * @chainable
- * @param {String|Date} date An ISO 8601-compliant date string, or Date object
- * @returns The request instance (for chaining)
- */
-parameterMixins.before = function( date ) {
-	return this.param( 'before', new Date( date ).toISOString() );
-};
-
-/**
- * Retrieve only records published after a specified date
- *
- * @example <caption>Provide an ISO 8601-compliant date string</caption>
- *
- *     wp.posts().after('1986-03-22')...
- *
- * @example <caption>Provide a JavaScript Date object</caption>
- *
- *     wp.posts().after( new Date( 1986, 03, 22 ) )...
- *
- * @method after
- * @chainable
- * @param {String|Date} date An ISO 8601-compliant date string, or Date object
- * @returns The request instance (for chaining)
- */
-parameterMixins.after = function( date ) {
-	return this.param( 'after', new Date( date ).toISOString() );
-};
-
-module.exports = parameterMixins;
-
-
-/***/ }),
-
-/***/ "./node_modules/wpapi/lib/path-part-setter.js":
-/*!****************************************************!*\
-  !*** ./node_modules/wpapi/lib/path-part-setter.js ***!
-  \****************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/**
- * @module path-part-setter
- */
-
-
-/**
- * Return a function to set part of the request URL path.
- *
- * Path part setter methods may be either dynamic (*i.e.* may represent a
- * "named group") or non-dynamic (representing a static part of the URL, which
- * is usually a collection endpoint of some sort). Which type of function is
- * returned depends on whether a given route has one or many sub-resources.
- *
- * @alias module:lib/path-part-setter.create
- * @param {Object} node An object representing a level of an endpoint path hierarchy
- * @returns {Function} A path part setter function
- */
-function createPathPartSetter( node ) {
-	// Local references to `node` properties used by returned functions
-	const nodeLevel = node.level;
-	const nodeName = node.names[ 0 ];
-	const supportedMethods = node.methods || [];
-	const dynamicChildren = node.children ?
-		Object.keys( node.children )
-			.map( key => node.children[ key ] )
-			.filter( childNode => ( childNode.namedGroup === true ) ) :
-		[];
-	const dynamicChild = dynamicChildren.length === 1 && dynamicChildren[ 0 ];
-	const dynamicChildLevel = dynamicChild && dynamicChild.level;
-
-	if ( node.namedGroup ) {
-		/**
-		 * Set a dymanic (named-group) path part of a query URL.
-		 *
-		 * @example
-		 *
-		 *     // id() is a dynamic path part setter:
-		 *     wp.posts().id( 7 ); // Get posts/7
-		 *
-		 * @chainable
-		 * @param  {String|Number} val The path part value to set
-		 * @returns {Object} The handler instance (for chaining)
-		 */
-		return function( val ) {
-			this.setPathPart( nodeLevel, val );
-			if ( supportedMethods.length ) {
-				this._supportedMethods = supportedMethods;
-			}
-			return this;
-		};
-	} else {
-		/**
-		 * Set a non-dymanic (non-named-group) path part of a query URL, and
-		 * set the value of a subresource if an input value is provided and
-		 * exactly one named-group child node exists.
-		 *
-		 * @example
-		 *
-		 *     // revisions() is a non-dynamic path part setter:
-		 *     wp.posts().id( 4 ).revisions();       // Get posts/4/revisions
-		 *     wp.posts().id( 4 ).revisions( 1372 ); // Get posts/4/revisions/1372
-		 *
-		 * @chainable
-		 * @param  {String|Number} [val] The path part value to set (if provided)
-		 *                               for a subresource within this resource
-		 * @returns {Object} The handler instance (for chaining)
-		 */
-		return function( val ) {
-			// If the path part is not a namedGroup, it should have exactly one
-			// entry in the names array: use that as the value for this setter,
-			// as it will usually correspond to a collection endpoint.
-			this.setPathPart( nodeLevel, nodeName );
-
-			// If this node has exactly one dynamic child, this method may act as
-			// a setter for that child node. `dynamicChildLevel` will be falsy if the
-			// node does not have a child or has multiple children.
-			if ( val !== undefined && dynamicChildLevel ) {
-				this.setPathPart( dynamicChildLevel, val );
-			}
-			return this;
-		};
-	}
-}
-
-module.exports = {
-	create: createPathPartSetter,
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/wpapi/lib/resource-handler-spec.js":
-/*!*********************************************************!*\
-  !*** ./node_modules/wpapi/lib/resource-handler-spec.js ***!
-  \*********************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/**
- * @module resource-handler-spec
- */
-
-
-const createPathPartSetter = __webpack_require__( /*! ./path-part-setter */ "./node_modules/wpapi/lib/path-part-setter.js" ).create;
-
-/** @private */
-function addLevelOption( levelsObj, level, obj ) {
-	levelsObj[ level ] = levelsObj[ level ] || [];
-	levelsObj[ level ].push( obj );
-}
-
-/**
- * Assign a setter function for the provided node to the provided route
- * handler object setters dictionary (mutates handler by reference).
- *
- * @private
- * @param {Object} handler A route handler definition object
- * @param {Object} node    A route hierarchy level node object
- */
-function assignSetterFnForNode( handler, node ) {
-	let setterFn;
-
-	// For each node, add its handler to the relevant "level" representation
-	addLevelOption( handler._levels, node.level, {
-		component: node.component,
-		validate: node.validate,
-		methods: node.methods,
-	} );
-
-	// First level is set implicitly, no dedicated setter needed
-	if ( node.level > 0 ) {
-
-		setterFn = createPathPartSetter( node );
-
-		node.names.forEach( ( name ) => {
-			// Convert from snake_case to camelCase
-			const setterFnName = name.replace(
-				/[_-]+\w/g,
-				match => match.replace( /[_-]+/, '' ).toUpperCase()
-			);
-
-			// Don't overwrite previously-set methods
-			if ( ! handler._setters[ setterFnName ] ) {
-				handler._setters[ setterFnName ] = setterFn;
-			}
-		} );
-	}
-}
-
-/**
- * Walk the tree of a specific resource node to create the setter methods
- *
- * The API we want to produce from the node tree looks like this:
- *
- *     wp.posts();                        /wp/v2/posts
- *     wp.posts().id( 7 );                /wp/v2/posts/7
- *     wp.posts().id( 7 ).revisions();    /wp/v2/posts/7/revisions
- *     wp.posts().id( 7 ).revisions( 8 ); /wp/v2/posts/7/revisions/8
- *
- * ^ That last one's the tricky one: we can deduce that this parameter is "id", but
- * that param will already be taken by the post ID, so sub-collections have to be
- * set up as `.revisions()` to get the collection, and `.revisions( id )` to get a
- * specific resource.
- *
- * @private
- * @param  {Object} node            A node object
- * @param  {Object} [node.children] An object of child nodes
- * // @returns {isLeaf} A boolean indicating whether the processed node is a leaf
- */
-function extractSetterFromNode( handler, node ) {
-
-	assignSetterFnForNode( handler, node );
-
-	if ( node.children ) {
-		// Recurse down to this node's children
-		Object.keys( node.children ).forEach( ( key ) => {
-			extractSetterFromNode( handler, node.children[ key ] );
-		} );
-	}
-}
-
-/**
- * Create a node handler specification object from a route definition object
- *
- * @name create
- * @param {object} routeDefinition A route definition object
- * @param {string} resource The string key of the resource for which to create a handler
- * @returns {object} A handler spec object with _path, _levels and _setters properties
- */
-function createNodeHandlerSpec( routeDefinition, resource ) {
-
-	const handler = {
-		// A "path" is an ordered (by key) set of values composed into the final URL
-		_path: {
-			'0': resource,
-		},
-
-		// A "level" is a level-keyed object representing the valid options for
-		// one level of the resource URL
-		_levels: {},
-
-		// Objects that hold methods and properties which will be copied to
-		// instances of this endpoint's handler
-		_setters: {},
-
-		// Arguments (query parameters) that may be set in GET requests to endpoints
-		// nested within this resource route tree, used to determine the mixins to
-		// add to the request handler
-		_getArgs: routeDefinition._getArgs,
-	};
-
-	// Walk the tree
-	Object.keys( routeDefinition ).forEach( ( routeDefProp ) => {
-		if ( routeDefProp !== '_getArgs' ) {
-			extractSetterFromNode( handler, routeDefinition[ routeDefProp ] );
-		}
-	} );
-
-	return handler;
-}
-
-module.exports = {
-	create: createNodeHandlerSpec,
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/wpapi/lib/route-tree.js":
-/*!**********************************************!*\
-  !*** ./node_modules/wpapi/lib/route-tree.js ***!
-  \**********************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/**
- * @module route-tree
- */
-
-
-const namedGroupRE = __webpack_require__( /*! ./util/named-group-regexp */ "./node_modules/wpapi/lib/util/named-group-regexp.js" ).namedGroupRE;
-const splitPath = __webpack_require__( /*! ./util/split-path */ "./node_modules/wpapi/lib/util/split-path.js" );
-const ensure = __webpack_require__( /*! ./util/ensure */ "./node_modules/wpapi/lib/util/ensure.js" );
-const objectReduce = __webpack_require__( /*! ./util/object-reduce */ "./node_modules/wpapi/lib/util/object-reduce.js" );
-
-/**
- * Method to use when reducing route components array.
- *
- * @private
- * @param {object} routeObj     A route definition object (set via .bind partial application)
- * @param {object} topLevel     The top-level route tree object for this set of routes (set
- *                              via .bind partial application)
- * @param {object} parentLevel  The memo object, which is mutated as the reducer adds
- *                              a new level handler for each level in the route
- * @param {string} component    The string defining this route component
- * @param {number} idx          The index of this component within the components array
- * @param {string[]} components The array of all components
- * @returns {object} The child object of the level being reduced
- */
-function reduceRouteComponents( routeObj, topLevel, parentLevel, component, idx, components ) {
-	// Check to see if this component is a dynamic URL segment (i.e. defined by
-	// a named capture group regular expression). namedGroup will be `null` if
-	// the regexp does not match, or else an array defining the RegExp match, e.g.
-	// [
-	//   'P<id>[\\d]+)',
-	//   'id', // Name of the group
-	//   '[\\d]+', // regular expression for this URL segment's contents
-	//   index: 15,
-	//   input: '/wp/v2/posts/(?P<id>[\\d]+)'
-	// ]
-	const namedGroup = component.match( namedGroupRE );
-	// Pull out references to the relevant indices of the match, for utility:
-	// `null` checking is necessary in case the component did not match the RE,
-	// hence the `namedGroup &&`.
-	const groupName = namedGroup && namedGroup[ 1 ];
-	const groupPattern = namedGroup && namedGroup[ 2 ];
-
-	// When branching based on a dynamic capture group we used the group's RE
-	// pattern as the unique identifier: this is done because the same group
-	// could be assigned different names in different endpoint handlers, e.g.
-	// "id" for posts/:id vs "parent_id" for posts/:parent_id/revisions.
-	//
-	// There is an edge case where groupPattern will be "" if we are registering
-	// a custom route via `.registerRoute` that does not include parameter
-	// validation. In this case we assume the groupName is sufficiently unique,
-	// and fall back to `|| groupName` for the levelKey string.
-	const levelKey = namedGroup ? ( groupPattern || groupName ) : component;
-
-	// Level name on the other hand takes its value from the group's name, if
-	// defined, and falls back to the component string to handle situations where
-	// `component` is a collection (e.g. "revisions")
-	const levelName = namedGroup ? groupName : component;
-
-	// Check whether we have a preexisting node at this level of the tree, and
-	// create a new level object if not. The component string is included so that
-	// validators can throw meaningful errors as appropriate.
-	const currentLevel = parentLevel[ levelKey ] || {
-		component: component,
-		namedGroup: namedGroup ? true : false,
-		level: idx,
-		names: [],
-	};
-
-	// A level's "names" correspond to the list of strings which could describe
-	// an endpoint's component setter functions: "id", "revisions", etc.
-	if ( currentLevel.names.indexOf( levelName ) < 0 ) {
-		currentLevel.names.push( levelName );
-	}
-
-	// A level's validate method is called to check whether a value being set
-	// on the request URL is of the proper type for the location in which it
-	// is specified. If a group pattern was found, the validator checks whether
-	// the input string exactly matches the group pattern.
-	const groupPatternRE = groupPattern === '' ?
-		// If groupPattern is an empty string, accept any input without validation
-		/.*/ :
-		// Otherwise, validate against the group pattern or the component string
-		new RegExp( groupPattern ? '^' + groupPattern + '$' : component, 'i' );
-
-	// Only one validate function is maintained for each node, because each node
-	// is defined either by a string literal or by a specific regular expression.
-	currentLevel.validate = input => groupPatternRE.test( input );
-
-	// Check to see whether to expect more nodes within this branch of the tree,
-	if ( components[ idx + 1 ] ) {
-		// and create a "children" object to hold those nodes if necessary
-		currentLevel.children = currentLevel.children || {};
-	} else {
-		// At leaf nodes, specify the method capabilities of this endpoint
-		currentLevel.methods = ( routeObj.methods || [] ).map( str => str.toLowerCase() );
-
-		// Ensure HEAD is included whenever GET is supported: the API automatically
-		// adds support for HEAD if you have GET
-		if ( currentLevel.methods.indexOf( 'get' ) > -1 && currentLevel.methods.indexOf( 'head' ) === -1 ) {
-			currentLevel.methods.push( 'head' );
-		}
-
-		// At leaf nodes also flag (at the top level) what arguments are
-		// available to GET requests, so that we may automatically apply the
-		// appropriate parameter mixins
-		if ( routeObj.endpoints ) {
-			topLevel._getArgs = topLevel._getArgs || {};
-			routeObj.endpoints.forEach( ( endpoint ) => {
-				// `endpoint.methods` will be an array of methods like `[ 'GET' ]`: we
-				// only care about GET for this exercise. Validating POST and PUT args
-				// could be useful but is currently deemed to be out-of-scope.
-				endpoint.methods.forEach( ( method ) => {
-					if ( method.toLowerCase() === 'get' ) {
-						Object.keys( endpoint.args ).forEach( ( argKey ) => {
-							// Reference param definition objects in the top _getArgs dictionary
-							topLevel._getArgs[ argKey ] = endpoint.args[ argKey ];
-						} );
-					}
-				} );
-			} );
-		}
-	}
-
-	// Return the child node object as the new "level"
-	parentLevel[ levelKey ] = currentLevel;
-	return currentLevel.children;
-}
-
-/**
- *
- * @private
- * @param {object}   namespaces The memo object that becomes a dictionary mapping API
- *                              namespaces to an object of the namespace's routes
- * @param {object}   routeObj   A route definition object
- * @param {string}   route      The string key of the `routeObj` route object
- * @returns {object} The namespaces dictionary memo object
- */
-function reduceRouteTree( namespaces, routeObj, route ) {
-	const nsForRoute = routeObj.namespace;
-
-	const routeString = route
-		// Strip the namespace from the route string (all routes should have the
-		// format `/namespace/other/stuff`) @TODO: Validate this assumption
-		.replace( '/' + nsForRoute + '/', '' )
-		// Also strip any trailing "/?": the slash is already optional and a single
-		// question mark would break the regex parser
-		.replace( /\/\?$/, '' );
-
-	// Split the routes up into hierarchical route components
-	const routeComponents = splitPath( routeString );
-
-	// Do not make a namespace group for the API root
-	// Do not add the namespace root to its own group
-	// Do not take any action if routeString is empty
-	if ( ! nsForRoute || '/' + nsForRoute === route || ! routeString ) {
-		return namespaces;
-	}
-
-	// Ensure that the namespace object for this namespace exists
-	ensure( namespaces, nsForRoute, {} );
-
-	// Get a local reference to namespace object
-	const ns = namespaces[ nsForRoute ];
-
-	// The first element of the route tells us what type of resource this route
-	// is for, e.g. "posts" or "comments": we build one handler per resource
-	// type, so we group like resource paths together.
-	const resource = routeComponents[0];
-
-	// @TODO: This code above currently precludes baseless routes, e.g.
-	// myplugin/v2/(?P<resource>\w+) -- should those be supported?
-
-	// Create an array to represent this resource, and ensure it is assigned
-	// to the namespace object. The array will structure the "levels" (path
-	// components and subresource types) of this resource's endpoint handler.
-	ensure( ns, resource, {} );
-	const levels = ns[ resource ];
-
-	// Recurse through the route components, mutating levels with information about
-	// each child node encountered while walking through the routes tree and what
-	// arguments (parameters) are available for GET requests to this endpoint.
-	routeComponents.reduce(
-		reduceRouteComponents.bind( null, routeObj, levels ),
-		levels
-	);
-
-	return namespaces;
-}
-
-/**
- * Build a route tree by reducing over a routes definition object from the API
- * root endpoint response object
- *
- * @method build
- * @param {object} routes A dictionary of routes keyed by route regex strings
- * @returns {object} A dictionary, keyed by namespace, of resource handler
- * factory methods for each namespace's resources
- */
-function buildRouteTree( routes ) {
-	return objectReduce( routes, reduceRouteTree, {} );
-}
-
-module.exports = {
-	build: buildRouteTree,
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/wpapi/lib/util/alphanumeric-sort.js":
-/*!**********************************************************!*\
-  !*** ./node_modules/wpapi/lib/util/alphanumeric-sort.js ***!
-  \**********************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-/**
- * Utility function for sorting arrays of numbers or strings.
- *
- * @module util/alphanumeric-sort
- * @param {String|Number} a The first comparator operand
- * @param {String|Number} a The second comparator operand
- * @returns -1 if the values are backwards, 1 if they're ordered, and 0 if they're the same
- */
-module.exports = ( a, b ) => {
-	if ( a > b ) {
-		return 1;
-	}
-	if ( a < b ) {
-		return -1;
-	}
-	return 0;
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/wpapi/lib/util/apply-mixin.js":
-/*!****************************************************!*\
-  !*** ./node_modules/wpapi/lib/util/apply-mixin.js ***!
-  \****************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-/**
- * Augment an object (specifically a prototype) with a mixin method
- * (the provided object is mutated by reference)
- *
- * @module util/apply-mixin
- * @param {Object} obj The object (usually a prototype) to augment
- * @param {String} key The property to which the mixin method should be assigned
- * @param {Function} mixin The mixin method
- * @returns {void}
- */
-module.exports = ( obj, key, mixin ) => {
-	// Will not overwrite existing methods
-	if ( typeof mixin === 'function' && ! obj[ key ] ) {
-		obj[ key ] = mixin;
-	}
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/wpapi/lib/util/argument-is-numeric.js":
-/*!************************************************************!*\
-  !*** ./node_modules/wpapi/lib/util/argument-is-numeric.js ***!
-  \************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-/**
- * Return true if the provided argument is a number, a numeric string, or an
- * array of numbers or numeric strings
- *
- * @module util/argument-is-numeric
- * @param {Number|String|Number[]|String[]} val The value to inspect
- * @param {String} key The property to which the mixin method should be assigned
- * @param {Function} mixin The mixin method
- * @returns {void}
- */
-const argumentIsNumeric = ( val ) => {
-	if ( typeof val === 'number' ) {
-		return true;
-	}
-
-	if ( typeof val === 'string' ) {
-		return /^\d+$/.test( val );
-	}
-
-	if ( Array.isArray( val ) ) {
-		for ( let i = 0; i < val.length; i++ ) {
-			// Fail early if any argument isn't determined to be numeric
-			if ( ! argumentIsNumeric( val[ i ] ) ) {
-				return false;
-			}
-		}
-		return true;
-	}
-
-	// If it's not an array, and not a string, and not a number, we don't
-	// know what to do with it
-	return false;
-};
-
-module.exports = argumentIsNumeric;
-
-
-/***/ }),
-
-/***/ "./node_modules/wpapi/lib/util/check-method-support.js":
-/*!*************************************************************!*\
-  !*** ./node_modules/wpapi/lib/util/check-method-support.js ***!
-  \*************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-/**
- * Verify that a specific HTTP method is supported by the provided WPRequest
- *
- * @module util/check-method-support
- * @param {String} method An HTTP method to check ('get', 'post', etc)
- * @param {WPRequest} request A WPRequest object with a _supportedMethods array
- * @returns true iff the method is within request._supportedMethods
- */
-module.exports = ( method, request ) => {
-	if ( request._supportedMethods.indexOf( method.toLowerCase() ) === -1 ) {
-		throw new Error(
-			'Unsupported method; supported methods are: ' +
-			request._supportedMethods.join( ', ' )
-		);
-	}
-
-	return true;
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/wpapi/lib/util/ensure.js":
-/*!***********************************************!*\
-  !*** ./node_modules/wpapi/lib/util/ensure.js ***!
-  \***********************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-/**
- * Ensure that a property is present in an object, initializing it to a default
- * value if it is not already defined. Modifies the provided object by reference.
- *
- * @module util/ensure
- * @param {object} obj              The object in which to ensure a property exists
- * @param {string} prop             The property key to ensure
- * @param {}       propDefaultValue The default value for the property
- * @returns {void}
- */
-module.exports = ( obj, prop, propDefaultValue ) => {
-	if ( obj && obj[ prop ] === undefined ) {
-		obj[ prop ] = propDefaultValue;
-	}
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/wpapi/lib/util/is-empty-object.js":
-/*!********************************************************!*\
-  !*** ./node_modules/wpapi/lib/util/is-empty-object.js ***!
-  \********************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-/**
- * Determine whether an provided value is an empty object
- *
- * @module util/is-empty-object
- * @param {} value A value to test for empty-object-ness
- * @returns {boolean} Whether the provided value is an empty object
- */
-module.exports = ( value ) => {
-	// If the value is not object-like, then it is certainly not an empty object
-	if ( typeof value !== 'object' ) {
-		return false;
-	}
-
-	// For our purposes an empty array should not be treated as an empty object
-	// (Since this is used to process invalid content-type responses, )
-	if ( Array.isArray( value ) ) {
-		return false;
-	}
-
-	for ( const key in value ) {
-		if ( value.hasOwnProperty( key ) ) {
-			return false;
-		}
-	}
-
-	return true;
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/wpapi/lib/util/key-val-to-obj.js":
-/*!*******************************************************!*\
-  !*** ./node_modules/wpapi/lib/util/key-val-to-obj.js ***!
-  \*******************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-/**
- * Convert a (key, value) pair to a { key: value } object
- *
- * @module util/key-val-to-obj
- * @param {string} key   The key to use in the returned object
- * @param {}       value The value to assign to the provided key
- * @returns {object} A dictionary object containing the key-value pair
- */
-module.exports = ( key, value ) => {
-	const obj = {};
-	obj[ key ] = value;
-	return obj;
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/wpapi/lib/util/named-group-regexp.js":
-/*!***********************************************************!*\
-  !*** ./node_modules/wpapi/lib/util/named-group-regexp.js ***!
-  \***********************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/**
- * @module util/named-group-regexp
- */
-
-
-const pattern = [
-	// Capture group start
-	'\\(\\?',
-	// Capture group name begins either `P<`, `<` or `'`
-	'(?:P<|<|\')',
-	// Everything up to the next `>`` or `'` (depending) will be the capture group name
-	'([^>\']+)',
-	// Capture group end
-	'[>\']',
-	// Get everything up to the end of the capture group: this is the RegExp used
-	// when matching URLs to this route, which we can use for validation purposes.
-	'([^\\)]*)',
-	// Capture group end
-	'\\)',
-].join( '' );
-
-module.exports = {
-	/**
-	 * String representation of the exported Regular Expression; we construct this
-	 * RegExp from a string to enable more detailed annotation and permutation
-	 *
-	 * @prop {String} pattern
-	 */
-	pattern: pattern,
-
-	/**
-	 * Regular Expression to identify a capture group in PCRE formats
-	 * `(?<name>regex)`, `(?'name'regex)` or `(?P<name>regex)` (see
-	 * regular-expressions.info/refext.html)
-	 *
-	 * @prop {RegExp} namedGroupRE
-	 */
-	namedGroupRE: new RegExp( pattern ),
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/wpapi/lib/util/object-reduce.js":
-/*!******************************************************!*\
-  !*** ./node_modules/wpapi/lib/util/object-reduce.js ***!
-  \******************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-/**
- * Utility method to permit Array#reduce-like operations over objects
- *
- * This is likely to be slightly more inefficient than using lodash.reduce,
- * but results in ~50kb less size in the resulting bundled code before
- * minification and ~12kb of savings with minification.
- *
- * Unlike lodash.reduce(), the iterator and initial value properties are NOT
- * optional: this is done to simplify the code, this module is not intended to
- * be a full replacement for lodash.reduce and instead prioritizes simplicity
- * for a specific common case.
- *
- * @module util/object-reduce
- * @private
- * @param {Object} obj An object of key-value pairs
- * @param {Function} iterator A function to use to reduce the object
- * @param {*} initialState The initial value to pass to the reducer function
- * @returns The result of the reduction operation
- */
-module.exports = ( obj, iterator, initialState ) => Object
-	.keys( obj )
-	.reduce(
-		( memo, key ) => iterator( memo, obj[ key ], key ),
-		initialState
-	);
-
-
-/***/ }),
-
-/***/ "./node_modules/wpapi/lib/util/parameter-setter.js":
-/*!*********************************************************!*\
-  !*** ./node_modules/wpapi/lib/util/parameter-setter.js ***!
-  \*********************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-/**
- * Helper to create a simple parameter setter convenience method
- *
- * @module util/parameter-setter
- * @param {String} param The string key of the parameter this method will set
- * @returns {Function} A setter method that can be assigned to a request instance
- */
-module.exports = ( param ) => {
-	/**
-	 * A setter for a specific parameter
-	 *
-	 * @chainable
-	 * @param {*} val The value to set for the the parameter
-	 * @returns The request instance on which this method was called (for chaining)
-	 */
-	return function( val ) {
-		return this.param( param, val );
-	};
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/wpapi/lib/util/split-path.js":
-/*!***************************************************!*\
-  !*** ./node_modules/wpapi/lib/util/split-path.js ***!
-  \***************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/**
- * @module util/split-path
- */
-
-
-const namedGroupPattern = __webpack_require__( /*! ./named-group-regexp */ "./node_modules/wpapi/lib/util/named-group-regexp.js" ).pattern;
-
-// Convert capture groups to non-matching groups, because all capture groups
-// are included in the resulting array when an RE is passed to `.split()`
-// (We re-use the existing named group's capture pattern instead of creating
-// a new RegExp just for this purpose)
-const patternWithoutSubgroups = namedGroupPattern
-	.replace( /([^\\])\(([^?])/g, '$1(?:$2' );
-
-// Make a new RegExp using the same pattern as one single unified capture group,
-// so the match as a whole will be preserved after `.split()`. Permit non-slash
-// characters before or after the named capture group, although those components
-// will not yield functioning setters.
-const namedGroupRE = new RegExp( '([^/]*' + patternWithoutSubgroups + '[^/]*)' );
-
-/**
- * Divide a route string up into hierarchical components by breaking it apart
- * on forward slash characters.
- *
- * There are plugins (including Jetpack) that register routes with regex capture
- * groups which also contain forward slashes, so those groups have to be pulled
- * out first before the remainder of the string can be .split() as normal.
- *
- * @param {String} pathStr A route path string to break into components
- * @returns {String[]} An array of route component strings
- */
-module.exports = pathStr => pathStr
-	// Divide a string like "/some/path/(?P<with_named_groups>)/etc" into an
-	// array `[ "/some/path/", "(?P<with_named_groups>)", "/etc" ]`.
-	.split( namedGroupRE )
-	// Then, reduce through the array of parts, splitting any non-capture-group
-	// parts on forward slashes and discarding empty strings to create the final
-	// array of path components.
-	.reduce( ( components, part ) => {
-		if ( ! part ) {
-			// Ignore empty strings parts
-			return components;
-		}
-
-		if ( namedGroupRE.test( part ) ) {
-			// Include named capture groups as-is
-			return components.concat( part );
-		}
-
-		// Split the part on / and filter out empty strings
-		return components.concat( part.split( '/' ).filter( Boolean ) );
-	}, [] );
-
-
-/***/ }),
-
-/***/ "./node_modules/wpapi/lib/util/unique.js":
-/*!***********************************************!*\
-  !*** ./node_modules/wpapi/lib/util/unique.js ***!
-  \***********************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-/**
- * Return an array with all duplicate items removed.
- *
- * This functionality was previously provided by lodash.uniq, but this
- * modern JS solution yields a smaller bundle size.
- *
- * @param {Array} arr An array to de-duplicate
- * @returns {Array} A de-duplicated array
- */
-module.exports = arr => Array.from( new Set( arr ) );
-
-
-/***/ }),
-
-/***/ "./node_modules/wpapi/lib/wp-register-route.js":
-/*!*****************************************************!*\
-  !*** ./node_modules/wpapi/lib/wp-register-route.js ***!
-  \*****************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-const buildRouteTree = __webpack_require__( /*! ./route-tree */ "./node_modules/wpapi/lib/route-tree.js" ).build;
-const generateEndpointFactories = __webpack_require__( /*! ./endpoint-factories */ "./node_modules/wpapi/lib/endpoint-factories.js" ).generate;
-const paramSetter = __webpack_require__( /*! ./util/parameter-setter */ "./node_modules/wpapi/lib/util/parameter-setter.js" );
-const applyMixin = __webpack_require__( /*! ./util/apply-mixin */ "./node_modules/wpapi/lib/util/apply-mixin.js" );
-const mixins = __webpack_require__( /*! ./mixins */ "./node_modules/wpapi/lib/mixins/index.js" );
-
-/**
- * Create and return a handler for an arbitrary WP REST API endpoint.
- *
- * The first two parameters mirror `register_rest_route` in the REST API
- * codebase:
- *
- * @memberof! WPAPI#
- * @param {string}   namespace         A namespace string, e.g. 'myplugin/v1'
- * @param {string}   restBase          A REST route string, e.g. '/author/(?P<id>\d+)'
- * @param {object}   [options]         An (optional) options object
- * @param {object}   [options.mixins]  A hash of functions to apply as mixins
- * @param {string[]} [options.methods] An array of methods to whitelist (on the leaf node only)
- * @returns {Function} An endpoint handler factory function for the specified route
- */
-function registerRoute( namespace, restBase, options = {} ) {
-	// Support all methods until requested to do otherwise
-	let supportedMethods = [ 'head', 'get', 'patch', 'put', 'post', 'delete' ];
-
-	if ( Array.isArray( options.methods ) ) {
-		// Permit supported methods to be specified as an array
-		supportedMethods = options.methods.map( method => method.trim().toLowerCase() );
-	} else if ( typeof options.methods === 'string' ) {
-		// Permit a supported method to be specified as a string
-		supportedMethods = [ options.methods.trim().toLowerCase() ];
-	}
-
-	// Ensure that if GET is supported, then HEAD is as well, and vice-versa
-	if ( supportedMethods.indexOf( 'get' ) !== -1 && supportedMethods.indexOf( 'head' ) === -1 ) {
-		supportedMethods.push( 'head' );
-	} else if ( supportedMethods.indexOf( 'head' ) !== -1 && supportedMethods.indexOf( 'get' ) === -1 ) {
-		supportedMethods.push( 'get' );
-	}
-
-	const fullRoute = namespace
-		// Route should always have preceding slash
-		.replace( /^[\s/]*/, '/' )
-		// Route should always be joined to namespace with a single slash
-		.replace( /[\s/]*$/, '/' ) + restBase.replace( /^[\s/]*/, '' );
-
-	const routeObj = {};
-	routeObj[ fullRoute ] = {
-		namespace: namespace,
-		methods: supportedMethods,
-	};
-
-	// Go through the same steps used to bootstrap the client to parse the
-	// provided route out into a handler request method
-	const routeTree = buildRouteTree( routeObj );
-	// Parse the mock route object into endpoint factories
-	const endpointFactories = generateEndpointFactories( routeTree )[ namespace ];
-	const EndpointRequest = endpointFactories[ Object.keys( endpointFactories )[ 0 ] ].Ctor;
-
-	if ( options && options.params ) {
-		options.params.forEach( ( param ) => {
-			// Only accept string parameters
-			if ( typeof param !== 'string' ) {
-				return;
-			}
-
-			// If the parameter can be mapped to a mixin, apply that mixin
-			if ( typeof mixins[ param ] === 'object' ) {
-				Object.keys( mixins[ param ] ).forEach( ( key ) => {
-					applyMixin( EndpointRequest.prototype, key, mixins[ param ][ key ] );
-				} );
-				return;
-			}
-
-			// Attempt to create a simple setter for any parameters for which
-			// we do not already have a custom mixin
-			applyMixin( EndpointRequest.prototype, param, paramSetter( param ) );
-		} );
-	}
-
-	// Set any explicitly-provided object mixins
-	if ( options && typeof options.mixins === 'object' ) {
-
-		// Set any specified mixin functions on the response
-		Object.keys( options.mixins ).forEach( ( key ) => {
-			applyMixin( EndpointRequest.prototype, key, options.mixins[ key ] );
-		} );
-	}
-
-	function endpointFactory( options = {} ) {
-		return new EndpointRequest( {
-			...options,
-			...( this ? this._options : {} ),
-		} );
-	}
-	endpointFactory.Ctor = EndpointRequest;
-
-	return endpointFactory;
-}
-
-module.exports = registerRoute;
-
-
-/***/ }),
-
-/***/ "./node_modules/wpapi/node_modules/qs/lib/formats.js":
-/*!***********************************************************!*\
-  !*** ./node_modules/wpapi/node_modules/qs/lib/formats.js ***!
-  \***********************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var replace = String.prototype.replace;
-var percentTwenties = /%20/g;
-
-var util = __webpack_require__(/*! ./utils */ "./node_modules/wpapi/node_modules/qs/lib/utils.js");
-
-var Format = {
-    RFC1738: 'RFC1738',
-    RFC3986: 'RFC3986'
-};
-
-module.exports = util.assign(
-    {
-        'default': Format.RFC3986,
-        formatters: {
-            RFC1738: function (value) {
-                return replace.call(value, percentTwenties, '+');
-            },
-            RFC3986: function (value) {
-                return String(value);
-            }
-        }
-    },
-    Format
-);
-
-
-/***/ }),
-
-/***/ "./node_modules/wpapi/node_modules/qs/lib/index.js":
-/*!*********************************************************!*\
-  !*** ./node_modules/wpapi/node_modules/qs/lib/index.js ***!
-  \*********************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var stringify = __webpack_require__(/*! ./stringify */ "./node_modules/wpapi/node_modules/qs/lib/stringify.js");
-var parse = __webpack_require__(/*! ./parse */ "./node_modules/wpapi/node_modules/qs/lib/parse.js");
-var formats = __webpack_require__(/*! ./formats */ "./node_modules/wpapi/node_modules/qs/lib/formats.js");
-
-module.exports = {
-    formats: formats,
-    parse: parse,
-    stringify: stringify
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/wpapi/node_modules/qs/lib/parse.js":
-/*!*********************************************************!*\
-  !*** ./node_modules/wpapi/node_modules/qs/lib/parse.js ***!
-  \*********************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var utils = __webpack_require__(/*! ./utils */ "./node_modules/wpapi/node_modules/qs/lib/utils.js");
-
-var has = Object.prototype.hasOwnProperty;
-var isArray = Array.isArray;
-
-var defaults = {
-    allowDots: false,
-    allowPrototypes: false,
-    arrayLimit: 20,
-    charset: 'utf-8',
-    charsetSentinel: false,
-    comma: false,
-    decoder: utils.decode,
-    delimiter: '&',
-    depth: 5,
-    ignoreQueryPrefix: false,
-    interpretNumericEntities: false,
-    parameterLimit: 1000,
-    parseArrays: true,
-    plainObjects: false,
-    strictNullHandling: false
-};
-
-var interpretNumericEntities = function (str) {
-    return str.replace(/&#(\d+);/g, function ($0, numberStr) {
-        return String.fromCharCode(parseInt(numberStr, 10));
-    });
-};
-
-var parseArrayValue = function (val, options) {
-    if (val && typeof val === 'string' && options.comma && val.indexOf(',') > -1) {
-        return val.split(',');
-    }
-
-    return val;
-};
-
-// This is what browsers will submit when the ✓ character occurs in an
-// application/x-www-form-urlencoded body and the encoding of the page containing
-// the form is iso-8859-1, or when the submitted form has an accept-charset
-// attribute of iso-8859-1. Presumably also with other charsets that do not contain
-// the ✓ character, such as us-ascii.
-var isoSentinel = 'utf8=%26%2310003%3B'; // encodeURIComponent('&#10003;')
-
-// These are the percent-encoded utf-8 octets representing a checkmark, indicating that the request actually is utf-8 encoded.
-var charsetSentinel = 'utf8=%E2%9C%93'; // encodeURIComponent('✓')
-
-var parseValues = function parseQueryStringValues(str, options) {
-    var obj = {};
-    var cleanStr = options.ignoreQueryPrefix ? str.replace(/^\?/, '') : str;
-    var limit = options.parameterLimit === Infinity ? undefined : options.parameterLimit;
-    var parts = cleanStr.split(options.delimiter, limit);
-    var skipIndex = -1; // Keep track of where the utf8 sentinel was found
-    var i;
-
-    var charset = options.charset;
-    if (options.charsetSentinel) {
-        for (i = 0; i < parts.length; ++i) {
-            if (parts[i].indexOf('utf8=') === 0) {
-                if (parts[i] === charsetSentinel) {
-                    charset = 'utf-8';
-                } else if (parts[i] === isoSentinel) {
-                    charset = 'iso-8859-1';
-                }
-                skipIndex = i;
-                i = parts.length; // The eslint settings do not allow break;
-            }
-        }
-    }
-
-    for (i = 0; i < parts.length; ++i) {
-        if (i === skipIndex) {
-            continue;
-        }
-        var part = parts[i];
-
-        var bracketEqualsPos = part.indexOf(']=');
-        var pos = bracketEqualsPos === -1 ? part.indexOf('=') : bracketEqualsPos + 1;
-
-        var key, val;
-        if (pos === -1) {
-            key = options.decoder(part, defaults.decoder, charset, 'key');
-            val = options.strictNullHandling ? null : '';
-        } else {
-            key = options.decoder(part.slice(0, pos), defaults.decoder, charset, 'key');
-            val = utils.maybeMap(
-                parseArrayValue(part.slice(pos + 1), options),
-                function (encodedVal) {
-                    return options.decoder(encodedVal, defaults.decoder, charset, 'value');
-                }
-            );
-        }
-
-        if (val && options.interpretNumericEntities && charset === 'iso-8859-1') {
-            val = interpretNumericEntities(val);
-        }
-
-        if (part.indexOf('[]=') > -1) {
-            val = isArray(val) ? [val] : val;
-        }
-
-        if (has.call(obj, key)) {
-            obj[key] = utils.combine(obj[key], val);
-        } else {
-            obj[key] = val;
-        }
-    }
-
-    return obj;
-};
-
-var parseObject = function (chain, val, options, valuesParsed) {
-    var leaf = valuesParsed ? val : parseArrayValue(val, options);
-
-    for (var i = chain.length - 1; i >= 0; --i) {
-        var obj;
-        var root = chain[i];
-
-        if (root === '[]' && options.parseArrays) {
-            obj = [].concat(leaf);
-        } else {
-            obj = options.plainObjects ? Object.create(null) : {};
-            var cleanRoot = root.charAt(0) === '[' && root.charAt(root.length - 1) === ']' ? root.slice(1, -1) : root;
-            var index = parseInt(cleanRoot, 10);
-            if (!options.parseArrays && cleanRoot === '') {
-                obj = { 0: leaf };
-            } else if (
-                !isNaN(index)
-                && root !== cleanRoot
-                && String(index) === cleanRoot
-                && index >= 0
-                && (options.parseArrays && index <= options.arrayLimit)
-            ) {
-                obj = [];
-                obj[index] = leaf;
-            } else {
-                obj[cleanRoot] = leaf;
-            }
-        }
-
-        leaf = obj; // eslint-disable-line no-param-reassign
-    }
-
-    return leaf;
-};
-
-var parseKeys = function parseQueryStringKeys(givenKey, val, options, valuesParsed) {
-    if (!givenKey) {
-        return;
-    }
-
-    // Transform dot notation to bracket notation
-    var key = options.allowDots ? givenKey.replace(/\.([^.[]+)/g, '[$1]') : givenKey;
-
-    // The regex chunks
-
-    var brackets = /(\[[^[\]]*])/;
-    var child = /(\[[^[\]]*])/g;
-
-    // Get the parent
-
-    var segment = options.depth > 0 && brackets.exec(key);
-    var parent = segment ? key.slice(0, segment.index) : key;
-
-    // Stash the parent if it exists
-
-    var keys = [];
-    if (parent) {
-        // If we aren't using plain objects, optionally prefix keys that would overwrite object prototype properties
-        if (!options.plainObjects && has.call(Object.prototype, parent)) {
-            if (!options.allowPrototypes) {
-                return;
-            }
-        }
-
-        keys.push(parent);
-    }
-
-    // Loop through children appending to the array until we hit depth
-
-    var i = 0;
-    while (options.depth > 0 && (segment = child.exec(key)) !== null && i < options.depth) {
-        i += 1;
-        if (!options.plainObjects && has.call(Object.prototype, segment[1].slice(1, -1))) {
-            if (!options.allowPrototypes) {
-                return;
-            }
-        }
-        keys.push(segment[1]);
-    }
-
-    // If there's a remainder, just add whatever is left
-
-    if (segment) {
-        keys.push('[' + key.slice(segment.index) + ']');
-    }
-
-    return parseObject(keys, val, options, valuesParsed);
-};
-
-var normalizeParseOptions = function normalizeParseOptions(opts) {
-    if (!opts) {
-        return defaults;
-    }
-
-    if (opts.decoder !== null && opts.decoder !== undefined && typeof opts.decoder !== 'function') {
-        throw new TypeError('Decoder has to be a function.');
-    }
-
-    if (typeof opts.charset !== 'undefined' && opts.charset !== 'utf-8' && opts.charset !== 'iso-8859-1') {
-        throw new TypeError('The charset option must be either utf-8, iso-8859-1, or undefined');
-    }
-    var charset = typeof opts.charset === 'undefined' ? defaults.charset : opts.charset;
-
-    return {
-        allowDots: typeof opts.allowDots === 'undefined' ? defaults.allowDots : !!opts.allowDots,
-        allowPrototypes: typeof opts.allowPrototypes === 'boolean' ? opts.allowPrototypes : defaults.allowPrototypes,
-        arrayLimit: typeof opts.arrayLimit === 'number' ? opts.arrayLimit : defaults.arrayLimit,
-        charset: charset,
-        charsetSentinel: typeof opts.charsetSentinel === 'boolean' ? opts.charsetSentinel : defaults.charsetSentinel,
-        comma: typeof opts.comma === 'boolean' ? opts.comma : defaults.comma,
-        decoder: typeof opts.decoder === 'function' ? opts.decoder : defaults.decoder,
-        delimiter: typeof opts.delimiter === 'string' || utils.isRegExp(opts.delimiter) ? opts.delimiter : defaults.delimiter,
-        // eslint-disable-next-line no-implicit-coercion, no-extra-parens
-        depth: (typeof opts.depth === 'number' || opts.depth === false) ? +opts.depth : defaults.depth,
-        ignoreQueryPrefix: opts.ignoreQueryPrefix === true,
-        interpretNumericEntities: typeof opts.interpretNumericEntities === 'boolean' ? opts.interpretNumericEntities : defaults.interpretNumericEntities,
-        parameterLimit: typeof opts.parameterLimit === 'number' ? opts.parameterLimit : defaults.parameterLimit,
-        parseArrays: opts.parseArrays !== false,
-        plainObjects: typeof opts.plainObjects === 'boolean' ? opts.plainObjects : defaults.plainObjects,
-        strictNullHandling: typeof opts.strictNullHandling === 'boolean' ? opts.strictNullHandling : defaults.strictNullHandling
-    };
-};
-
-module.exports = function (str, opts) {
-    var options = normalizeParseOptions(opts);
-
-    if (str === '' || str === null || typeof str === 'undefined') {
-        return options.plainObjects ? Object.create(null) : {};
-    }
-
-    var tempObj = typeof str === 'string' ? parseValues(str, options) : str;
-    var obj = options.plainObjects ? Object.create(null) : {};
-
-    // Iterate over the keys and setup the new object
-
-    var keys = Object.keys(tempObj);
-    for (var i = 0; i < keys.length; ++i) {
-        var key = keys[i];
-        var newObj = parseKeys(key, tempObj[key], options, typeof str === 'string');
-        obj = utils.merge(obj, newObj, options);
-    }
-
-    return utils.compact(obj);
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/wpapi/node_modules/qs/lib/stringify.js":
-/*!*************************************************************!*\
-  !*** ./node_modules/wpapi/node_modules/qs/lib/stringify.js ***!
-  \*************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var utils = __webpack_require__(/*! ./utils */ "./node_modules/wpapi/node_modules/qs/lib/utils.js");
-var formats = __webpack_require__(/*! ./formats */ "./node_modules/wpapi/node_modules/qs/lib/formats.js");
-var has = Object.prototype.hasOwnProperty;
-
-var arrayPrefixGenerators = {
-    brackets: function brackets(prefix) {
-        return prefix + '[]';
-    },
-    comma: 'comma',
-    indices: function indices(prefix, key) {
-        return prefix + '[' + key + ']';
-    },
-    repeat: function repeat(prefix) {
-        return prefix;
-    }
-};
-
-var isArray = Array.isArray;
-var push = Array.prototype.push;
-var pushToArray = function (arr, valueOrArray) {
-    push.apply(arr, isArray(valueOrArray) ? valueOrArray : [valueOrArray]);
-};
-
-var toISO = Date.prototype.toISOString;
-
-var defaultFormat = formats['default'];
-var defaults = {
-    addQueryPrefix: false,
-    allowDots: false,
-    charset: 'utf-8',
-    charsetSentinel: false,
-    delimiter: '&',
-    encode: true,
-    encoder: utils.encode,
-    encodeValuesOnly: false,
-    format: defaultFormat,
-    formatter: formats.formatters[defaultFormat],
-    // deprecated
-    indices: false,
-    serializeDate: function serializeDate(date) {
-        return toISO.call(date);
-    },
-    skipNulls: false,
-    strictNullHandling: false
-};
-
-var isNonNullishPrimitive = function isNonNullishPrimitive(v) {
-    return typeof v === 'string'
-        || typeof v === 'number'
-        || typeof v === 'boolean'
-        || typeof v === 'symbol'
-        || typeof v === 'bigint';
-};
-
-var stringify = function stringify(
-    object,
-    prefix,
-    generateArrayPrefix,
-    strictNullHandling,
-    skipNulls,
-    encoder,
-    filter,
-    sort,
-    allowDots,
-    serializeDate,
-    formatter,
-    encodeValuesOnly,
-    charset
-) {
-    var obj = object;
-    if (typeof filter === 'function') {
-        obj = filter(prefix, obj);
-    } else if (obj instanceof Date) {
-        obj = serializeDate(obj);
-    } else if (generateArrayPrefix === 'comma' && isArray(obj)) {
-        obj = utils.maybeMap(obj, function (value) {
-            if (value instanceof Date) {
-                return serializeDate(value);
-            }
-            return value;
-        }).join(',');
-    }
-
-    if (obj === null) {
-        if (strictNullHandling) {
-            return encoder && !encodeValuesOnly ? encoder(prefix, defaults.encoder, charset, 'key') : prefix;
-        }
-
-        obj = '';
-    }
-
-    if (isNonNullishPrimitive(obj) || utils.isBuffer(obj)) {
-        if (encoder) {
-            var keyValue = encodeValuesOnly ? prefix : encoder(prefix, defaults.encoder, charset, 'key');
-            return [formatter(keyValue) + '=' + formatter(encoder(obj, defaults.encoder, charset, 'value'))];
-        }
-        return [formatter(prefix) + '=' + formatter(String(obj))];
-    }
-
-    var values = [];
-
-    if (typeof obj === 'undefined') {
-        return values;
-    }
-
-    var objKeys;
-    if (isArray(filter)) {
-        objKeys = filter;
-    } else {
-        var keys = Object.keys(obj);
-        objKeys = sort ? keys.sort(sort) : keys;
-    }
-
-    for (var i = 0; i < objKeys.length; ++i) {
-        var key = objKeys[i];
-        var value = obj[key];
-
-        if (skipNulls && value === null) {
-            continue;
-        }
-
-        var keyPrefix = isArray(obj)
-            ? typeof generateArrayPrefix === 'function' ? generateArrayPrefix(prefix, key) : prefix
-            : prefix + (allowDots ? '.' + key : '[' + key + ']');
-
-        pushToArray(values, stringify(
-            value,
-            keyPrefix,
-            generateArrayPrefix,
-            strictNullHandling,
-            skipNulls,
-            encoder,
-            filter,
-            sort,
-            allowDots,
-            serializeDate,
-            formatter,
-            encodeValuesOnly,
-            charset
-        ));
-    }
-
-    return values;
-};
-
-var normalizeStringifyOptions = function normalizeStringifyOptions(opts) {
-    if (!opts) {
-        return defaults;
-    }
-
-    if (opts.encoder !== null && opts.encoder !== undefined && typeof opts.encoder !== 'function') {
-        throw new TypeError('Encoder has to be a function.');
-    }
-
-    var charset = opts.charset || defaults.charset;
-    if (typeof opts.charset !== 'undefined' && opts.charset !== 'utf-8' && opts.charset !== 'iso-8859-1') {
-        throw new TypeError('The charset option must be either utf-8, iso-8859-1, or undefined');
-    }
-
-    var format = formats['default'];
-    if (typeof opts.format !== 'undefined') {
-        if (!has.call(formats.formatters, opts.format)) {
-            throw new TypeError('Unknown format option provided.');
-        }
-        format = opts.format;
-    }
-    var formatter = formats.formatters[format];
-
-    var filter = defaults.filter;
-    if (typeof opts.filter === 'function' || isArray(opts.filter)) {
-        filter = opts.filter;
-    }
-
-    return {
-        addQueryPrefix: typeof opts.addQueryPrefix === 'boolean' ? opts.addQueryPrefix : defaults.addQueryPrefix,
-        allowDots: typeof opts.allowDots === 'undefined' ? defaults.allowDots : !!opts.allowDots,
-        charset: charset,
-        charsetSentinel: typeof opts.charsetSentinel === 'boolean' ? opts.charsetSentinel : defaults.charsetSentinel,
-        delimiter: typeof opts.delimiter === 'undefined' ? defaults.delimiter : opts.delimiter,
-        encode: typeof opts.encode === 'boolean' ? opts.encode : defaults.encode,
-        encoder: typeof opts.encoder === 'function' ? opts.encoder : defaults.encoder,
-        encodeValuesOnly: typeof opts.encodeValuesOnly === 'boolean' ? opts.encodeValuesOnly : defaults.encodeValuesOnly,
-        filter: filter,
-        formatter: formatter,
-        serializeDate: typeof opts.serializeDate === 'function' ? opts.serializeDate : defaults.serializeDate,
-        skipNulls: typeof opts.skipNulls === 'boolean' ? opts.skipNulls : defaults.skipNulls,
-        sort: typeof opts.sort === 'function' ? opts.sort : null,
-        strictNullHandling: typeof opts.strictNullHandling === 'boolean' ? opts.strictNullHandling : defaults.strictNullHandling
-    };
-};
-
-module.exports = function (object, opts) {
-    var obj = object;
-    var options = normalizeStringifyOptions(opts);
-
-    var objKeys;
-    var filter;
-
-    if (typeof options.filter === 'function') {
-        filter = options.filter;
-        obj = filter('', obj);
-    } else if (isArray(options.filter)) {
-        filter = options.filter;
-        objKeys = filter;
-    }
-
-    var keys = [];
-
-    if (typeof obj !== 'object' || obj === null) {
-        return '';
-    }
-
-    var arrayFormat;
-    if (opts && opts.arrayFormat in arrayPrefixGenerators) {
-        arrayFormat = opts.arrayFormat;
-    } else if (opts && 'indices' in opts) {
-        arrayFormat = opts.indices ? 'indices' : 'repeat';
-    } else {
-        arrayFormat = 'indices';
-    }
-
-    var generateArrayPrefix = arrayPrefixGenerators[arrayFormat];
-
-    if (!objKeys) {
-        objKeys = Object.keys(obj);
-    }
-
-    if (options.sort) {
-        objKeys.sort(options.sort);
-    }
-
-    for (var i = 0; i < objKeys.length; ++i) {
-        var key = objKeys[i];
-
-        if (options.skipNulls && obj[key] === null) {
-            continue;
-        }
-        pushToArray(keys, stringify(
-            obj[key],
-            key,
-            generateArrayPrefix,
-            options.strictNullHandling,
-            options.skipNulls,
-            options.encode ? options.encoder : null,
-            options.filter,
-            options.sort,
-            options.allowDots,
-            options.serializeDate,
-            options.formatter,
-            options.encodeValuesOnly,
-            options.charset
-        ));
-    }
-
-    var joined = keys.join(options.delimiter);
-    var prefix = options.addQueryPrefix === true ? '?' : '';
-
-    if (options.charsetSentinel) {
-        if (options.charset === 'iso-8859-1') {
-            // encodeURIComponent('&#10003;'), the "numeric entity" representation of a checkmark
-            prefix += 'utf8=%26%2310003%3B&';
-        } else {
-            // encodeURIComponent('✓')
-            prefix += 'utf8=%E2%9C%93&';
-        }
-    }
-
-    return joined.length > 0 ? prefix + joined : '';
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/wpapi/node_modules/qs/lib/utils.js":
-/*!*********************************************************!*\
-  !*** ./node_modules/wpapi/node_modules/qs/lib/utils.js ***!
-  \*********************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var has = Object.prototype.hasOwnProperty;
-var isArray = Array.isArray;
-
-var hexTable = (function () {
-    var array = [];
-    for (var i = 0; i < 256; ++i) {
-        array.push('%' + ((i < 16 ? '0' : '') + i.toString(16)).toUpperCase());
-    }
-
-    return array;
-}());
-
-var compactQueue = function compactQueue(queue) {
-    while (queue.length > 1) {
-        var item = queue.pop();
-        var obj = item.obj[item.prop];
-
-        if (isArray(obj)) {
-            var compacted = [];
-
-            for (var j = 0; j < obj.length; ++j) {
-                if (typeof obj[j] !== 'undefined') {
-                    compacted.push(obj[j]);
-                }
-            }
-
-            item.obj[item.prop] = compacted;
-        }
-    }
-};
-
-var arrayToObject = function arrayToObject(source, options) {
-    var obj = options && options.plainObjects ? Object.create(null) : {};
-    for (var i = 0; i < source.length; ++i) {
-        if (typeof source[i] !== 'undefined') {
-            obj[i] = source[i];
-        }
-    }
-
-    return obj;
-};
-
-var merge = function merge(target, source, options) {
-    /* eslint no-param-reassign: 0 */
-    if (!source) {
-        return target;
-    }
-
-    if (typeof source !== 'object') {
-        if (isArray(target)) {
-            target.push(source);
-        } else if (target && typeof target === 'object') {
-            if ((options && (options.plainObjects || options.allowPrototypes)) || !has.call(Object.prototype, source)) {
-                target[source] = true;
-            }
-        } else {
-            return [target, source];
-        }
-
-        return target;
-    }
-
-    if (!target || typeof target !== 'object') {
-        return [target].concat(source);
-    }
-
-    var mergeTarget = target;
-    if (isArray(target) && !isArray(source)) {
-        mergeTarget = arrayToObject(target, options);
-    }
-
-    if (isArray(target) && isArray(source)) {
-        source.forEach(function (item, i) {
-            if (has.call(target, i)) {
-                var targetItem = target[i];
-                if (targetItem && typeof targetItem === 'object' && item && typeof item === 'object') {
-                    target[i] = merge(targetItem, item, options);
-                } else {
-                    target.push(item);
-                }
-            } else {
-                target[i] = item;
-            }
-        });
-        return target;
-    }
-
-    return Object.keys(source).reduce(function (acc, key) {
-        var value = source[key];
-
-        if (has.call(acc, key)) {
-            acc[key] = merge(acc[key], value, options);
-        } else {
-            acc[key] = value;
-        }
-        return acc;
-    }, mergeTarget);
-};
-
-var assign = function assignSingleSource(target, source) {
-    return Object.keys(source).reduce(function (acc, key) {
-        acc[key] = source[key];
-        return acc;
-    }, target);
-};
-
-var decode = function (str, decoder, charset) {
-    var strWithoutPlus = str.replace(/\+/g, ' ');
-    if (charset === 'iso-8859-1') {
-        // unescape never throws, no try...catch needed:
-        return strWithoutPlus.replace(/%[0-9a-f]{2}/gi, unescape);
-    }
-    // utf-8
-    try {
-        return decodeURIComponent(strWithoutPlus);
-    } catch (e) {
-        return strWithoutPlus;
-    }
-};
-
-var encode = function encode(str, defaultEncoder, charset) {
-    // This code was originally written by Brian White (mscdex) for the io.js core querystring library.
-    // It has been adapted here for stricter adherence to RFC 3986
-    if (str.length === 0) {
-        return str;
-    }
-
-    var string = str;
-    if (typeof str === 'symbol') {
-        string = Symbol.prototype.toString.call(str);
-    } else if (typeof str !== 'string') {
-        string = String(str);
-    }
-
-    if (charset === 'iso-8859-1') {
-        return escape(string).replace(/%u[0-9a-f]{4}/gi, function ($0) {
-            return '%26%23' + parseInt($0.slice(2), 16) + '%3B';
-        });
-    }
-
-    var out = '';
-    for (var i = 0; i < string.length; ++i) {
-        var c = string.charCodeAt(i);
-
-        if (
-            c === 0x2D // -
-            || c === 0x2E // .
-            || c === 0x5F // _
-            || c === 0x7E // ~
-            || (c >= 0x30 && c <= 0x39) // 0-9
-            || (c >= 0x41 && c <= 0x5A) // a-z
-            || (c >= 0x61 && c <= 0x7A) // A-Z
-        ) {
-            out += string.charAt(i);
-            continue;
-        }
-
-        if (c < 0x80) {
-            out = out + hexTable[c];
-            continue;
-        }
-
-        if (c < 0x800) {
-            out = out + (hexTable[0xC0 | (c >> 6)] + hexTable[0x80 | (c & 0x3F)]);
-            continue;
-        }
-
-        if (c < 0xD800 || c >= 0xE000) {
-            out = out + (hexTable[0xE0 | (c >> 12)] + hexTable[0x80 | ((c >> 6) & 0x3F)] + hexTable[0x80 | (c & 0x3F)]);
-            continue;
-        }
-
-        i += 1;
-        c = 0x10000 + (((c & 0x3FF) << 10) | (string.charCodeAt(i) & 0x3FF));
-        out += hexTable[0xF0 | (c >> 18)]
-            + hexTable[0x80 | ((c >> 12) & 0x3F)]
-            + hexTable[0x80 | ((c >> 6) & 0x3F)]
-            + hexTable[0x80 | (c & 0x3F)];
-    }
-
-    return out;
-};
-
-var compact = function compact(value) {
-    var queue = [{ obj: { o: value }, prop: 'o' }];
-    var refs = [];
-
-    for (var i = 0; i < queue.length; ++i) {
-        var item = queue[i];
-        var obj = item.obj[item.prop];
-
-        var keys = Object.keys(obj);
-        for (var j = 0; j < keys.length; ++j) {
-            var key = keys[j];
-            var val = obj[key];
-            if (typeof val === 'object' && val !== null && refs.indexOf(val) === -1) {
-                queue.push({ obj: obj, prop: key });
-                refs.push(val);
-            }
-        }
-    }
-
-    compactQueue(queue);
-
-    return value;
-};
-
-var isRegExp = function isRegExp(obj) {
-    return Object.prototype.toString.call(obj) === '[object RegExp]';
-};
-
-var isBuffer = function isBuffer(obj) {
-    if (!obj || typeof obj !== 'object') {
-        return false;
-    }
-
-    return !!(obj.constructor && obj.constructor.isBuffer && obj.constructor.isBuffer(obj));
-};
-
-var combine = function combine(a, b) {
-    return [].concat(a, b);
-};
-
-var maybeMap = function maybeMap(val, fn) {
-    if (isArray(val)) {
-        var mapped = [];
-        for (var i = 0; i < val.length; i += 1) {
-            mapped.push(fn(val[i]));
-        }
-        return mapped;
-    }
-    return fn(val);
-};
-
-module.exports = {
-    arrayToObject: arrayToObject,
-    assign: assign,
-    combine: combine,
-    compact: compact,
-    decode: decode,
-    encode: encode,
-    isBuffer: isBuffer,
-    isRegExp: isRegExp,
-    maybeMap: maybeMap,
-    merge: merge
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/wpapi/wpapi.js":
-/*!*************************************!*\
-  !*** ./node_modules/wpapi/wpapi.js ***!
-  \*************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
+!function(t,e){ true?module.exports=e():undefined}(window,function(){return function(t){var e={};function r(n){if(e[n])return e[n].exports;var o=e[n]={i:n,l:!1,exports:{}};return t[n].call(o.exports,o,o.exports,r),o.l=!0,o.exports}return r.m=t,r.c=e,r.d=function(t,e,n){r.o(t,e)||Object.defineProperty(t,e,{enumerable:!0,get:n})},r.r=function(t){"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(t,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(t,"__esModule",{value:!0})},r.t=function(t,e){if(1&e&&(t=r(t)),8&e)return t;if(4&e&&"object"==typeof t&&t&&t.__esModule)return t;var n=Object.create(null);if(r.r(n),Object.defineProperty(n,"default",{enumerable:!0,value:t}),2&e&&"string"!=typeof t)for(var o in t)r.d(n,o,function(e){return t[e]}.bind(null,o));return n},r.n=function(t){var e=t&&t.__esModule?function(){return t.default}:function(){return t};return r.d(e,"a",e),e},r.o=function(t,e){return Object.prototype.hasOwnProperty.call(t,e)},r.p="",r(r.s=16)}([function(t,e,r){"use strict";t.exports=function(t,e,r){return Object.keys(t).reduce(function(r,n){return e(r,t[n],n)},r)}},function(t,e,r){"use strict";function n(t){return(n="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(t){return typeof t}:function(t){return t&&"function"==typeof Symbol&&t.constructor===Symbol&&t!==Symbol.prototype?"symbol":typeof t})(t)}function o(t){for(var e=1;e<arguments.length;e++){var r=null!=arguments[e]?arguments[e]:{},n=Object.keys(r);"function"==typeof Object.getOwnPropertySymbols&&(n=n.concat(Object.getOwnPropertySymbols(r).filter(function(t){return Object.getOwnPropertyDescriptor(r,t).enumerable}))),n.forEach(function(e){s(t,e,r[e])})}return t}function s(t,e,r){return e in t?Object.defineProperty(t,e,{value:r,enumerable:!0,configurable:!0,writable:!0}):t[e]=r,t}var i=r(23),a=r(8),c=r(9),p=r(2),u=r(0),h=r(10);function f(t){this._options=["auth","endpoint","headers","username","password","nonce"].reduce(function(e,r){return t&&t[r]&&(e[r]=t[r]),e},{}),this.transport=t&&t.transport,this._params={},this._supportedMethods=["head","get","put","post","delete"],this._path={}}var l=function(t){return t};var d=function(t){return t?u(t,function(t,e,r){return null!=e&&""!==e&&(t[r]=e),t},{}):t},m=function(t,e){if(!t.reduce(function(t,r){return!r.validate||(t||r.validate(e))},!1))throw new Error(["Invalid path component:",e,"does not match"+(t.length>1?" any of":""),t.reduce(function(t,e){return t.concat(e.component)},[]).join(", ")].join(" "))};f.prototype._renderQuery=function(){var t,e=o({},d(this._params)),r=(t=this._taxonomyFilters)?u(t,function(t,e,r){return t[r]=e.map(function(t){return(t+"").trim().toLowerCase()}).join("+"),t},{}):{};e.filter=o({},d(this._filters),r);var n=i.stringify(e,{arrayFormat:"brackets"}).split("&").sort().join("&"),s=/\?/.test(this._options.endpoint)?"&":"?";return""===n?"":s+n},f.prototype._renderPath=function(){this.validatePath();var t=this._path,e=Object.keys(t).sort(function(t,e){return parseInt(t,10)-parseInt(e,10)}).map(function(e){return t[e]});return[this._namespace].concat(e).filter(l).join("/")},f.prototype.toString=function(){var t=this._renderPath(),e=this._renderQuery();return this._options.endpoint+t+e},f.prototype.setPathPart=function(t,e){if(this._path[t])throw new Error("Cannot overwrite value "+this._path[t]);return this._path[t]=e,this},f.prototype.validatePath=function(){for(var t=Object.keys(this._path).map(function(t){return parseInt(t,10)}).filter(function(t){return!isNaN(t)}),e=Math.max.apply(null,t),r=[],n=!0,o=0;o<=e;o++)this._levels&&this._levels[o]&&(this._path[o]?(m(this._levels[o],this._path[o]),r.push(this._path[o])):(r.push(" ??? "),n=!1));if(!n)throw new Error("Incomplete URL! Missing component: /"+r.join("/"));return this},f.prototype.param=function(t,e){var r=this;return!t||"string"==typeof t&&void 0===e?this:("string"==typeof t&&(t=c(t,e)),Object.keys(t).forEach(function(e){var n=t[e];Array.isArray(n)&&(n=h(n).sort(a)),r._params[e]=n}),this)},f.prototype.context=p("context"),f.prototype.edit=function(){return this.context("edit")},f.prototype.embed=function(){return this.param("_embed",!0)},f.prototype.page=p("page"),f.prototype.perPage=p("per_page"),f.prototype.offset=p("offset"),f.prototype.order=p("order"),f.prototype.orderby=p("orderby"),f.prototype.search=p("search"),f.prototype.include=p("include"),f.prototype.exclude=p("exclude"),f.prototype.slug=p("slug"),f.prototype.namespace=function(t){return this._namespace=t,this},f.prototype.auth=function(t){return"object"===n(t)&&("string"==typeof t.username&&(this._options.username=t.username),"string"==typeof t.password&&(this._options.password=t.password),t.nonce&&(this._options.nonce=t.nonce)),this._options.auth=!0,this},f.prototype.file=function(t,e){return this._attachment=t,this._attachmentName=e||void 0,this},f.prototype.setHeaders=function(t,e){return"string"==typeof t&&(t=c(t,e)),this._options.headers=o({},this._options.headers||{},t),this},f.prototype.get=function(t){return this.transport.get(this,t)},f.prototype.headers=function(t){return this.transport.head(this,t)},f.prototype.create=function(t,e){return this.transport.post(this,t,e)},f.prototype.update=function(t,e){return this.transport.put(this,t,e)},f.prototype.delete=function(t,e){return this.transport.delete(this,t,e)},f.prototype.then=function(t,e){return this.transport.get(this).then(t,e)},t.exports=f},function(t,e,r){"use strict";t.exports=function(t){return function(e){return this.param(t,e)}}},function(t,e,r){"use strict";var n=r(4).namedGroupRE,o=r(18),s=r(19),i=r(0);function a(t,e,r){var i=e.namespace,a=r.replace("/"+i+"/","").replace(/\/\?$/,""),c=o(a);if(!i||"/"+i===r||!a)return t;s(t,i,{});var p=t[i],u=c[0];s(p,u,{});var h=p[u];return c.reduce(function(t,e,r,o,s,i){var a=o.match(n),c=a&&a[1],p=a&&a[2],u=a?p||c:o,h=a?c:o,f=r[u]||{component:o,namedGroup:!!a,level:s,names:[]};f.names.indexOf(h)<0&&f.names.push(h);var l=""===p?/.*/:new RegExp(p?"^"+p+"$":o,"i");return f.validate=function(t){return l.test(t)},i[s+1]?f.children=f.children||{}:(f.methods=(t.methods||[]).map(function(t){return t.toLowerCase()}),f.methods.indexOf("get")>-1&&-1===f.methods.indexOf("head")&&f.methods.push("head"),t.endpoints&&(e._getArgs=e._getArgs||{},t.endpoints.forEach(function(t){t.methods.forEach(function(r){"get"===r.toLowerCase()&&Object.keys(t.args).forEach(function(r){e._getArgs[r]=t.args[r]})})}))),r[u]=f,f.children}.bind(null,e,h),h),t}t.exports={build:function(t){return i(t,a,{})}}},function(t,e,r){"use strict";var n=["\\(\\?","(?:P<|<|')","([^>']+)","[>']","([^\\)]*)","\\)"].join("");t.exports={pattern:n,namedGroupRE:new RegExp(n)}},function(t,e,r){"use strict";function n(t,e,r){return e in t?Object.defineProperty(t,e,{value:r,enumerable:!0,configurable:!0,writable:!0}):t[e]=r,t}var o=r(20).create,s=r(22).create,i=r(0);t.exports={generate:function(t){return i(t,function(t,e,r){return t[r]=i(e,function(t,e,i){var a=o(e,i),c=s(a,i,r);return t[i]=function(t){return new c(function(t){for(var e=1;e<arguments.length;e++){var r=null!=arguments[e]?arguments[e]:{},o=Object.keys(r);"function"==typeof Object.getOwnPropertySymbols&&(o=o.concat(Object.getOwnPropertySymbols(r).filter(function(t){return Object.getOwnPropertyDescriptor(r,t).enumerable}))),o.forEach(function(e){n(t,e,r[e])})}return t}({},this._options,t))},t[i].Ctor=c,t},{}),t},{})}}},function(t,e,r){"use strict";var n=Object.prototype.hasOwnProperty,o=function(){for(var t=[],e=0;e<256;++e)t.push("%"+((e<16?"0":"")+e.toString(16)).toUpperCase());return t}(),s=function(t,e){for(var r=e&&e.plainObjects?Object.create(null):{},n=0;n<t.length;++n)void 0!==t[n]&&(r[n]=t[n]);return r};t.exports={arrayToObject:s,assign:function(t,e){return Object.keys(e).reduce(function(t,r){return t[r]=e[r],t},t)},combine:function(t,e){return[].concat(t,e)},compact:function(t){for(var e=[{obj:{o:t},prop:"o"}],r=[],n=0;n<e.length;++n)for(var o=e[n],s=o.obj[o.prop],i=Object.keys(s),a=0;a<i.length;++a){var c=i[a],p=s[c];"object"==typeof p&&null!==p&&-1===r.indexOf(p)&&(e.push({obj:s,prop:c}),r.push(p))}return function(t){for(;t.length>1;){var e=t.pop(),r=e.obj[e.prop];if(Array.isArray(r)){for(var n=[],o=0;o<r.length;++o)void 0!==r[o]&&n.push(r[o]);e.obj[e.prop]=n}}}(e),t},decode:function(t,e,r){var n=t.replace(/\+/g," ");if("iso-8859-1"===r)return n.replace(/%[0-9a-f]{2}/gi,unescape);try{return decodeURIComponent(n)}catch(t){return n}},encode:function(t,e,r){if(0===t.length)return t;var n="string"==typeof t?t:String(t);if("iso-8859-1"===r)return escape(n).replace(/%u[0-9a-f]{4}/gi,function(t){return"%26%23"+parseInt(t.slice(2),16)+"%3B"});for(var s="",i=0;i<n.length;++i){var a=n.charCodeAt(i);45===a||46===a||95===a||126===a||a>=48&&a<=57||a>=65&&a<=90||a>=97&&a<=122?s+=n.charAt(i):a<128?s+=o[a]:a<2048?s+=o[192|a>>6]+o[128|63&a]:a<55296||a>=57344?s+=o[224|a>>12]+o[128|a>>6&63]+o[128|63&a]:(i+=1,a=65536+((1023&a)<<10|1023&n.charCodeAt(i)),s+=o[240|a>>18]+o[128|a>>12&63]+o[128|a>>6&63]+o[128|63&a])}return s},isBuffer:function(t){return null!=t&&!!(t.constructor&&t.constructor.isBuffer&&t.constructor.isBuffer(t))},isRegExp:function(t){return"[object RegExp]"===Object.prototype.toString.call(t)},merge:function t(e,r,o){if(!r)return e;if("object"!=typeof r){if(Array.isArray(e))e.push(r);else{if("object"!=typeof e)return[e,r];(o&&(o.plainObjects||o.allowPrototypes)||!n.call(Object.prototype,r))&&(e[r]=!0)}return e}if("object"!=typeof e)return[e].concat(r);var i=e;return Array.isArray(e)&&!Array.isArray(r)&&(i=s(e,o)),Array.isArray(e)&&Array.isArray(r)?(r.forEach(function(r,s){n.call(e,s)?e[s]&&"object"==typeof e[s]?e[s]=t(e[s],r,o):e.push(r):e[s]=r}),e):Object.keys(r).reduce(function(e,s){var i=r[s];return n.call(e,s)?e[s]=t(e[s],i,o):e[s]=i,e},i)}}},function(t,e,r){"use strict";var n=String.prototype.replace,o=/%20/g;t.exports={default:"RFC3986",formatters:{RFC1738:function(t){return n.call(t,o,"+")},RFC3986:function(t){return t}},RFC1738:"RFC1738",RFC3986:"RFC3986"}},function(t,e,r){"use strict";t.exports=function(t,e){return t>e?1:t<e?-1:0}},function(t,e,r){"use strict";t.exports=function(t,e){var r={};return r[t]=e,r}},function(t,e){t.exports=function(t){return Array.from(new Set(t))}},function(t,e,r){"use strict";var n=r(12),o=r(26),s={categories:{categories:o.categories,category:o.category},categories_exclude:{excludeCategories:o.excludeCategories},tags:{tags:o.tags,tag:o.tag},tags_exclude:{excludeTags:o.excludeTags},filter:n,post:{post:o.post,forPost:o.post}};["after","author","before","parent","password","status","sticky"].forEach(function(t){s[t]={},s[t][t]=o[t]}),t.exports=s},function(t,e,r){"use strict";function n(t,e,r){return e in t?Object.defineProperty(t,e,{value:r,enumerable:!0,configurable:!0,writable:!0}):t[e]=r,t}var o=r(8),s=r(9),i=r(10),a={};a.filter=function(t,e){return!t||"string"==typeof t&&void 0===e?this:("string"==typeof t&&(t=s(t,e)),this._filters=function(t){for(var e=1;e<arguments.length;e++){var r=null!=arguments[e]?arguments[e]:{},o=Object.keys(r);"function"==typeof Object.getOwnPropertySymbols&&(o=o.concat(Object.getOwnPropertySymbols(r).filter(function(t){return Object.getOwnPropertyDescriptor(r,t).enumerable}))),o.forEach(function(e){n(t,e,r[e])})}return t}({},this._filters,t),this)},a.taxonomy=function(t,e){var r=Array.isArray(e),n=r?e.reduce(function(t,e){return t&&"number"==typeof e},!0):"number"==typeof e,s=r?e.reduce(function(t,e){return t&&"string"==typeof e},!0):"string"==typeof e;if(!s&&!n)throw new Error("term must be a number, string, or array of numbers or strings");"category"===t?t=s?"category_name":"cat":"post_tag"===t&&(t="tag"),this._taxonomyFilters=this._taxonomyFilters||{};var a=(this._taxonomyFilters[t]||[]).concat(e).sort(o);return this._taxonomyFilters[t]=i(a,!0),this},a.year=function(t){return a.filter.call(this,"year",t)},a.month=function(t){var e;if("string"==typeof t){if(e=new Date(Date.parse(t+" 1, 2012")),isNaN(e))return this;t=e.getMonth()+1}return"number"==typeof t?a.filter.call(this,"monthnum",t):this},a.day=function(t){return a.filter.call(this,"day",t)},a.path=function(t){return a.filter.call(this,"pagename",t)},t.exports=a},function(t,e,r){"use strict";t.exports=function(t,e,r){"function"!=typeof r||t[e]||(t[e]=r)}},function(t,e,r){var n,o,s,i;s=function(){var t=/^;\s*([^"=]+)=(?:"([^"]+)"|([^";,]+)(?:[;,]|$))/,e=/^<([^>]*)>/,r=/^\s*,\s*/;return{parse:function(n,o){for(var s,i,a,c=o&&o.extended||!1,p=[];n&&(n=n.trim(),i=e.exec(n));){for(var u={link:i[1]},h=(n=n.slice(i[0].length)).match(r);n&&(!h||h.index>0)&&(s=t.exec(n));)h=(n=n.slice(s[0].length)).match(r),"rel"===s[1]||"rev"===s[1]?(a=(s[2]||s[3]).split(/\s+/),u[s[1]]=a):u[s[1]]=s[2]||s[3];p.push(u),n=n.replace(r,"")}return c?p:p.reduce(function(t,e){return e.rel&&e.rel.forEach(function(r){t[r]=e.link}),t},{})},stringify:function(t){var e=Object.keys(t).reduce(function(e,r){return e[t[r]]=e[t[r]]||[],e[t[r]].push(r),e},{});return Object.keys(e).reduce(function(t,r){return t.concat("<"+r+'>; rel="'+e[r].join(" ")+'"')},[]).join(", ")}}},i=this,t.exports?t.exports=s():"function"==typeof i.define&&i.define.amd?void 0===(o="function"==typeof(n=s)?n.call(e,r,e,t):n)||(t.exports=o):i.li=s()},function(t,e,r){"use strict";t.exports=function(t){return null!==t&&"object"==typeof t}},function(t,e,r){"use strict";
 /**
  * A WP REST API client for Node.js
  *
@@ -28017,463 +24442,7 @@ module.exports = {
  *
  * @license MIT
  })
- */
-
-
-const objectReduce = __webpack_require__( /*! ./lib/util/object-reduce */ "./node_modules/wpapi/lib/util/object-reduce.js" );
-
-// This JSON file provides enough data to create handler methods for all valid
-// API routes in WordPress 4.7
-const defaultRoutes = __webpack_require__( /*! ./lib/data/default-routes.json */ "./node_modules/wpapi/lib/data/default-routes.json" );
-const buildRouteTree = __webpack_require__( /*! ./lib/route-tree */ "./node_modules/wpapi/lib/route-tree.js" ).build;
-const generateEndpointFactories = __webpack_require__( /*! ./lib/endpoint-factories */ "./node_modules/wpapi/lib/endpoint-factories.js" ).generate;
-
-// The default endpoint factories will be lazy-loaded by parsing the default
-// route tree data if a default-mode WPAPI instance is created (i.e. one that
-// is to be bootstrapped with the handlers for all of the built-in routes)
-let defaultEndpointFactories;
-
-// Constant used to detect first-party WordPress REST API routes
-const apiDefaultNamespace = 'wp/v2';
-
-// Pull in autodiscovery methods
-const autodiscovery = __webpack_require__( /*! ./lib/autodiscovery */ "./node_modules/wpapi/lib/autodiscovery.js" );
-
-// Pull in base module constructors
-const WPRequest = __webpack_require__( /*! ./lib/constructors/wp-request */ "./node_modules/wpapi/lib/constructors/wp-request.js" );
-
-// Pull in default HTTP transport
-const httpTransport = __webpack_require__( /*! ./lib/http-transport */ "./node_modules/wpapi/lib/http-transport.js" );
-
-/**
- * Construct a REST API client instance object to create
- *
- * @constructor WPAPI
- * @param {Object} options             An options hash to configure the instance
- * @param {String} options.endpoint    The URI for a WP-API endpoint
- * @param {String} [options.username]  A WP-API Basic Auth username
- * @param {String} [options.password]  A WP-API Basic Auth password
- * @param {String} [options.nonce]     A WP nonce for use with cookie authentication
- * @param {Object} [options.routes]    A dictionary of API routes with which to
- *                                     bootstrap the WPAPI instance: the instance will
- *                                     be initialized with default routes only
- *                                     if this property is omitted
- * @param {String} [options.transport] An optional dictionary of HTTP transport
- *                                     methods (.get, .post, .put, .delete, .head)
- *                                     to use instead of the defaults, e.g. to use
- *                                     a different HTTP library than superagent
- */
-function WPAPI( options ) {
-
-	// Enforce `new`
-	if ( this instanceof WPAPI === false ) {
-		return new WPAPI( options );
-	}
-
-	if ( typeof options.endpoint !== 'string' ) {
-		throw new Error( 'options hash must contain an API endpoint URL string' );
-	}
-
-	// Dictionary to be filled by handlers for default namespaces
-	this._ns = {};
-
-	this._options = {
-		// Ensure trailing slash on endpoint URI
-		endpoint: options.endpoint.replace(  /\/?$/, '/' ),
-	};
-
-	// If any authentication credentials were provided, assign them now
-	if ( options && ( options.username || options.password || options.nonce ) ) {
-		this.auth( options );
-	}
-
-	return this
-		// Configure custom HTTP transport methods, if provided
-		.transport( options.transport )
-		// Bootstrap with a specific routes object, if provided
-		.bootstrap( options && options.routes );
-}
-
-/**
- * Set custom transport methods to use when making HTTP requests against the API
- *
- * Pass an object with a function for one or many of "get", "post", "put",
- * "delete" and "head" and that function will be called when making that type
- * of request. The provided transport functions should take a WPRequest handler
- * instance (_e.g._ the result of a `wp.posts()...` chain or any other chaining
- * request handler) as their first argument; a `data` object as their second
- * argument (for POST, PUT and DELETE requests); and an optional callback as
- * their final argument. Transport methods should invoke the callback with the
- * response data (or error, as appropriate), and should also return a Promise.
- *
- * @example <caption>showing how a cache hit (keyed by URI) could short-circuit a get request</caption>
- *
- *     var site = new WPAPI({
- *       endpoint: 'http://my-site.com/wp-json'
- *     });
- *
- *     // Overwrite the GET behavior to inject a caching layer
- *     site.transport({
- *       get: function( wpreq, cb ) {
- *         var result = cache[ wpreq ];
- *         // If a cache hit is found, return it via the same callback/promise
- *         // signature as the default transport method
- *         if ( result ) {
- *           if ( cb && typeof cb === 'function' ) {
- *             cb( null, result );
- *           }
- *           return Promise.resolve( result );
- *         }
- *
- *         // Delegate to default transport if no cached data was found
- *         return WPAPI.transport.get( wpreq, cb ).then(function( result ) {
- *           cache[ wpreq ] = result;
- *           return result;
- *         });
- *       }
- *     });
- *
- * This is advanced behavior; you will only need to utilize this functionality
- * if your application has very specific HTTP handling or caching requirements.
- * Refer to the "http-transport" module within this application for the code
- * implementing the built-in transport methods.
- *
- * @memberof! WPAPI
- * @method transport
- * @chainable
- * @param {Object}   transport          A dictionary of HTTP transport methods
- * @param {Function} [transport.get]    The function to use for GET requests
- * @param {Function} [transport.post]   The function to use for POST requests
- * @param {Function} [transport.put]    The function to use for PUT requests
- * @param {Function} [transport.delete] The function to use for DELETE requests
- * @param {Function} [transport.head]   The function to use for HEAD requests
- * @returns {WPAPI} The WPAPI instance, for chaining
- */
-WPAPI.prototype.transport = function( transport ) {
-	// Local reference to avoid need to reference via `this` inside forEach
-	const _options = this._options;
-
-	// Create the default transport if it does not exist
-	if ( ! _options.transport ) {
-		_options.transport = Object.create( WPAPI.transport );
-	}
-
-	// Whitelist the methods that may be applied
-	[ 'get', 'head', 'post', 'put', 'delete' ].forEach( ( key ) => {
-		if ( transport && transport[ key ] ) {
-			_options.transport[ key ] = transport[ key ];
-		}
-	} );
-
-	return this;
-};
-
-/**
- * Default HTTP transport methods object for all WPAPI instances
- *
- * These methods may be extended or replaced on an instance-by-instance basis
- *
- * @memberof! WPAPI
- * @static
- * @property transport
- * @type {Object}
- */
-WPAPI.transport = Object.create( httpTransport );
-Object.freeze( WPAPI.transport );
-
-/**
- * Convenience method for making a new WPAPI instance
- *
- * @example
- * These are equivalent:
- *
- *     var wp = new WPAPI({ endpoint: 'http://my.blog.url/wp-json' });
- *     var wp = WPAPI.site( 'http://my.blog.url/wp-json' );
- *
- * `WPAPI.site` can take an optional API root response JSON object to use when
- * bootstrapping the client's endpoint handler methods: if no second parameter
- * is provided, the client instance is assumed to be using the default API
- * with no additional plugins and is initialized with handlers for only those
- * default API routes.
- *
- * @example
- * These are equivalent:
- *
- *     // {...} means the JSON output of http://my.blog.url/wp-json
- *     var wp = new WPAPI({
- *       endpoint: 'http://my.blog.url/wp-json',
- *       json: {...}
- *     });
- *     var wp = WPAPI.site( 'http://my.blog.url/wp-json', {...} );
- *
- * @memberof! WPAPI
- * @static
- * @param {String} endpoint The URI for a WP-API endpoint
- * @param {Object} routes   The "routes" object from the JSON object returned
- *                          from the root API endpoint of a WP site, which should
- *                          be a dictionary of route definition objects keyed by
- *                          the route's regex pattern
- * @returns {WPAPI} A new WPAPI instance, bound to the provided endpoint
- */
-WPAPI.site = function( endpoint, routes ) {
-	return new WPAPI( {
-		endpoint: endpoint,
-		routes: routes,
-	} );
-};
-
-/**
- * Generate a request against a completely arbitrary endpoint, with no assumptions about
- * or mutation of path, filtering, or query parameters. This request is not restricted to
- * the endpoint specified during WPAPI object instantiation.
- *
- * @example
- * Generate a request to the explicit URL "http://your.website.com/wp-json/some/custom/path"
- *
- *     wp.url( 'http://your.website.com/wp-json/some/custom/path' ).get()...
- *
- * @memberof! WPAPI
- * @param {String} url The URL to request
- * @returns {WPRequest} A WPRequest object bound to the provided URL
- */
-WPAPI.prototype.url = function( url ) {
-	return new WPRequest( {
-		...this._options,
-		endpoint: url,
-	} );
-};
-
-/**
- * Generate a query against an arbitrary path on the current endpoint. This is useful for
- * requesting resources at custom WP-API endpoints, such as WooCommerce's `/products`.
- *
- * @memberof! WPAPI
- * @param {String} [relativePath] An endpoint-relative path to which to bind the request
- * @returns {WPRequest} A request object
- */
-WPAPI.prototype.root = function( relativePath ) {
-	relativePath = relativePath || '';
-	const options = {
-		...this._options,
-	};
-	// Request should be
-	const request = new WPRequest( options );
-
-	// Set the path template to the string passed in
-	request._path = { '0': relativePath };
-
-	return request;
-};
-
-/**
- * Set the default headers to use for all HTTP requests created from this WPAPI
- * site instance. Accepts a header name and its associated value as two strings,
- * or multiple headers as an object of name-value pairs.
- *
- * @example <caption>Set a single header to be used by all requests to this site</caption>
- *
- *     site.setHeaders( 'Authorization', 'Bearer trustme' )...
- *
- * @example <caption>Set multiple headers to be used by all requests to this site</caption>
- *
- *     site.setHeaders({
- *       Authorization: 'Bearer comeonwereoldfriendsright',
- *       'Accept-Language': 'en-CA'
- *     })...
- *
- * @memberof! WPAPI
- * @since 1.1.0
- * @chainable
- * @param {String|Object} headers The name of the header to set, or an object of
- *                                header names and their associated string values
- * @param {String}        [value] The value of the header being set
- * @returns {WPAPI} The WPAPI site handler instance, for chaining
- */
-WPAPI.prototype.setHeaders = WPRequest.prototype.setHeaders;
-
-/**
- * Set the authentication to use for a WPAPI site handler instance. Accepts basic
- * HTTP authentication credentials (string username & password) or a Nonce (for
- * cookie authentication) by default; may be overloaded to accept OAuth credentials
- * in the future.
- *
- * @example <caption>Basic Authentication</caption>
- *
- *     site.auth({
- *       username: 'admin',
- *       password: 'securepass55'
- *     })...
- *
- * @example <caption>Cookie/Nonce Authentication</caption>
- *
- *     site.auth({
- *       nonce: 'somenonce'
- *     })...
- *
- * @memberof! WPAPI
- * @method
- * @chainable
- * @param {Object} credentials            An authentication credentials object
- * @param {String} [credentials.username] A WP-API Basic HTTP Authentication username
- * @param {String} [credentials.password] A WP-API Basic HTTP Authentication password
- * @param {String} [credentials.nonce]    A WP nonce for use with cookie authentication
- * @returns {WPAPI} The WPAPI site handler instance, for chaining
- */
-WPAPI.prototype.auth = WPRequest.prototype.auth;
-
-// Apply the registerRoute method to the prototype
-WPAPI.prototype.registerRoute = __webpack_require__( /*! ./lib/wp-register-route */ "./node_modules/wpapi/lib/wp-register-route.js" );
-
-/**
- * Deduce request methods from a provided API root JSON response object's
- * routes dictionary, and assign those methods to the current instance. If
- * no routes dictionary is provided then the instance will be bootstrapped
- * with route handlers for the default API endpoints only.
- *
- * This method is called automatically during WPAPI instance creation.
- *
- * @memberof! WPAPI
- * @chainable
- * @param {Object} routes The "routes" object from the JSON object returned
- *                        from the root API endpoint of a WP site, which should
- *                        be a dictionary of route definition objects keyed by
- *                        the route's regex pattern
- * @returns {WPAPI} The bootstrapped WPAPI client instance (for chaining or assignment)
- */
-WPAPI.prototype.bootstrap = function( routes ) {
-	let routesByNamespace;
-	let endpointFactoriesByNamespace;
-
-	if ( ! routes ) {
-		// Auto-generate default endpoint factories if they are not already available
-		if ( ! defaultEndpointFactories ) {
-			routesByNamespace = buildRouteTree( defaultRoutes );
-			defaultEndpointFactories = generateEndpointFactories( routesByNamespace );
-		}
-		endpointFactoriesByNamespace = defaultEndpointFactories;
-	} else {
-		routesByNamespace = buildRouteTree( routes );
-		endpointFactoriesByNamespace = generateEndpointFactories( routesByNamespace );
-	}
-
-	// For each namespace for which routes were identified, store the generated
-	// route handlers on the WPAPI instance's private _ns dictionary. These namespaced
-	// handler methods can be accessed by calling `.namespace( str )` on the
-	// client instance and passing a registered namespace string.
-	// Handlers for default (wp/v2) routes will also be assigned to the WPAPI
-	// client instance object itself, for brevity.
-	return objectReduce( endpointFactoriesByNamespace, ( wpInstance, endpointFactories, namespace ) => {
-
-		// Set (or augment) the route handler factories for this namespace.
-		wpInstance._ns[ namespace ] = objectReduce(
-			endpointFactories,
-			( nsHandlers, handlerFn, methodName ) => {
-				nsHandlers[ methodName ] = handlerFn;
-				return nsHandlers;
-			},
-			wpInstance._ns[ namespace ] || {
-				// Create all namespace dictionaries with a direct reference to the main WPAPI
-				// instance's _options property so that things like auth propagate properly
-				_options: wpInstance._options,
-			}
-		);
-
-		// For the default namespace, e.g. "wp/v2" at the time this comment was
-		// written, ensure all methods are assigned to the root client object itself
-		// in addition to the private _ns dictionary: this is done so that these
-		// methods can be called with e.g. `wp.posts()` and not the more verbose
-		// `wp.namespace( 'wp/v2' ).posts()`.
-		if ( namespace === apiDefaultNamespace ) {
-			Object.keys( wpInstance._ns[ namespace ] ).forEach( ( methodName ) => {
-				wpInstance[ methodName ] = wpInstance._ns[ namespace ][ methodName ];
-			} );
-		}
-
-		return wpInstance;
-	}, this );
-};
-
-/**
- * Access API endpoint handlers from a particular API namespace object
- *
- * @example
- *
- *     wp.namespace( 'myplugin/v1' ).author()...
- *
- *     // Default WP endpoint handlers are assigned to the wp instance itself.
- *     // These are equivalent:
- *     wp.namespace( 'wp/v2' ).posts()...
- *     wp.posts()...
- *
- * @memberof! WPAPI
- * @param {string} namespace A namespace string
- * @returns {Object} An object of route endpoint handler methods for the
- * routes within the specified namespace
- */
-WPAPI.prototype.namespace = function( namespace ) {
-	if ( ! this._ns[ namespace ] ) {
-		throw new Error( 'Error: namespace ' + namespace + ' is not recognized' );
-	}
-	return this._ns[ namespace ];
-};
-
-/**
- * Take an arbitrary WordPress site, deduce the WP REST API root endpoint, query
- * that endpoint, and parse the response JSON. Use the returned JSON response
- * to instantiate a WPAPI instance bound to the provided site.
- *
- * @memberof! WPAPI
- * @static
- * @param {string} url A URL within a REST API-enabled WordPress website
- * @returns {Promise} A promise that resolves to a configured WPAPI instance bound
- * to the deduced endpoint, or rejected if an endpoint is not found or the
- * library is unable to parse the provided endpoint.
- */
-WPAPI.discover = ( url ) => {
-	// local placeholder for API root URL
-	let endpoint;
-
-	// Try HEAD request first, for smaller payload: use WPAPI.site to produce
-	// a request that utilizes the defined HTTP transports
-	const req = WPAPI.site( url ).root();
-	return req.headers()
-		.catch( () => {
-			// On the hypothesis that any error here is related to the HEAD request
-			// failing, provisionally try again using GET because that method is
-			// more widely supported
-			return req.get();
-		} )
-		// Inspect response to find API location header
-		.then( autodiscovery.locateAPIRootHeader )
-		.then( ( apiRootURL ) => {
-			// Set the function-scope variable that will be used to instantiate
-			// the bound WPAPI instance,
-			endpoint = apiRootURL;
-
-			// then GET the API root JSON object
-			return WPAPI.site( apiRootURL ).root().get();
-		} )
-		.then( ( apiRootJSON ) => {
-			// Instantiate & bootstrap with the discovered methods
-			return new WPAPI( {
-				endpoint: endpoint,
-				routes: apiRootJSON.routes,
-			} );
-		} )
-		.catch( ( err ) => {
-			/* eslint-disable no-console */
-			console.error( err );
-			if ( endpoint ) {
-				console.warn( 'Endpoint detected, proceeding despite error...' );
-				console.warn( 'Binding to ' + endpoint + ' and assuming default routes' );
-				return new WPAPI.site( endpoint );
-			}
-			throw new Error( 'Autodiscovery failed' );
-		} );
-};
-
-module.exports = WPAPI;
-
+ */function n(t){for(var e=1;e<arguments.length;e++){var r=null!=arguments[e]?arguments[e]:{},n=Object.keys(r);"function"==typeof Object.getOwnPropertySymbols&&(n=n.concat(Object.getOwnPropertySymbols(r).filter(function(t){return Object.getOwnPropertyDescriptor(r,t).enumerable}))),n.forEach(function(e){o(t,e,r[e])})}return t}function o(t,e,r){return e in t?Object.defineProperty(t,e,{value:r,enumerable:!0,configurable:!0,writable:!0}):t[e]=r,t}var s,i=r(0),a=r(17),c=r(3).build,p=r(5).generate,u=r(28),h=r(1),f=r(29);function l(t){if(this instanceof l==!1)return new l(t);if("string"!=typeof t.endpoint)throw new Error("options hash must contain an API endpoint URL string");return this._ns={},this._options={endpoint:t.endpoint.replace(/\/?$/,"/")},t&&(t.username||t.password||t.nonce)&&this.auth(t),this.transport(t.transport).bootstrap(t&&t.routes)}l.prototype.transport=function(t){var e=this._options;return e.transport||(e.transport=Object.create(l.transport)),["get","head","post","put","delete"].forEach(function(r){t&&t[r]&&(e.transport[r]=t[r])}),this},l.transport=Object.create(f),Object.freeze(l.transport),l.site=function(t,e){return new l({endpoint:t,routes:e})},l.prototype.url=function(t){return new h(n({},this._options,{endpoint:t}))},l.prototype.root=function(t){t=t||"";var e=n({},this._options),r=new h(e);return r._path={0:t},r},l.prototype.setHeaders=h.prototype.setHeaders,l.prototype.auth=h.prototype.auth,l.prototype.registerRoute=r(38),l.prototype.bootstrap=function(t){var e,r;return t?(e=c(t),r=p(e)):(s||(e=c(a),s=p(e)),r=s),i(r,function(t,e,r){return t._ns[r]=i(e,function(t,e,r){return t[r]=e,t},t._ns[r]||{_options:t._options}),"wp/v2"===r&&Object.keys(t._ns[r]).forEach(function(e){t[e]=t._ns[r][e]}),t},this)},l.prototype.namespace=function(t){if(!this._ns[t])throw new Error("Error: namespace "+t+" is not recognized");return this._ns[t]},l.discover=function(t){var e,r=l.site(t).root();return r.headers().catch(function(){return r.get()}).then(u.locateAPIRootHeader).then(function(t){return e=t,l.site(t).root().get()}).then(function(t){return new l({endpoint:e,routes:t.routes})}).catch(function(t){if(console.error(t),e)return console.warn("Endpoint detected, proceeding despite error..."),console.warn("Binding to "+e+" and assuming default routes"),new l.site(e);throw new Error("Autodiscovery failed")})},t.exports=l},function(t){t.exports={"/":{namespace:"",methods:["GET"],endpoints:[{methods:["GET"],args:{context:{}}}]},"/oembed/1.0":{namespace:"oembed/1.0",methods:["GET"],endpoints:[{methods:["GET"],args:{namespace:{},context:{}}}]},"/oembed/1.0/embed":{namespace:"oembed/1.0",methods:["GET"],endpoints:[{methods:["GET"],args:{url:{},format:{},maxwidth:{}}}]},"/oembed/1.0/proxy":{namespace:"oembed/1.0",methods:["GET"],endpoints:[{methods:["GET"],args:{url:{},format:{},maxwidth:{},maxheight:{},discover:{}}}]},"/wp/v2":{namespace:"wp/v2",methods:["GET"],endpoints:[{methods:["GET"],args:{namespace:{},context:{}}}]},"/wp/v2/posts":{namespace:"wp/v2",methods:["GET","POST"],endpoints:[{methods:["GET"],args:{context:{},page:{},per_page:{},search:{},after:{},author:{},author_exclude:{},before:{},exclude:{},include:{},offset:{},order:{},orderby:{},slug:{},status:{},categories:{},categories_exclude:{},tags:{},tags_exclude:{},sticky:{}}},{methods:["POST"],args:{}}]},"/wp/v2/posts/(?P<id>[\\d]+)":{namespace:"wp/v2",methods:["GET","POST","PUT","PATCH","DELETE"],endpoints:[{methods:["GET"],args:{id:{},context:{},password:{}}},{methods:["POST","PUT","PATCH"],args:{}},{methods:["DELETE"],args:{}}]},"/wp/v2/posts/(?P<parent>[\\d]+)/revisions":{namespace:"wp/v2",methods:["GET"],endpoints:[{methods:["GET"],args:{parent:{},context:{},page:{},per_page:{},search:{},exclude:{},include:{},offset:{},order:{},orderby:{}}}]},"/wp/v2/posts/(?P<parent>[\\d]+)/revisions/(?P<id>[\\d]+)":{namespace:"wp/v2",methods:["GET","DELETE"],endpoints:[{methods:["GET"],args:{parent:{},id:{},context:{}}},{methods:["DELETE"],args:{}}]},"/wp/v2/posts/(?P<id>[\\d]+)/autosaves":{namespace:"wp/v2",methods:["GET","POST"],endpoints:[{methods:["GET"],args:{parent:{},context:{}}},{methods:["POST"],args:{}}]},"/wp/v2/posts/(?P<parent>[\\d]+)/autosaves/(?P<id>[\\d]+)":{namespace:"wp/v2",methods:["GET"],endpoints:[{methods:["GET"],args:{parent:{},id:{},context:{}}}]},"/wp/v2/pages":{namespace:"wp/v2",methods:["GET","POST"],endpoints:[{methods:["GET"],args:{context:{},page:{},per_page:{},search:{},after:{},author:{},author_exclude:{},before:{},exclude:{},include:{},menu_order:{},offset:{},order:{},orderby:{},parent:{},parent_exclude:{},slug:{},status:{}}},{methods:["POST"],args:{}}]},"/wp/v2/pages/(?P<id>[\\d]+)":{namespace:"wp/v2",methods:["GET","POST","PUT","PATCH","DELETE"],endpoints:[{methods:["GET"],args:{id:{},context:{},password:{}}},{methods:["POST","PUT","PATCH"],args:{}},{methods:["DELETE"],args:{}}]},"/wp/v2/pages/(?P<parent>[\\d]+)/revisions":{namespace:"wp/v2",methods:["GET"],endpoints:[{methods:["GET"],args:{parent:{},context:{},page:{},per_page:{},search:{},exclude:{},include:{},offset:{},order:{},orderby:{}}}]},"/wp/v2/pages/(?P<parent>[\\d]+)/revisions/(?P<id>[\\d]+)":{namespace:"wp/v2",methods:["GET","DELETE"],endpoints:[{methods:["GET"],args:{parent:{},id:{},context:{}}},{methods:["DELETE"],args:{}}]},"/wp/v2/pages/(?P<id>[\\d]+)/autosaves":{namespace:"wp/v2",methods:["GET","POST"],endpoints:[{methods:["GET"],args:{parent:{},context:{}}},{methods:["POST"],args:{}}]},"/wp/v2/pages/(?P<parent>[\\d]+)/autosaves/(?P<id>[\\d]+)":{namespace:"wp/v2",methods:["GET"],endpoints:[{methods:["GET"],args:{parent:{},id:{},context:{}}}]},"/wp/v2/media":{namespace:"wp/v2",methods:["GET","POST"],endpoints:[{methods:["GET"],args:{context:{},page:{},per_page:{},search:{},after:{},author:{},author_exclude:{},before:{},exclude:{},include:{},offset:{},order:{},orderby:{},parent:{},parent_exclude:{},slug:{},status:{},media_type:{},mime_type:{}}},{methods:["POST"],args:{}}]},"/wp/v2/media/(?P<id>[\\d]+)":{namespace:"wp/v2",methods:["GET","POST","PUT","PATCH","DELETE"],endpoints:[{methods:["GET"],args:{id:{},context:{}}},{methods:["POST","PUT","PATCH"],args:{}},{methods:["DELETE"],args:{}}]},"/wp/v2/blocks":{namespace:"wp/v2",methods:["GET","POST"],endpoints:[{methods:["GET"],args:{context:{},page:{},per_page:{},search:{},after:{},before:{},exclude:{},include:{},offset:{},order:{},orderby:{},slug:{},status:{}}},{methods:["POST"],args:{}}]},"/wp/v2/blocks/(?P<id>[\\d]+)":{namespace:"wp/v2",methods:["GET","POST","PUT","PATCH","DELETE"],endpoints:[{methods:["GET"],args:{id:{},context:{},password:{}}},{methods:["POST","PUT","PATCH"],args:{}},{methods:["DELETE"],args:{}}]},"/wp/v2/blocks/(?P<id>[\\d]+)/autosaves":{namespace:"wp/v2",methods:["GET","POST"],endpoints:[{methods:["GET"],args:{parent:{},context:{}}},{methods:["POST"],args:{}}]},"/wp/v2/blocks/(?P<parent>[\\d]+)/autosaves/(?P<id>[\\d]+)":{namespace:"wp/v2",methods:["GET"],endpoints:[{methods:["GET"],args:{parent:{},id:{},context:{}}}]},"/wp/v2/types":{namespace:"wp/v2",methods:["GET"],endpoints:[{methods:["GET"],args:{context:{}}}]},"/wp/v2/types/(?P<type>[\\w-]+)":{namespace:"wp/v2",methods:["GET"],endpoints:[{methods:["GET"],args:{type:{},context:{}}}]},"/wp/v2/statuses":{namespace:"wp/v2",methods:["GET"],endpoints:[{methods:["GET"],args:{context:{}}}]},"/wp/v2/statuses/(?P<status>[\\w-]+)":{namespace:"wp/v2",methods:["GET"],endpoints:[{methods:["GET"],args:{status:{},context:{}}}]},"/wp/v2/taxonomies":{namespace:"wp/v2",methods:["GET"],endpoints:[{methods:["GET"],args:{context:{},type:{}}}]},"/wp/v2/taxonomies/(?P<taxonomy>[\\w-]+)":{namespace:"wp/v2",methods:["GET"],endpoints:[{methods:["GET"],args:{taxonomy:{},context:{}}}]},"/wp/v2/categories":{namespace:"wp/v2",methods:["GET","POST"],endpoints:[{methods:["GET"],args:{context:{},page:{},per_page:{},search:{},exclude:{},include:{},order:{},orderby:{},hide_empty:{},parent:{},post:{},slug:{}}},{methods:["POST"],args:{}}]},"/wp/v2/categories/(?P<id>[\\d]+)":{namespace:"wp/v2",methods:["GET","POST","PUT","PATCH","DELETE"],endpoints:[{methods:["GET"],args:{id:{},context:{}}},{methods:["POST","PUT","PATCH"],args:{}},{methods:["DELETE"],args:{}}]},"/wp/v2/tags":{namespace:"wp/v2",methods:["GET","POST"],endpoints:[{methods:["GET"],args:{context:{},page:{},per_page:{},search:{},exclude:{},include:{},offset:{},order:{},orderby:{},hide_empty:{},post:{},slug:{}}},{methods:["POST"],args:{}}]},"/wp/v2/tags/(?P<id>[\\d]+)":{namespace:"wp/v2",methods:["GET","POST","PUT","PATCH","DELETE"],endpoints:[{methods:["GET"],args:{id:{},context:{}}},{methods:["POST","PUT","PATCH"],args:{}},{methods:["DELETE"],args:{}}]},"/wp/v2/users":{namespace:"wp/v2",methods:["GET","POST"],endpoints:[{methods:["GET"],args:{context:{},page:{},per_page:{},search:{},exclude:{},include:{},offset:{},order:{},orderby:{},slug:{},roles:{},who:{}}},{methods:["POST"],args:{}}]},"/wp/v2/users/(?P<id>[\\d]+)":{namespace:"wp/v2",methods:["GET","POST","PUT","PATCH","DELETE"],endpoints:[{methods:["GET"],args:{id:{},context:{}}},{methods:["POST","PUT","PATCH"],args:{}},{methods:["DELETE"],args:{}}]},"/wp/v2/users/me":{namespace:"wp/v2",methods:["GET","POST","PUT","PATCH","DELETE"],endpoints:[{methods:["GET"],args:{context:{}}},{methods:["POST","PUT","PATCH"],args:{}},{methods:["DELETE"],args:{}}]},"/wp/v2/comments":{namespace:"wp/v2",methods:["GET","POST"],endpoints:[{methods:["GET"],args:{context:{},page:{},per_page:{},search:{},after:{},author:{},author_exclude:{},author_email:{},before:{},exclude:{},include:{},offset:{},order:{},orderby:{},parent:{},parent_exclude:{},post:{},status:{},type:{},password:{}}},{methods:["POST"],args:{}}]},"/wp/v2/comments/(?P<id>[\\d]+)":{namespace:"wp/v2",methods:["GET","POST","PUT","PATCH","DELETE"],endpoints:[{methods:["GET"],args:{id:{},context:{},password:{}}},{methods:["POST","PUT","PATCH"],args:{}},{methods:["DELETE"],args:{}}]},"/wp/v2/search":{namespace:"wp/v2",methods:["GET"],endpoints:[{methods:["GET"],args:{context:{},page:{},per_page:{},search:{},type:{},subtype:{}}}]},"/wp/v2/block-renderer/(?P<name>core/block)":{namespace:"wp/v2",methods:["GET"],endpoints:[{methods:["GET"],args:{name:{},context:{},attributes:{},post_id:{}}}]},"/wp/v2/block-renderer/(?P<name>core/latest-comments)":{namespace:"wp/v2",methods:["GET"],endpoints:[{methods:["GET"],args:{name:{},context:{},attributes:{},post_id:{}}}]},"/wp/v2/block-renderer/(?P<name>core/archives)":{namespace:"wp/v2",methods:["GET"],endpoints:[{methods:["GET"],args:{name:{},context:{},attributes:{},post_id:{}}}]},"/wp/v2/block-renderer/(?P<name>core/categories)":{namespace:"wp/v2",methods:["GET"],endpoints:[{methods:["GET"],args:{name:{},context:{},attributes:{},post_id:{}}}]},"/wp/v2/block-renderer/(?P<name>core/latest-posts)":{namespace:"wp/v2",methods:["GET"],endpoints:[{methods:["GET"],args:{name:{},context:{},attributes:{},post_id:{}}}]},"/wp/v2/block-renderer/(?P<name>core/shortcode)":{namespace:"wp/v2",methods:["GET"],endpoints:[{methods:["GET"],args:{name:{},context:{},attributes:{},post_id:{}}}]},"/wp/v2/settings":{namespace:"wp/v2",methods:["GET","POST","PUT","PATCH"],endpoints:[{methods:["GET"],args:{}},{methods:["POST","PUT","PATCH"],args:{}}]},"/wp/v2/themes":{namespace:"wp/v2",methods:["GET"],endpoints:[{methods:["GET"],args:{context:{},page:{},per_page:{},search:{},status:{}}}]}}},function(t,e,r){"use strict";var n=r(4).pattern.replace(/([^\\])\(([^?])/g,"$1(?:$2"),o=new RegExp("([^/]*"+n+"[^/]*)");t.exports=function(t){return t.split(o).reduce(function(t,e){return e?o.test(e)?t.concat(e):t.concat(e.split("/").filter(Boolean)):t},[])}},function(t,e,r){"use strict";t.exports=function(t,e,r){t&&void 0===t[e]&&(t[e]=r)}},function(t,e,r){"use strict";var n=r(21).create;function o(t,e){!function(t,e){var r,o,s,i;o=t._levels,s=e.level,i={component:e.component,validate:e.validate,methods:e.methods},o[s]=o[s]||[],o[s].push(i),e.level>0&&(r=n(e),e.names.forEach(function(e){var n=e.replace(/[_-]+\w/g,function(t){return t.replace(/[_-]+/,"").toUpperCase()});t._setters[n]||(t._setters[n]=r)}))}(t,e),e.children&&Object.keys(e.children).forEach(function(r){o(t,e.children[r])})}t.exports={create:function(t,e){var r={_path:{0:e},_levels:{},_setters:{},_getArgs:t._getArgs};return Object.keys(t).forEach(function(e){"_getArgs"!==e&&o(r,t[e])}),r}}},function(t,e,r){"use strict";t.exports={create:function(t){var e=t.level,r=t.names[0],n=t.methods||[],o=t.children?Object.keys(t.children).map(function(e){return t.children[e]}).filter(function(t){return!0===t.namedGroup}):[],s=1===o.length&&o[0],i=s&&s.level;return t.namedGroup?function(t){return this.setPathPart(e,t),n.length&&(this._supportedMethods=n),this}:function(t){return this.setPathPart(e,r),void 0!==t&&i&&this.setPathPart(i,t),this}}}},function(t,e,r){"use strict";function n(t){return(n="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(t){return typeof t}:function(t){return t&&"function"==typeof Symbol&&t.constructor===Symbol&&t!==Symbol.prototype?"symbol":typeof t})(t)}function o(t,e){return!e||"object"!==n(e)&&"function"!=typeof e?function(t){if(void 0===t)throw new ReferenceError("this hasn't been initialised - super() hasn't been called");return t}(t):e}function s(t){return(s=Object.setPrototypeOf?Object.getPrototypeOf:function(t){return t.__proto__||Object.getPrototypeOf(t)})(t)}function i(t,e){return(i=Object.setPrototypeOf||function(t,e){return t.__proto__=e,t})(t,e)}var a=r(1),c=r(11),p=r(13);t.exports={create:function(t,e,r){var u=function(n){function c(n){var i;return function(t,e){if(!(t instanceof e))throw new TypeError("Cannot call a class as a function")}(this,c),(i=o(this,s(c).call(this,n)))._levels=t._levels,i.setPathPart(0,e).namespace(r),i}return function(t,e){if("function"!=typeof e&&null!==e)throw new TypeError("Super expression must either be null or a function");t.prototype=Object.create(e&&e.prototype,{constructor:{value:t,writable:!0,configurable:!0}}),e&&i(t,e)}(c,a),c}();return"object"===n(t._getArgs)&&Object.keys(t._getArgs).forEach(function(t){var e=c[t];"object"===n(e)&&Object.keys(e).forEach(function(t){p(u.prototype,t,e[t])})}),Object.keys(t._setters).forEach(function(e){u.prototype[e]||(u.prototype[e]=t._setters[e])}),u}}},function(t,e,r){"use strict";var n=r(24),o=r(25),s=r(7);t.exports={formats:s,parse:o,stringify:n}},function(t,e,r){"use strict";var n=r(6),o=r(7),s={brackets:function(t){return t+"[]"},indices:function(t,e){return t+"["+e+"]"},repeat:function(t){return t}},i=Array.isArray,a=Array.prototype.push,c=function(t,e){a.apply(t,i(e)?e:[e])},p=Date.prototype.toISOString,u={addQueryPrefix:!1,allowDots:!1,charset:"utf-8",charsetSentinel:!1,delimiter:"&",encode:!0,encoder:n.encode,encodeValuesOnly:!1,indices:!1,serializeDate:function(t){return p.call(t)},skipNulls:!1,strictNullHandling:!1},h=function t(e,r,o,s,i,a,p,h,f,l,d,m,y){var g=e;if("function"==typeof p?g=p(r,g):g instanceof Date&&(g=l(g)),null===g){if(s)return a&&!m?a(r,u.encoder,y):r;g=""}if("string"==typeof g||"number"==typeof g||"boolean"==typeof g||n.isBuffer(g))return a?[d(m?r:a(r,u.encoder,y))+"="+d(a(g,u.encoder,y))]:[d(r)+"="+d(String(g))];var b,w=[];if(void 0===g)return w;if(Array.isArray(p))b=p;else{var _=Object.keys(g);b=h?_.sort(h):_}for(var T=0;T<b.length;++T){var v=b[T];i&&null===g[v]||(Array.isArray(g)?c(w,t(g[v],o(r,v),o,s,i,a,p,h,f,l,d,m,y)):c(w,t(g[v],r+(f?"."+v:"["+v+"]"),o,s,i,a,p,h,f,l,d,m,y)))}return w};t.exports=function(t,e){var r=t,i=e?n.assign({},e):{};if(null!==i.encoder&&void 0!==i.encoder&&"function"!=typeof i.encoder)throw new TypeError("Encoder has to be a function.");var a=void 0===i.delimiter?u.delimiter:i.delimiter,p="boolean"==typeof i.strictNullHandling?i.strictNullHandling:u.strictNullHandling,f="boolean"==typeof i.skipNulls?i.skipNulls:u.skipNulls,l="boolean"==typeof i.encode?i.encode:u.encode,d="function"==typeof i.encoder?i.encoder:u.encoder,m="function"==typeof i.sort?i.sort:null,y=void 0===i.allowDots?u.allowDots:!!i.allowDots,g="function"==typeof i.serializeDate?i.serializeDate:u.serializeDate,b="boolean"==typeof i.encodeValuesOnly?i.encodeValuesOnly:u.encodeValuesOnly,w=i.charset||u.charset;if(void 0!==i.charset&&"utf-8"!==i.charset&&"iso-8859-1"!==i.charset)throw new Error("The charset option must be either utf-8, iso-8859-1, or undefined");if(void 0===i.format)i.format=o.default;else if(!Object.prototype.hasOwnProperty.call(o.formatters,i.format))throw new TypeError("Unknown format option provided.");var _,T,v=o.formatters[i.format];"function"==typeof i.filter?r=(T=i.filter)("",r):Array.isArray(i.filter)&&(_=T=i.filter);var E,x=[];if("object"!=typeof r||null===r)return"";E=i.arrayFormat in s?i.arrayFormat:"indices"in i?i.indices?"indices":"repeat":"indices";var O=s[E];_||(_=Object.keys(r)),m&&_.sort(m);for(var P=0;P<_.length;++P){var j=_[P];f&&null===r[j]||c(x,h(r[j],j,O,p,f,l?d:null,T,m,y,g,v,b,w))}var S=x.join(a),A=!0===i.addQueryPrefix?"?":"";return i.charsetSentinel&&(A+="iso-8859-1"===w?"utf8=%26%2310003%3B&":"utf8=%E2%9C%93&"),S.length>0?A+S:""}},function(t,e,r){"use strict";var n=r(6),o=Object.prototype.hasOwnProperty,s={allowDots:!1,allowPrototypes:!1,arrayLimit:20,charset:"utf-8",charsetSentinel:!1,decoder:n.decode,delimiter:"&",depth:5,ignoreQueryPrefix:!1,interpretNumericEntities:!1,parameterLimit:1e3,parseArrays:!0,plainObjects:!1,strictNullHandling:!1},i=function(t){return t.replace(/&#(\d+);/g,function(t,e){return String.fromCharCode(parseInt(e,10))})},a=function(t,e,r){if(t){var n=r.allowDots?t.replace(/\.([^.[]+)/g,"[$1]"):t,s=/(\[[^[\]]*])/g,i=/(\[[^[\]]*])/.exec(n),a=i?n.slice(0,i.index):n,c=[];if(a){if(!r.plainObjects&&o.call(Object.prototype,a)&&!r.allowPrototypes)return;c.push(a)}for(var p=0;null!==(i=s.exec(n))&&p<r.depth;){if(p+=1,!r.plainObjects&&o.call(Object.prototype,i[1].slice(1,-1))&&!r.allowPrototypes)return;c.push(i[1])}return i&&c.push("["+n.slice(i.index)+"]"),function(t,e,r){for(var n=e,o=t.length-1;o>=0;--o){var s,i=t[o];if("[]"===i&&r.parseArrays)s=[].concat(n);else{s=r.plainObjects?Object.create(null):{};var a="["===i.charAt(0)&&"]"===i.charAt(i.length-1)?i.slice(1,-1):i,c=parseInt(a,10);r.parseArrays||""!==a?!isNaN(c)&&i!==a&&String(c)===a&&c>=0&&r.parseArrays&&c<=r.arrayLimit?(s=[])[c]=n:s[a]=n:s={0:n}}n=s}return n}(c,e,r)}};t.exports=function(t,e){var r=e?n.assign({},e):{};if(null!==r.decoder&&void 0!==r.decoder&&"function"!=typeof r.decoder)throw new TypeError("Decoder has to be a function.");if(r.ignoreQueryPrefix=!0===r.ignoreQueryPrefix,r.delimiter="string"==typeof r.delimiter||n.isRegExp(r.delimiter)?r.delimiter:s.delimiter,r.depth="number"==typeof r.depth?r.depth:s.depth,r.arrayLimit="number"==typeof r.arrayLimit?r.arrayLimit:s.arrayLimit,r.parseArrays=!1!==r.parseArrays,r.decoder="function"==typeof r.decoder?r.decoder:s.decoder,r.allowDots=void 0===r.allowDots?s.allowDots:!!r.allowDots,r.plainObjects="boolean"==typeof r.plainObjects?r.plainObjects:s.plainObjects,r.allowPrototypes="boolean"==typeof r.allowPrototypes?r.allowPrototypes:s.allowPrototypes,r.parameterLimit="number"==typeof r.parameterLimit?r.parameterLimit:s.parameterLimit,r.strictNullHandling="boolean"==typeof r.strictNullHandling?r.strictNullHandling:s.strictNullHandling,void 0!==r.charset&&"utf-8"!==r.charset&&"iso-8859-1"!==r.charset)throw new Error("The charset option must be either utf-8, iso-8859-1, or undefined");if(void 0===r.charset&&(r.charset=s.charset),""===t||null==t)return r.plainObjects?Object.create(null):{};for(var c="string"==typeof t?function(t,e){var r,a={},c=e.ignoreQueryPrefix?t.replace(/^\?/,""):t,p=e.parameterLimit===1/0?void 0:e.parameterLimit,u=c.split(e.delimiter,p),h=-1,f=e.charset;if(e.charsetSentinel)for(r=0;r<u.length;++r)0===u[r].indexOf("utf8=")&&("utf8=%E2%9C%93"===u[r]?f="utf-8":"utf8=%26%2310003%3B"===u[r]&&(f="iso-8859-1"),h=r,r=u.length);for(r=0;r<u.length;++r)if(r!==h){var l,d,m=u[r],y=m.indexOf("]="),g=-1===y?m.indexOf("="):y+1;-1===g?(l=e.decoder(m,s.decoder,f),d=e.strictNullHandling?null:""):(l=e.decoder(m.slice(0,g),s.decoder,f),d=e.decoder(m.slice(g+1),s.decoder,f)),d&&e.interpretNumericEntities&&"iso-8859-1"===f&&(d=i(d)),o.call(a,l)?a[l]=n.combine(a[l],d):a[l]=d}return a}(t,r):t,p=r.plainObjects?Object.create(null):{},u=Object.keys(c),h=0;h<u.length;++h){var f=u[h],l=a(f,c[f],r);p=n.merge(p,l,r)}return n.compact(p)}},function(t,e,r){"use strict";var n=r(2),o=r(27),s={},i=r(12),a=i.filter,c=i.taxonomy;s.author=function(t){if(void 0===t)return this;if("string"==typeof t)return this.param("author",null),a.call(this,"author_name",t);if("number"==typeof t)return a.call(this,"author_name",null),this.param("author",t);if(null===t)return a.call(this,"author_name",null),this.param("author",null);throw new Error("author must be either a nicename string or numeric ID")},s.parent=n("parent"),s.post=n("post"),s.password=n("password"),s.status=n("status"),s.sticky=n("sticky"),s.categories=n("categories"),s.category=function(t){return o(t)?s.categories.call(this,t):c.call(this,"category",t)},s.excludeCategories=n("categories_exclude"),s.tags=n("tags"),s.tag=function(t){return o(t)?s.tags.call(this,t):c.call(this,"tag",t)},s.excludeTags=n("tags_exclude"),s.before=function(t){return this.param("before",new Date(t).toISOString())},s.after=function(t){return this.param("after",new Date(t).toISOString())},t.exports=s},function(t,e,r){"use strict";t.exports=function t(e){if("number"==typeof e)return!0;if("string"==typeof e)return/^\d+$/.test(e);if(Array.isArray(e)){for(var r=0;r<e.length;r++)if(!t(e[r]))return!1;return!0}return!1}},function(t,e,r){"use strict";var n=r(14).parse;t.exports={locateAPIRootHeader:function(t){var e="https://api.w.org/",r=t.link||t.headers&&t.headers.link,o=n(r),s=o&&o[e];if(s)return s;throw new Error('No header link found with rel="'.concat(e,'"'))}}},function(t,e,r){"use strict";function n(t){for(var e=1;e<arguments.length;e++){var r=null!=arguments[e]?arguments[e]:{},n=Object.keys(r);"function"==typeof Object.getOwnPropertySymbols&&(n=n.concat(Object.getOwnPropertySymbols(r).filter(function(t){return Object.getOwnPropertyDescriptor(r,t).enumerable}))),n.forEach(function(e){o(t,e,r[e])})}return t}function o(t,e,r){return e in t?Object.defineProperty(t,e,{value:r,enumerable:!0,configurable:!0,writable:!0}):t[e]=r,t}var s=r(30),i=r(14).parse,a=r(1),c=r(36),p=r(0),u=r(37);function h(t,e){return e.headers?p(e.headers,function(t,e,r){return t.set(r,e)},t):t}function f(t,e,r){if(!r&&!e.auth&&!e.nonce)return t;if(e.nonce)return t.set("X-WP-Nonce",e.nonce),t;var n=e.username,o=e.password;return n&&o?t.auth(n,o):t}function l(t,e,r){return new Promise(function(e,r){t.end(function(t,n){t||n.error?r(t||n.error):e(n)})}).then(r).then(function(t){return e&&"function"==typeof e&&e(null,t),t},function(t){if(t.response&&t.response.body&&t.response.body.code&&(t=t.response.body),!e||"function"!=typeof e)throw t;e(t)})}function d(t,e){var r=function(t){var e=t.body;if(u(e)&&"text/html"===t.type)try{e=JSON.parse(t.text)}catch(t){}return e}(e),o=function(t,e,r){var o=null;if(!t.headers)return o;if(Object.keys(t.headers).forEach(function(e){t.headers[e.toLowerCase()]=t.headers[e]}),!t.headers["x-wp-totalpages"])return o;var s=+t.headers["x-wp-totalpages"];if(!s||0===s)return o;var c=t.headers.link?i(t.headers.link):{};return o={total:+t.headers["x-wp-total"],totalPages:s,links:c},c.next&&(o.next=new a(n({},e,{transport:r,endpoint:c.next}))),c.prev&&(o.prev=new a(n({},e,{transport:r,endpoint:c.prev}))),o}(e,t._options,t.transport);return o&&(r._paging=o),r}function m(t){return t.headers}t.exports={delete:function(t,e,r){r||"function"!=typeof e||(r=e,e=null),c("delete",t);var n=t.toString(),o=f(s.del(n),t._options,!0).send(e);return l(o=h(o,t._options),r,d.bind(null,t))},get:function(t,e){c("get",t);var r=t.toString(),n=f(s.get(r),t._options);return l(n=h(n,t._options),e,d.bind(null,t))},head:function(t,e){c("head",t);var r=t.toString(),n=f(s.head(r),t._options);return l(n=h(n,t._options),e,m)},post:function(t,e,r){c("post",t);var n=t.toString();e=e||{};var o=f(s.post(n),t._options,!0);return o=h(o,t._options),l(o=t._attachment?p(e,function(t,e,r){return t.field(r,e)},o.attach("file",t._attachment,t._attachmentName)):o.send(e),r,d.bind(null,t))},put:function(t,e,r){c("put",t);var n=t.toString();e=e||{};var o=f(s.put(n),t._options,!0).send(e);return l(o=h(o,t._options),r,d.bind(null,t))}}},function(t,e,r){let n;"undefined"!=typeof window?n=window:"undefined"!=typeof self?n=self:(console.warn("Using browser-only version of superagent in non-browser environment"),n=this);const o=r(31),s=r(32),i=r(15),a=r(33),c=r(35);function p(){}const u=e=t.exports=function(t,r){return"function"==typeof r?new e.Request("GET",t).end(r):1==arguments.length?new e.Request("GET",t):new e.Request(t,r)};e.Request=g,u.getXHR=(()=>{if(!(!n.XMLHttpRequest||n.location&&"file:"==n.location.protocol&&n.ActiveXObject))return new XMLHttpRequest;try{return new ActiveXObject("Microsoft.XMLHTTP")}catch(t){}try{return new ActiveXObject("Msxml2.XMLHTTP.6.0")}catch(t){}try{return new ActiveXObject("Msxml2.XMLHTTP.3.0")}catch(t){}try{return new ActiveXObject("Msxml2.XMLHTTP")}catch(t){}throw Error("Browser-only version of superagent could not find XHR")});const h="".trim?t=>t.trim():t=>t.replace(/(^\s*|\s*$)/g,"");function f(t){if(!i(t))return t;const e=[];for(const r in t)l(e,r,t[r]);return e.join("&")}function l(t,e,r){if(null!=r)if(Array.isArray(r))r.forEach(r=>{l(t,e,r)});else if(i(r))for(const n in r)l(t,`${e}[${n}]`,r[n]);else t.push(encodeURIComponent(e)+"="+encodeURIComponent(r));else null===r&&t.push(encodeURIComponent(e))}function d(t){const e={},r=t.split("&");let n,o;for(let t=0,s=r.length;t<s;++t)-1==(o=(n=r[t]).indexOf("="))?e[decodeURIComponent(n)]="":e[decodeURIComponent(n.slice(0,o))]=decodeURIComponent(n.slice(o+1));return e}function m(t){return/[\/+]json($|[^-\w])/.test(t)}function y(t){this.req=t,this.xhr=this.req.xhr,this.text="HEAD"!=this.req.method&&(""===this.xhr.responseType||"text"===this.xhr.responseType)||void 0===this.xhr.responseType?this.xhr.responseText:null,this.statusText=this.req.xhr.statusText;let e=this.xhr.status;1223===e&&(e=204),this._setStatusProperties(e),this.header=this.headers=function(t){const e=t.split(/\r?\n/),r={};let n,o,s,i;for(let t=0,a=e.length;t<a;++t)-1!==(n=(o=e[t]).indexOf(":"))&&(s=o.slice(0,n).toLowerCase(),i=h(o.slice(n+1)),r[s]=i);return r}(this.xhr.getAllResponseHeaders()),this.header["content-type"]=this.xhr.getResponseHeader("content-type"),this._setHeaderProperties(this.header),null===this.text&&t._responseType?this.body=this.xhr.response:this.body="HEAD"!=this.req.method?this._parseBody(this.text?this.text:this.xhr.response):null}function g(t,e){const r=this;this._query=this._query||[],this.method=t,this.url=e,this.header={},this._header={},this.on("end",()=>{let t,e=null,n=null;try{n=new y(r)}catch(t){return(e=new Error("Parser is unable to parse the response")).parse=!0,e.original=t,r.xhr?(e.rawResponse=void 0===r.xhr.responseType?r.xhr.responseText:r.xhr.response,e.status=r.xhr.status?r.xhr.status:null,e.statusCode=e.status):(e.rawResponse=null,e.status=null),r.callback(e)}r.emit("response",n);try{r._isResponseOK(n)||(t=new Error(n.statusText||"Unsuccessful HTTP response"))}catch(e){t=e}t?(t.original=e,t.response=n,t.status=n.status,r.callback(t,n)):r.callback(null,n)})}function b(t,e,r){const n=u("DELETE",t);return"function"==typeof e&&(r=e,e=null),e&&n.send(e),r&&n.end(r),n}u.serializeObject=f,u.parseString=d,u.types={html:"text/html",json:"application/json",xml:"text/xml",urlencoded:"application/x-www-form-urlencoded",form:"application/x-www-form-urlencoded","form-data":"application/x-www-form-urlencoded"},u.serialize={"application/x-www-form-urlencoded":f,"application/json":JSON.stringify},u.parse={"application/x-www-form-urlencoded":d,"application/json":JSON.parse},a(y.prototype),y.prototype._parseBody=function(t){let e=u.parse[this.type];return this.req._parser?this.req._parser(this,t):(!e&&m(this.type)&&(e=u.parse["application/json"]),e&&t&&(t.length||t instanceof Object)?e(t):null)},y.prototype.toError=function(){const t=this.req,e=t.method,r=t.url,n=`cannot ${e} ${r} (${this.status})`,o=new Error(n);return o.status=this.status,o.method=e,o.url=r,o},u.Response=y,o(g.prototype),s(g.prototype),g.prototype.type=function(t){return this.set("Content-Type",u.types[t]||t),this},g.prototype.accept=function(t){return this.set("Accept",u.types[t]||t),this},g.prototype.auth=function(t,e,r){1===arguments.length&&(e=""),"object"==typeof e&&null!==e&&(r=e,e=""),r||(r={type:"function"==typeof btoa?"basic":"auto"});return this._auth(t,e,r,t=>{if("function"==typeof btoa)return btoa(t);throw new Error("Cannot use basic auth, btoa is not a function")})},g.prototype.query=function(t){return"string"!=typeof t&&(t=f(t)),t&&this._query.push(t),this},g.prototype.attach=function(t,e,r){if(e){if(this._data)throw Error("superagent can't mix .send() and .attach()");this._getFormData().append(t,e,r||e.name)}return this},g.prototype._getFormData=function(){return this._formData||(this._formData=new n.FormData),this._formData},g.prototype.callback=function(t,e){if(this._shouldRetry(t,e))return this._retry();const r=this._callback;this.clearTimeout(),t&&(this._maxRetries&&(t.retries=this._retries-1),this.emit("error",t)),r(t,e)},g.prototype.crossDomainError=function(){const t=new Error("Request has been terminated\nPossible causes: the network is offline, Origin is not allowed by Access-Control-Allow-Origin, the page is being unloaded, etc.");t.crossDomain=!0,t.status=this.status,t.method=this.method,t.url=this.url,this.callback(t)},g.prototype.buffer=g.prototype.ca=g.prototype.agent=function(){return console.warn("This is not supported in browser version of superagent"),this},g.prototype.pipe=g.prototype.write=(()=>{throw Error("Streaming is not supported in browser version of superagent")}),g.prototype._isHost=function(t){return t&&"object"==typeof t&&!Array.isArray(t)&&"[object Object]"!==Object.prototype.toString.call(t)},g.prototype.end=function(t){this._endCalled&&console.warn("Warning: .end() was called twice. This is not supported in superagent"),this._endCalled=!0,this._callback=t||p,this._finalizeQueryString(),this._end()},g.prototype._end=function(){if(this._aborted)return this.callback(Error("The request has been aborted even before .end() was called"));const t=this,e=this.xhr=u.getXHR();let r=this._formData||this._data;this._setTimeouts(),e.onreadystatechange=(()=>{const r=e.readyState;if(r>=2&&t._responseTimeoutTimer&&clearTimeout(t._responseTimeoutTimer),4!=r)return;let n;try{n=e.status}catch(t){n=0}if(!n){if(t.timedout||t._aborted)return;return t.crossDomainError()}t.emit("end")});const n=(e,r)=>{r.total>0&&(r.percent=r.loaded/r.total*100),r.direction=e,t.emit("progress",r)};if(this.hasListeners("progress"))try{e.onprogress=n.bind(null,"download"),e.upload&&(e.upload.onprogress=n.bind(null,"upload"))}catch(t){}try{this.username&&this.password?e.open(this.method,this.url,!0,this.username,this.password):e.open(this.method,this.url,!0)}catch(t){return this.callback(t)}if(this._withCredentials&&(e.withCredentials=!0),!this._formData&&"GET"!=this.method&&"HEAD"!=this.method&&"string"!=typeof r&&!this._isHost(r)){const t=this._header["content-type"];let e=this._serializer||u.serialize[t?t.split(";")[0]:""];!e&&m(t)&&(e=u.serialize["application/json"]),e&&(r=e(r))}for(const t in this.header)null!=this.header[t]&&this.header.hasOwnProperty(t)&&e.setRequestHeader(t,this.header[t]);this._responseType&&(e.responseType=this._responseType),this.emit("request",this),e.send(void 0!==r?r:null)},u.agent=(()=>new c),["GET","POST","OPTIONS","PATCH","PUT","DELETE"].forEach(t=>{c.prototype[t.toLowerCase()]=function(e,r){const n=new u.Request(t,e);return this._setDefaults(n),r&&n.end(r),n}}),c.prototype.del=c.prototype.delete,u.get=((t,e,r)=>{const n=u("GET",t);return"function"==typeof e&&(r=e,e=null),e&&n.query(e),r&&n.end(r),n}),u.head=((t,e,r)=>{const n=u("HEAD",t);return"function"==typeof e&&(r=e,e=null),e&&n.query(e),r&&n.end(r),n}),u.options=((t,e,r)=>{const n=u("OPTIONS",t);return"function"==typeof e&&(r=e,e=null),e&&n.send(e),r&&n.end(r),n}),u.del=b,u.delete=b,u.patch=((t,e,r)=>{const n=u("PATCH",t);return"function"==typeof e&&(r=e,e=null),e&&n.send(e),r&&n.end(r),n}),u.post=((t,e,r)=>{const n=u("POST",t);return"function"==typeof e&&(r=e,e=null),e&&n.send(e),r&&n.end(r),n}),u.put=((t,e,r)=>{const n=u("PUT",t);return"function"==typeof e&&(r=e,e=null),e&&n.send(e),r&&n.end(r),n})},function(t,e,r){function n(t){if(t)return function(t){for(var e in n.prototype)t[e]=n.prototype[e];return t}(t)}t.exports=n,n.prototype.on=n.prototype.addEventListener=function(t,e){return this._callbacks=this._callbacks||{},(this._callbacks["$"+t]=this._callbacks["$"+t]||[]).push(e),this},n.prototype.once=function(t,e){function r(){this.off(t,r),e.apply(this,arguments)}return r.fn=e,this.on(t,r),this},n.prototype.off=n.prototype.removeListener=n.prototype.removeAllListeners=n.prototype.removeEventListener=function(t,e){if(this._callbacks=this._callbacks||{},0==arguments.length)return this._callbacks={},this;var r,n=this._callbacks["$"+t];if(!n)return this;if(1==arguments.length)return delete this._callbacks["$"+t],this;for(var o=0;o<n.length;o++)if((r=n[o])===e||r.fn===e){n.splice(o,1);break}return this},n.prototype.emit=function(t){this._callbacks=this._callbacks||{};var e=[].slice.call(arguments,1),r=this._callbacks["$"+t];if(r)for(var n=0,o=(r=r.slice(0)).length;n<o;++n)r[n].apply(this,e);return this},n.prototype.listeners=function(t){return this._callbacks=this._callbacks||{},this._callbacks["$"+t]||[]},n.prototype.hasListeners=function(t){return!!this.listeners(t).length}},function(t,e,r){"use strict";const n=r(15);function o(t){if(t)return function(t){for(const e in o.prototype)t[e]=o.prototype[e];return t}(t)}t.exports=o,o.prototype.clearTimeout=function(){return clearTimeout(this._timer),clearTimeout(this._responseTimeoutTimer),delete this._timer,delete this._responseTimeoutTimer,this},o.prototype.parse=function(t){return this._parser=t,this},o.prototype.responseType=function(t){return this._responseType=t,this},o.prototype.serialize=function(t){return this._serializer=t,this},o.prototype.timeout=function(t){if(!t||"object"!=typeof t)return this._timeout=t,this._responseTimeout=0,this;for(const e in t)switch(e){case"deadline":this._timeout=t.deadline;break;case"response":this._responseTimeout=t.response;break;default:console.warn("Unknown timeout option",e)}return this},o.prototype.retry=function(t,e){return 0!==arguments.length&&!0!==t||(t=1),t<=0&&(t=0),this._maxRetries=t,this._retries=0,this._retryCallback=e,this};const s=["ECONNRESET","ETIMEDOUT","EADDRINFO","ESOCKETTIMEDOUT"];o.prototype._shouldRetry=function(t,e){if(!this._maxRetries||this._retries++>=this._maxRetries)return!1;if(this._retryCallback)try{const r=this._retryCallback(t,e);if(!0===r)return!0;if(!1===r)return!1}catch(t){console.error(t)}if(e&&e.status&&e.status>=500&&501!=e.status)return!0;if(t){if(t.code&&~s.indexOf(t.code))return!0;if(t.timeout&&"ECONNABORTED"==t.code)return!0;if(t.crossDomain)return!0}return!1},o.prototype._retry=function(){return this.clearTimeout(),this.req&&(this.req=null,this.req=this.request()),this._aborted=!1,this.timedout=!1,this._end()},o.prototype.then=function(t,e){if(!this._fullfilledPromise){const t=this;this._endCalled&&console.warn("Warning: superagent request was sent twice, because both .end() and .then() were called. Never call .end() if you use promises"),this._fullfilledPromise=new Promise((e,r)=>{t.on("error",r),t.on("abort",()=>{const t=new Error("Aborted");t.code="ABORTED",t.status=this.status,t.method=this.method,t.url=this.url,r(t)}),t.end((t,n)=>{t?r(t):e(n)})})}return this._fullfilledPromise.then(t,e)},o.prototype.catch=function(t){return this.then(void 0,t)},o.prototype.use=function(t){return t(this),this},o.prototype.ok=function(t){if("function"!=typeof t)throw Error("Callback required");return this._okCallback=t,this},o.prototype._isResponseOK=function(t){return!!t&&(this._okCallback?this._okCallback(t):t.status>=200&&t.status<300)},o.prototype.get=function(t){return this._header[t.toLowerCase()]},o.prototype.getHeader=o.prototype.get,o.prototype.set=function(t,e){if(n(t)){for(const e in t)this.set(e,t[e]);return this}return this._header[t.toLowerCase()]=e,this.header[t]=e,this},o.prototype.unset=function(t){return delete this._header[t.toLowerCase()],delete this.header[t],this},o.prototype.field=function(t,e){if(null==t)throw new Error(".field(name, val) name can not be empty");if(this._data)throw new Error(".field() can't be used if .send() is used. Please use only .send() or only .field() & .attach()");if(n(t)){for(const e in t)this.field(e,t[e]);return this}if(Array.isArray(e)){for(const r in e)this.field(t,e[r]);return this}if(null==e)throw new Error(".field(name, val) val can not be empty");return"boolean"==typeof e&&(e=""+e),this._getFormData().append(t,e),this},o.prototype.abort=function(){return this._aborted?this:(this._aborted=!0,this.xhr&&this.xhr.abort(),this.req&&this.req.abort(),this.clearTimeout(),this.emit("abort"),this)},o.prototype._auth=function(t,e,r,n){switch(r.type){case"basic":this.set("Authorization",`Basic ${n(`${t}:${e}`)}`);break;case"auto":this.username=t,this.password=e;break;case"bearer":this.set("Authorization",`Bearer ${t}`)}return this},o.prototype.withCredentials=function(t){return null==t&&(t=!0),this._withCredentials=t,this},o.prototype.redirects=function(t){return this._maxRedirects=t,this},o.prototype.maxResponseSize=function(t){if("number"!=typeof t)throw TypeError("Invalid argument");return this._maxResponseSize=t,this},o.prototype.toJSON=function(){return{method:this.method,url:this.url,data:this._data,headers:this._header}},o.prototype.send=function(t){const e=n(t);let r=this._header["content-type"];if(this._formData)throw new Error(".send() can't be used if .attach() or .field() is used. Please use only .send() or only .field() & .attach()");if(e&&!this._data)Array.isArray(t)?this._data=[]:this._isHost(t)||(this._data={});else if(t&&this._data&&this._isHost(this._data))throw Error("Can't merge these send calls");if(e&&n(this._data))for(const e in t)this._data[e]=t[e];else"string"==typeof t?(r||this.type("form"),r=this._header["content-type"],this._data="application/x-www-form-urlencoded"==r?this._data?`${this._data}&${t}`:t:(this._data||"")+t):this._data=t;return!e||this._isHost(t)?this:(r||this.type("json"),this)},o.prototype.sortQuery=function(t){return this._sort=void 0===t||t,this},o.prototype._finalizeQueryString=function(){const t=this._query.join("&");if(t&&(this.url+=(this.url.indexOf("?")>=0?"&":"?")+t),this._query.length=0,this._sort){const t=this.url.indexOf("?");if(t>=0){const e=this.url.substring(t+1).split("&");"function"==typeof this._sort?e.sort(this._sort):e.sort(),this.url=this.url.substring(0,t)+"?"+e.join("&")}}},o.prototype._appendQueryString=(()=>{console.trace("Unsupported")}),o.prototype._timeoutError=function(t,e,r){if(this._aborted)return;const n=new Error(`${t+e}ms exceeded`);n.timeout=e,n.code="ECONNABORTED",n.errno=r,this.timedout=!0,this.abort(),this.callback(n)},o.prototype._setTimeouts=function(){const t=this;this._timeout&&!this._timer&&(this._timer=setTimeout(()=>{t._timeoutError("Timeout of ",t._timeout,"ETIME")},this._timeout)),this._responseTimeout&&!this._responseTimeoutTimer&&(this._responseTimeoutTimer=setTimeout(()=>{t._timeoutError("Response timeout of ",t._responseTimeout,"ETIMEDOUT")},this._responseTimeout))}},function(t,e,r){"use strict";const n=r(34);function o(t){if(t)return function(t){for(const e in o.prototype)t[e]=o.prototype[e];return t}(t)}t.exports=o,o.prototype.get=function(t){return this.header[t.toLowerCase()]},o.prototype._setHeaderProperties=function(t){const e=t["content-type"]||"";this.type=n.type(e);const r=n.params(e);for(const t in r)this[t]=r[t];this.links={};try{t.link&&(this.links=n.parseLinks(t.link))}catch(t){}},o.prototype._setStatusProperties=function(t){const e=t/100|0;this.status=this.statusCode=t,this.statusType=e,this.info=1==e,this.ok=2==e,this.redirect=3==e,this.clientError=4==e,this.serverError=5==e,this.error=(4==e||5==e)&&this.toError(),this.created=201==t,this.accepted=202==t,this.noContent=204==t,this.badRequest=400==t,this.unauthorized=401==t,this.notAcceptable=406==t,this.forbidden=403==t,this.notFound=404==t,this.unprocessableEntity=422==t}},function(t,e,r){"use strict";e.type=(t=>t.split(/ *; */).shift()),e.params=(t=>t.split(/ *; */).reduce((t,e)=>{const r=e.split(/ *= */),n=r.shift(),o=r.shift();return n&&o&&(t[n]=o),t},{})),e.parseLinks=(t=>t.split(/ *, */).reduce((t,e)=>{const r=e.split(/ *; */),n=r[0].slice(1,-1);return t[r[1].split(/ *= */)[1].slice(1,-1)]=n,t},{})),e.cleanHeader=((t,e)=>(delete t["content-type"],delete t["content-length"],delete t["transfer-encoding"],delete t.host,e&&(delete t.authorization,delete t.cookie),t))},function(t,e){function r(){this._defaults=[]}["use","on","once","set","query","type","accept","auth","withCredentials","sortQuery","retry","ok","redirects","timeout","buffer","serialize","parse","ca","key","pfx","cert"].forEach(t=>{r.prototype[t]=function(...e){return this._defaults.push({fn:t,args:e}),this}}),r.prototype._setDefaults=function(t){this._defaults.forEach(e=>{t[e.fn].apply(t,e.args)})},t.exports=r},function(t,e,r){"use strict";t.exports=function(t,e){if(-1===e._supportedMethods.indexOf(t.toLowerCase()))throw new Error("Unsupported method; supported methods are: "+e._supportedMethods.join(", "));return!0}},function(t,e,r){"use strict";function n(t){return(n="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(t){return typeof t}:function(t){return t&&"function"==typeof Symbol&&t.constructor===Symbol&&t!==Symbol.prototype?"symbol":typeof t})(t)}t.exports=function(t){if("object"!==n(t))return!1;if(Array.isArray(t))return!1;for(var e in t)if(t.hasOwnProperty(e))return!1;return!0}},function(t,e,r){"use strict";function n(t,e,r){return e in t?Object.defineProperty(t,e,{value:r,enumerable:!0,configurable:!0,writable:!0}):t[e]=r,t}function o(t){return(o="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(t){return typeof t}:function(t){return t&&"function"==typeof Symbol&&t.constructor===Symbol&&t!==Symbol.prototype?"symbol":typeof t})(t)}var s=r(3).build,i=r(5).generate,a=r(2),c=r(13),p=r(11);t.exports=function(t,e){var r=arguments.length>2&&void 0!==arguments[2]?arguments[2]:{},u=["head","get","patch","put","post","delete"];Array.isArray(r.methods)?u=r.methods.map(function(t){return t.trim().toLowerCase()}):"string"==typeof r.methods&&(u=[r.methods.trim().toLowerCase()]),-1!==u.indexOf("get")&&-1===u.indexOf("head")?u.push("head"):-1!==u.indexOf("head")&&-1===u.indexOf("get")&&u.push("get");var h={};h[t.replace(/^[\s\/]*/,"/").replace(/[\s\/]*$/,"/")+e.replace(/^[\s\/]*/,"")]={namespace:t,methods:u};var f=s(h),l=i(f)[t],d=l[Object.keys(l)[0]].Ctor;function m(){var t=arguments.length>0&&void 0!==arguments[0]?arguments[0]:{};return new d(function(t){for(var e=1;e<arguments.length;e++){var r=null!=arguments[e]?arguments[e]:{},o=Object.keys(r);"function"==typeof Object.getOwnPropertySymbols&&(o=o.concat(Object.getOwnPropertySymbols(r).filter(function(t){return Object.getOwnPropertyDescriptor(r,t).enumerable}))),o.forEach(function(e){n(t,e,r[e])})}return t}({},t,this?this._options:{}))}return r&&r.params&&r.params.forEach(function(t){"string"==typeof t&&("object"!==o(p[t])?c(d.prototype,t,a(t)):Object.keys(p[t]).forEach(function(e){c(d.prototype,e,p[t][e])}))}),r&&"object"===o(r.mixins)&&Object.keys(r.mixins).forEach(function(t){c(d.prototype,t,r.mixins[t])}),m.Ctor=d,m}}])});
 
 /***/ }),
 
@@ -28512,18 +24481,20 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_5__);
 /* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @wordpress/element */ "@wordpress/element");
 /* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(_wordpress_element__WEBPACK_IMPORTED_MODULE_6__);
-/* harmony import */ var uuid__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! uuid */ "./node_modules/uuid/dist/esm-browser/index.js");
-/* harmony import */ var react_loader_spinner__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! react-loader-spinner */ "./node_modules/react-loader-spinner/index.js");
-/* harmony import */ var react_loader_spinner__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(react_loader_spinner__WEBPACK_IMPORTED_MODULE_8__);
-/* harmony import */ var _App_css__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./App.css */ "./src/components/App.css");
-/* harmony import */ var _App_css__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(_App_css__WEBPACK_IMPORTED_MODULE_9__);
-/* harmony import */ var _layout_header_RelHeader__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./layout/header/RelHeader */ "./src/components/layout/header/RelHeader.js");
-/* harmony import */ var _layout_footer_RelFooter__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./layout/footer/RelFooter */ "./src/components/layout/footer/RelFooter.js");
-/* harmony import */ var _views_ListingGrid_RelListingGrid__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./views/ListingGrid/RelListingGrid */ "./src/components/views/ListingGrid/RelListingGrid.js");
-/* harmony import */ var _views_ListingRows_RelListingRows__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./views/ListingRows/RelListingRows */ "./src/components/views/ListingRows/RelListingRows.js");
-/* harmony import */ var _views_ListingMap_RelListingMap__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./views/ListingMap/RelListingMap */ "./src/components/views/ListingMap/RelListingMap.js");
-/* harmony import */ var _views_ListingSingle_RelListingSingle__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./views/ListingSingle/RelListingSingle */ "./src/components/views/ListingSingle/RelListingSingle.js");
-/* harmony import */ var _layout_modules_RelModal_RelModal__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./layout/modules/RelModal/RelModal */ "./src/components/layout/modules/RelModal/RelModal.js");
+/* harmony import */ var wpapi_browser_wpapi_min__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! wpapi/browser/wpapi.min */ "./node_modules/wpapi/browser/wpapi.min.js");
+/* harmony import */ var wpapi_browser_wpapi_min__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(wpapi_browser_wpapi_min__WEBPACK_IMPORTED_MODULE_7__);
+/* harmony import */ var uuid__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! uuid */ "./node_modules/uuid/dist/esm-browser/index.js");
+/* harmony import */ var react_loader_spinner__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! react-loader-spinner */ "./node_modules/react-loader-spinner/index.js");
+/* harmony import */ var react_loader_spinner__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(react_loader_spinner__WEBPACK_IMPORTED_MODULE_9__);
+/* harmony import */ var _App_css__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./App.css */ "./src/components/App.css");
+/* harmony import */ var _App_css__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(_App_css__WEBPACK_IMPORTED_MODULE_10__);
+/* harmony import */ var _layout_header_RelHeader__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./layout/header/RelHeader */ "./src/components/layout/header/RelHeader.js");
+/* harmony import */ var _layout_footer_RelFooter__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./layout/footer/RelFooter */ "./src/components/layout/footer/RelFooter.js");
+/* harmony import */ var _views_ListingGrid_RelListingGrid__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./views/ListingGrid/RelListingGrid */ "./src/components/views/ListingGrid/RelListingGrid.js");
+/* harmony import */ var _views_ListingRows_RelListingRows__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./views/ListingRows/RelListingRows */ "./src/components/views/ListingRows/RelListingRows.js");
+/* harmony import */ var _views_ListingMap_RelListingMap__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./views/ListingMap/RelListingMap */ "./src/components/views/ListingMap/RelListingMap.js");
+/* harmony import */ var _views_ListingSingle_RelListingSingle__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./views/ListingSingle/RelListingSingle */ "./src/components/views/ListingSingle/RelListingSingle.js");
+/* harmony import */ var _layout_modules_RelModal_RelModal__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./layout/modules/RelModal/RelModal */ "./src/components/layout/modules/RelModal/RelModal.js");
 
 
 
@@ -28537,8 +24508,6 @@ function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflec
 function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
 
 var Component = wp.element.Component;
-
-var WPAPI = __webpack_require__(/*! wpapi */ "./node_modules/wpapi/wpapi.js");
 
 
 
@@ -28570,17 +24539,19 @@ var App = /*#__PURE__*/function (_Component) {
       modalListing: false,
       page: 1,
       currentCategory: props.args.initialCategory,
+      currentFlag: props.args.initialFlag,
       currentRegion: props.args.initialRegion,
       categories: [],
       regions: [],
       listings: []
     }; // Configure WPAPI handlers
 
-    _this.relWP = new WPAPI({
+    _this.relWP = new wpapi_browser_wpapi_min__WEBPACK_IMPORTED_MODULE_7___default.a({
       endpoint: props.globals.apiLocation
     });
     _this.relWP.relListings = _this.relWP.registerRoute('wp/v2', '/' + props.globals.postType + '/(?P<id>\\d+)');
     _this.relWP.relCategories = _this.relWP.registerRoute('wp/v2', '/' + props.globals.categoryName + '/');
+    _this.relWP.relFlags = _this.relWP.registerRoute('wp/v2', '/' + props.globals.flagName + '/');
     _this.relWP.relRegions = _this.relWP.registerRoute('wp/v2', '/' + props.globals.regionName + '/'); // Bind callback methods to class
 
     _this.changeView = _this.changeView.bind(_babel_runtime_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_2___default()(_this));
@@ -28724,21 +24695,25 @@ var App = /*#__PURE__*/function (_Component) {
       // Destruct required props and states
       var _this$props$globals = this.props.globals,
           categoryName = _this$props$globals.categoryName,
+          flagName = _this$props$globals.flagName,
           regionName = _this$props$globals.regionName;
       var _this$props$args = this.props.args,
           perpage = _this$props$args.perpage,
+          order = _this$props$args.order,
+          orderby = _this$props$args.orderby,
           excludeCategories = _this$props$args.excludeCategories,
           excludeRegions = _this$props$args.excludeRegions,
           initialCategory = _this$props$args.initialCategory;
       var _this$state = this.state,
           currentCategory = _this$state.currentCategory,
+          currentFlag = _this$state.currentFlag,
           currentRegion = _this$state.currentRegion,
           page = _this$state.page;
-      this.relWP.relListings().param(categoryName, currentCategory != false ? currentCategory.trim().split(',') : []).param(categoryName + '_exclude', excludeCategories != false && currentCategory == initialCategory ? excludeCategories.trim().split(',') : []).param(regionName, currentRegion != false ? currentRegion.trim().split(',') : []).param('_embed', "1").order('asc').orderby('title').page(page).perPage(perpage).then(function (data) {
+      this.relWP.relListings().param(categoryName, currentCategory != false ? currentCategory.trim().split(',') : []).param(categoryName + '_exclude', excludeCategories != false && currentCategory == initialCategory ? excludeCategories.trim().split(',') : []).param(flagName, currentFlag != false ? currentFlag.trim().split(',') : []).param(regionName, currentRegion != false ? currentRegion.trim().split(',') : []).param('_embed', "1").order(order != false ? order : 'asc').orderby(orderby != false ? orderby : 'title').page(page).perPage(perpage).then(function (data) {
         if (data.length > 0) {
           // Hash static keys to every listing
           data.forEach(function (listing) {
-            return listing.key = Object(uuid__WEBPACK_IMPORTED_MODULE_7__["v3"])(JSON.stringify(listing), uuid__WEBPACK_IMPORTED_MODULE_7__["v3"].URL);
+            return listing.key = Object(uuid__WEBPACK_IMPORTED_MODULE_8__["v3"])(JSON.stringify(listing), uuid__WEBPACK_IMPORTED_MODULE_8__["v3"].URL);
           });
 
           _this6.setState({
@@ -28753,7 +24728,8 @@ var App = /*#__PURE__*/function (_Component) {
           });
         }
       }).catch(function (err) {
-        console.error("WP API Fetch Error - Are you requesting a page that doesn't exist?");
+        console.error("WP API Fetch Error - Are you requesting a path that doesn't exist?");
+        console.error(err);
 
         _this6.setState({
           loading: false
@@ -28816,7 +24792,7 @@ var App = /*#__PURE__*/function (_Component) {
           }); // Hash static keys to every region
 
           data.forEach(function (category) {
-            return category.key = Object(uuid__WEBPACK_IMPORTED_MODULE_7__["v3"])(JSON.stringify(category), uuid__WEBPACK_IMPORTED_MODULE_7__["v3"].URL);
+            return category.key = Object(uuid__WEBPACK_IMPORTED_MODULE_8__["v3"])(JSON.stringify(category), uuid__WEBPACK_IMPORTED_MODULE_8__["v3"].URL);
           }); // If top level categories state has already been set
 
           if (categories.length > 0) {
@@ -28847,7 +24823,7 @@ var App = /*#__PURE__*/function (_Component) {
         if (data.length > 0) {
           // Hash static keys to every region
           data.forEach(function (region) {
-            return region.key = Object(uuid__WEBPACK_IMPORTED_MODULE_7__["v3"])(JSON.stringify(region), uuid__WEBPACK_IMPORTED_MODULE_7__["v3"].URL);
+            return region.key = Object(uuid__WEBPACK_IMPORTED_MODULE_8__["v3"])(JSON.stringify(region), uuid__WEBPACK_IMPORTED_MODULE_8__["v3"].URL);
           });
 
           _this9.setState({
@@ -28877,7 +24853,7 @@ var App = /*#__PURE__*/function (_Component) {
     key: "renderModal",
     value: function renderModal() {
       if (this.state.modalOpened && this.state.modalListing != false) {
-        return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_6__["createElement"])(_layout_modules_RelModal_RelModal__WEBPACK_IMPORTED_MODULE_16__["default"], {
+        return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_6__["createElement"])(_layout_modules_RelModal_RelModal__WEBPACK_IMPORTED_MODULE_17__["default"], {
           modalListing: this.state.modalListing,
           toggleModal: this.toggleModal,
           globals: this.props.globals
@@ -28890,7 +24866,7 @@ var App = /*#__PURE__*/function (_Component) {
       if ((this.state.view == 'grid' || this.state.view == 'list' || this.state.view == 'single') && this.state.loading) {
         return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_6__["createElement"])("div", {
           className: "rel-loader-container"
-        }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_6__["createElement"])(react_loader_spinner__WEBPACK_IMPORTED_MODULE_8___default.a, {
+        }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_6__["createElement"])(react_loader_spinner__WEBPACK_IMPORTED_MODULE_9___default.a, {
           type: "RevolvingDot",
           color: "#173f57",
           height: 100,
@@ -28904,14 +24880,14 @@ var App = /*#__PURE__*/function (_Component) {
     value: function renderView() {
       switch (this.state.view) {
         case 'list':
-          return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_6__["createElement"])(_views_ListingRows_RelListingRows__WEBPACK_IMPORTED_MODULE_13__["default"], {
+          return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_6__["createElement"])(_views_ListingRows_RelListingRows__WEBPACK_IMPORTED_MODULE_14__["default"], {
             listings: this.state.listings,
             globals: this.props.globals,
             toggleModal: this.toggleModal
           });
 
         case 'map':
-          return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_6__["createElement"])(_views_ListingMap_RelListingMap__WEBPACK_IMPORTED_MODULE_14__["default"], {
+          return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_6__["createElement"])(_views_ListingMap_RelListingMap__WEBPACK_IMPORTED_MODULE_15__["default"], {
             listings: this.state.listings,
             globals: this.props.globals,
             toggleModal: this.toggleModal,
@@ -28921,13 +24897,13 @@ var App = /*#__PURE__*/function (_Component) {
           });
 
         case 'single':
-          return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_6__["createElement"])(_views_ListingSingle_RelListingSingle__WEBPACK_IMPORTED_MODULE_15__["default"], {
+          return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_6__["createElement"])(_views_ListingSingle_RelListingSingle__WEBPACK_IMPORTED_MODULE_16__["default"], {
             singleListing: this.state.modalListing,
             globals: this.props.globals
           });
 
         default:
-          return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_6__["createElement"])(_views_ListingGrid_RelListingGrid__WEBPACK_IMPORTED_MODULE_12__["default"], {
+          return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_6__["createElement"])(_views_ListingGrid_RelListingGrid__WEBPACK_IMPORTED_MODULE_13__["default"], {
             listings: this.state.listings,
             globals: this.props.globals,
             toggleModal: this.toggleModal
@@ -28939,7 +24915,7 @@ var App = /*#__PURE__*/function (_Component) {
     value: function render() {
       return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_6__["createElement"])("div", {
         className: "rel-wrapper"
-      }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_6__["createElement"])(_layout_header_RelHeader__WEBPACK_IMPORTED_MODULE_10__["default"], {
+      }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_6__["createElement"])(_layout_header_RelHeader__WEBPACK_IMPORTED_MODULE_11__["default"], {
         currentView: this.state.view,
         changeView: this.changeView,
         categories: this.state.categories,
@@ -28949,7 +24925,7 @@ var App = /*#__PURE__*/function (_Component) {
         currentRegion: this.state.currentRegion,
         changeRegion: this.changeRegion,
         regionColourField: this.props.globals.regionColourField
-      }), this.renderView(), this.renderLoader(), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_6__["createElement"])(_layout_footer_RelFooter__WEBPACK_IMPORTED_MODULE_11__["default"], {
+      }), this.renderView(), this.renderLoader(), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_6__["createElement"])(_layout_footer_RelFooter__WEBPACK_IMPORTED_MODULE_12__["default"], {
         currentView: this.state.view,
         page: this.state.page,
         totalPages: this.state.totalPages,
@@ -28961,6 +24937,136 @@ var App = /*#__PURE__*/function (_Component) {
   return App;
 }(Component);
 /* harmony default export */ __webpack_exports__["default"] = (App);
+
+/***/ }),
+
+/***/ "./src/components/elements/RelListingFlag/RelListingFlag.css":
+/*!*******************************************************************!*\
+  !*** ./src/components/elements/RelListingFlag/RelListingFlag.css ***!
+  \*******************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+// extracted by mini-css-extract-plugin
+
+/***/ }),
+
+/***/ "./src/components/elements/RelListingFlag/RelListingFlag.js":
+/*!******************************************************************!*\
+  !*** ./src/components/elements/RelListingFlag/RelListingFlag.js ***!
+  \******************************************************************/
+/*! exports provided: RelListingFlag, default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "RelListingFlag", function() { return RelListingFlag; });
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js");
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js");
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js");
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @wordpress/element */ "@wordpress/element");
+/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @fortawesome/react-fontawesome */ "./node_modules/@fortawesome/react-fontawesome/index.es.js");
+/* harmony import */ var react_tooltip__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! react-tooltip */ "./node_modules/react-tooltip/dist/index.es.js");
+/* harmony import */ var _RelListingFlag_css__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./RelListingFlag.css */ "./src/components/elements/RelListingFlag/RelListingFlag.css");
+/* harmony import */ var _RelListingFlag_css__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(_RelListingFlag_css__WEBPACK_IMPORTED_MODULE_8__);
+/* harmony import */ var _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @fortawesome/free-solid-svg-icons */ "./node_modules/@fortawesome/free-solid-svg-icons/index.es.js");
+
+
+
+
+
+
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default()(this, result); }; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+var Component = wp.element.Component;
+
+var Entities = __webpack_require__(/*! html-entities */ "./node_modules/html-entities/lib/index.js").AllHtmlEntities;
+
+var entities = new Entities();
+
+
+ // Icons
+
+
+var RelListingFlag = /*#__PURE__*/function (_Component) {
+  _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default()(RelListingFlag, _Component);
+
+  var _super = _createSuper(RelListingFlag);
+
+  function RelListingFlag() {
+    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, RelListingFlag);
+
+    return _super.apply(this, arguments);
+  }
+
+  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(RelListingFlag, [{
+    key: "renderIcon",
+    value: function renderIcon(flag, flagIconField) {
+      if (flag.rel_fields[flagIconField]) {
+        return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("img", {
+          src: flag.rel_fields[flagIconField].url
+        });
+      } else {
+        return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_6__["FontAwesomeIcon"], {
+          className: "rel-default-flag-icon",
+          icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_9__["faExclamation"]
+        });
+      }
+    }
+  }, {
+    key: "renderDesc",
+    value: function renderDesc(flag, showDesc) {
+      if (showDesc) {
+        return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("div", {
+          className: "rel-flag-desc"
+        }, entities.decode(flag.name));
+      }
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      var _this$props = this.props,
+          flag = _this$props.flag,
+          description = _this$props.description,
+          tooltip = _this$props.tooltip;
+      var flagIconField = this.props.globals.flagIconField;
+      var flagClass = "rel-flag ";
+
+      if (description) {
+        flagClass += "contains-desc";
+      }
+
+      var tooltipText = "";
+
+      if (tooltip) {
+        tooltipText += entities.decode(flag.name);
+      }
+
+      return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("div", {
+        className: flagClass
+      }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("div", {
+        "data-tip": tooltipText,
+        className: "rel-flag-icon"
+      }, this.renderIcon(flag, flagIconField)), this.renderDesc(flag, description), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])(react_tooltip__WEBPACK_IMPORTED_MODULE_7__["default"], {
+        effect: "solid"
+      }));
+    }
+  }]);
+
+  return RelListingFlag;
+}(Component);
+/* harmony default export */ __webpack_exports__["default"] = (RelListingFlag);
 
 /***/ }),
 
@@ -30115,9 +26221,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @wordpress/element */ "@wordpress/element");
 /* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__);
 /* harmony import */ var _fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @fortawesome/react-fontawesome */ "./node_modules/@fortawesome/react-fontawesome/index.es.js");
-/* harmony import */ var _RelModal_css__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./RelModal.css */ "./src/components/layout/modules/RelModal/RelModal.css");
-/* harmony import */ var _RelModal_css__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(_RelModal_css__WEBPACK_IMPORTED_MODULE_7__);
-/* harmony import */ var _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @fortawesome/free-solid-svg-icons */ "./node_modules/@fortawesome/free-solid-svg-icons/index.es.js");
+/* harmony import */ var _helpers_apiHelpers__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../../../helpers/apiHelpers */ "./src/helpers/apiHelpers.js");
+/* harmony import */ var _RelModal_css__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./RelModal.css */ "./src/components/layout/modules/RelModal/RelModal.css");
+/* harmony import */ var _RelModal_css__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(_RelModal_css__WEBPACK_IMPORTED_MODULE_8__);
+/* harmony import */ var _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @fortawesome/free-solid-svg-icons */ "./node_modules/@fortawesome/free-solid-svg-icons/index.es.js");
+/* harmony import */ var _elements_RelListingFlag_RelListingFlag__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../../../elements/RelListingFlag/RelListingFlag */ "./src/components/elements/RelListingFlag/RelListingFlag.js");
 
 
 
@@ -30135,7 +26243,10 @@ var Component = wp.element.Component;
 var Entities = __webpack_require__(/*! html-entities */ "./node_modules/html-entities/lib/index.js").AllHtmlEntities;
 
 var entities = new Entities();
+
  // Fontawesome Icons
+
+ // Import Components
 
 
 var RelModal = /*#__PURE__*/function (_Component) {
@@ -30158,23 +26269,25 @@ var RelModal = /*#__PURE__*/function (_Component) {
         backgroundColor: '#c7c7c7'
       };
 
-      if (typeof listing._embedded['wp:term'][2] !== 'undefined' && listing._embedded['wp:term'][2].length > 0) {
-        if (typeof listing._embedded['wp:term'][2][0].rel_fields[regionColourField] !== 'undefined') {
+      try {
+        regionName = entities.decode(listing._embedded['wp:term'][2][0].name);
+
+        try {
           dotStyle.backgroundColor = listing._embedded['wp:term'][2][0].rel_fields[regionColourField];
+        } catch (err) {// No region colour
         }
 
-        regionName = entities.decode(listing._embedded['wp:term'][2][0].name);
-      }
-
-      if (regionName) {
-        return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("div", {
-          className: "rel-modal-region-container"
-        }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("div", {
-          className: "rel-modal-region-dot",
-          style: dotStyle
-        }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("div", {
-          className: "rel-modal-region"
-        }, regionName));
+        if (regionName) {
+          return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("div", {
+            className: "rel-modal-region-container"
+          }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("div", {
+            className: "rel-modal-region-dot",
+            style: dotStyle
+          }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("div", {
+            className: "rel-modal-region"
+          }, regionName));
+        }
+      } catch (err) {// No region name
       }
     }
   }, {
@@ -30232,6 +26345,22 @@ var RelModal = /*#__PURE__*/function (_Component) {
       }
     }
   }, {
+    key: "renderHours",
+    value: function renderHours(listing, hoursField) {
+      if (listing.rel_fields[hoursField]) {
+        return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("div", {
+          className: "rel-modal-hours"
+        }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("h5", {
+          className: "rel-modal-hours-title"
+        }, "Hours of Operation"), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("div", {
+          className: "rel-modal-hours-desc",
+          dangerouslySetInnerHTML: {
+            __html: entities.decode(listing.rel_fields[hoursField])
+          }
+        }));
+      }
+    }
+  }, {
     key: "renderLink",
     value: function renderLink(internalLink) {
       if (internalLink != false) {
@@ -30239,7 +26368,7 @@ var RelModal = /*#__PURE__*/function (_Component) {
           href: internalLink
         }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_6__["FontAwesomeIcon"], {
           className: "rel-modal-link",
-          icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_8__["faLink"]
+          icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_9__["faLink"]
         }));
       }
     }
@@ -30255,16 +26384,43 @@ var RelModal = /*#__PURE__*/function (_Component) {
       }
     }
   }, {
+    key: "renderFlags",
+    value: function renderFlags(listing, flagName, flagHiddenField) {
+      var _this = this;
+
+      if (flagName) {
+        var flags = Object(_helpers_apiHelpers__WEBPACK_IMPORTED_MODULE_7__["getTaxonomyTerms"])(flagName, listing);
+
+        if (flags) {
+          return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("div", {
+            className: "rel-modal-flags"
+          }, flags.map(function (flag, index) {
+            if (!flag.rel_fields[flagHiddenField]) {
+              return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])(_elements_RelListingFlag_RelListingFlag__WEBPACK_IMPORTED_MODULE_10__["default"], {
+                flag: flag,
+                description: true,
+                tooltip: false,
+                globals: _this.props.globals
+              });
+            }
+          }));
+        }
+      }
+    }
+  }, {
     key: "render",
     value: function render() {
-      var _this = this;
+      var _this2 = this;
 
       // Destruct required props and globals
       var listing = this.props.modalListing;
       var _this$props$globals = this.props.globals,
           phoneField = _this$props$globals.phoneField,
           addressField = _this$props$globals.addressField,
+          hoursField = _this$props$globals.hoursField,
           logoField = _this$props$globals.logoField,
+          flagName = _this$props$globals.flagName,
+          flagHiddenField = _this$props$globals.flagHiddenField,
           mapField = _this$props$globals.mapField,
           websiteField = _this$props$globals.websiteField,
           regionColourField = _this$props$globals.regionColourField,
@@ -30273,15 +26429,22 @@ var RelModal = /*#__PURE__*/function (_Component) {
       var thumbSrc = placeholderImage;
       var thumbAlt = '';
 
-      if (listing._embedded['wp:featuredmedia']) {
-        thumbSrc = listing._embedded['wp:featuredmedia'][0].media_details.sizes.medium.source_url;
+      try {
+        thumbSrc = listing._embedded['wp:featuredmedia'][0].media_details.sizes.large.source_url;
         thumbAlt = listing._embedded['wp:featuredmedia'][0].alt_text;
+      } catch (err) {
+        // No LARGE Featured Media
+        try {
+          thumbSrc = listing._embedded['wp:featuredmedia'][0].media_details.sizes.thumbnail.source_url;
+          thumbAlt = listing._embedded['wp:featuredmedia'][0].alt_text;
+        } catch (err) {// No Featured Media
+        }
       }
 
       return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("div", {
         className: "rel-modal-background",
         onClick: function onClick(e) {
-          return _this.props.toggleModal(e, false, false);
+          return _this2.props.toggleModal(e, false, false);
         }
       }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("div", {
         className: "rel-modal-container"
@@ -30294,21 +26457,21 @@ var RelModal = /*#__PURE__*/function (_Component) {
         className: "rel-modal-details"
       }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("div", {
         className: "rel-modal-text"
-      }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("h4", null, entities.decode(listing.title.rendered), " ", this.renderLink(listing.link)), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("div", {
+      }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("h4", null, entities.decode(listing.title.rendered), " ", this.renderLink(listing.link)), this.renderFlags(listing, flagName, flagHiddenField), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("div", {
         className: "rel-modal-content",
         dangerouslySetInnerHTML: {
           __html: entities.decode(listing.content.rendered)
         }
-      })), this.renderRegion(listing, regionColourField), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("div", {
+      }), this.renderHours(listing, hoursField)), this.renderRegion(listing, regionColourField), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("div", {
         className: "rel-modal-field-container"
       }, this.renderAddress(listing, addressField, mapField), this.renderPhone(listing, phoneField), this.renderWebsite(listing, websiteField)), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("div", {
         className: "rel-modal-close-container",
         onClick: function onClick(e) {
-          return _this.props.toggleModal(e, true, false);
+          return _this2.props.toggleModal(e, true, false);
         }
       }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_6__["FontAwesomeIcon"], {
         className: "rel-modal-close",
-        icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_8__["faTimesCircle"]
+        icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_9__["faTimesCircle"]
       })))));
     }
   }]);
@@ -30438,8 +26601,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__);
 /* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @wordpress/element */ "@wordpress/element");
 /* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var _RelListingGridItem_css__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./RelListingGridItem.css */ "./src/components/views/ListingGrid/RelListingGridItem/RelListingGridItem.css");
-/* harmony import */ var _RelListingGridItem_css__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(_RelListingGridItem_css__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var _helpers_apiHelpers__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../../../helpers/apiHelpers */ "./src/helpers/apiHelpers.js");
+/* harmony import */ var _RelListingGridItem_css__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./RelListingGridItem.css */ "./src/components/views/ListingGrid/RelListingGridItem/RelListingGridItem.css");
+/* harmony import */ var _RelListingGridItem_css__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(_RelListingGridItem_css__WEBPACK_IMPORTED_MODULE_7__);
+/* harmony import */ var _elements_RelListingFlag_RelListingFlag__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../../elements/RelListingFlag/RelListingFlag */ "./src/components/elements/RelListingFlag/RelListingFlag.js");
 
 
 
@@ -30456,6 +26621,9 @@ var Component = wp.element.Component;
 var Entities = __webpack_require__(/*! html-entities */ "./node_modules/html-entities/lib/index.js").AllHtmlEntities;
 
 var entities = new Entities();
+
+ // Import Components
+
 
 var RelListingGridItem = /*#__PURE__*/function (_Component) {
   _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default()(RelListingGridItem, _Component);
@@ -30480,24 +26648,51 @@ var RelListingGridItem = /*#__PURE__*/function (_Component) {
       }
     }
   }, {
+    key: "renderFlags",
+    value: function renderFlags(listing, flagName, flagHiddenField) {
+      var _this = this;
+
+      if (flagName) {
+        var flags = Object(_helpers_apiHelpers__WEBPACK_IMPORTED_MODULE_6__["getTaxonomyTerms"])(flagName, listing);
+
+        if (flags) {
+          return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("div", {
+            className: "rel-grid-flags"
+          }, flags.map(function (flag, index) {
+            if (!flag.rel_fields[flagHiddenField]) {
+              return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])(_elements_RelListingFlag_RelListingFlag__WEBPACK_IMPORTED_MODULE_8__["default"], {
+                flag: flag,
+                description: false,
+                tooltip: true,
+                globals: _this.props.globals
+              });
+            }
+          }));
+        }
+      }
+    }
+  }, {
     key: "render",
     value: function render() {
-      var _this = this;
+      var _this2 = this;
 
       // Destruct required props and globals
       var listing = this.props.listing;
       var _this$props$globals = this.props.globals,
           addressField = _this$props$globals.addressField,
           logoField = _this$props$globals.logoField,
+          flagName = _this$props$globals.flagName,
+          flagHiddenField = _this$props$globals.flagHiddenField,
           regionColourField = _this$props$globals.regionColourField,
           placeholderImage = _this$props$globals.placeholderImage; // Check for a featured image if it exists
 
       var thumbSrc = placeholderImage;
       var thumbAlt = '';
 
-      if (listing._embedded['wp:featuredmedia']) {
+      try {
         thumbSrc = listing._embedded['wp:featuredmedia'][0].media_details.sizes.thumbnail.source_url;
         thumbAlt = listing._embedded['wp:featuredmedia'][0].alt_text;
+      } catch (err) {// No Featured Media
       } // Get the Region dot colour if it exists
 
 
@@ -30505,21 +26700,22 @@ var RelListingGridItem = /*#__PURE__*/function (_Component) {
         backgroundColor: '#c7c7c7'
       };
 
-      if (typeof listing._embedded['wp:term'][2] !== 'undefined' && listing._embedded['wp:term'][2].length > 0 && typeof listing._embedded['wp:term'][2][0].rel_fields[regionColourField] !== 'undefined') {
+      try {
         dotStyle.backgroundColor = listing._embedded['wp:term'][2][0].rel_fields[regionColourField];
+      } catch (err) {// No region colour
       }
 
       return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("div", {
         className: "rel-listing-grid-item",
         onClick: function onClick(e) {
-          return _this.props.toggleModal(e, false, listing);
+          return _this2.props.toggleModal(e, false, listing);
         }
       }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("div", {
         className: "rel-listing-image"
       }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("img", {
         src: thumbSrc,
         alt: thumbAlt
-      }), this.renderLogo(listing, logoField)), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("div", {
+      }), this.renderLogo(listing, logoField), this.renderFlags(listing, flagName, flagHiddenField)), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("div", {
         className: "rel-listing-grid-details"
       }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("div", {
         className: "rel-listing-grid-text"
@@ -30982,8 +27178,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__);
 /* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @wordpress/element */ "@wordpress/element");
 /* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var _RelListingRowItem_css__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./RelListingRowItem.css */ "./src/components/views/ListingRows/RelListingRowItem/RelListingRowItem.css");
-/* harmony import */ var _RelListingRowItem_css__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(_RelListingRowItem_css__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var _helpers_apiHelpers__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../../../helpers/apiHelpers */ "./src/helpers/apiHelpers.js");
+/* harmony import */ var _RelListingRowItem_css__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./RelListingRowItem.css */ "./src/components/views/ListingRows/RelListingRowItem/RelListingRowItem.css");
+/* harmony import */ var _RelListingRowItem_css__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(_RelListingRowItem_css__WEBPACK_IMPORTED_MODULE_7__);
+/* harmony import */ var _elements_RelListingFlag_RelListingFlag__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../../elements/RelListingFlag/RelListingFlag */ "./src/components/elements/RelListingFlag/RelListingFlag.js");
 
 
 
@@ -31001,6 +27199,9 @@ var Entities = __webpack_require__(/*! html-entities */ "./node_modules/html-ent
 
 var entities = new Entities();
 
+ // Import Components
+
+
 var RelListingRowItem = /*#__PURE__*/function (_Component) {
   _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default()(RelListingRowItem, _Component);
 
@@ -31013,28 +27214,55 @@ var RelListingRowItem = /*#__PURE__*/function (_Component) {
   }
 
   _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(RelListingRowItem, [{
+    key: "renderFlags",
+    value: function renderFlags(listing, flagName, flagHiddenField) {
+      var _this = this;
+
+      if (flagName) {
+        var flags = Object(_helpers_apiHelpers__WEBPACK_IMPORTED_MODULE_6__["getTaxonomyTerms"])(flagName, listing);
+
+        if (flags) {
+          return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("div", {
+            className: "rel-row-flags"
+          }, flags.map(function (flag, index) {
+            if (!flag.rel_fields[flagHiddenField]) {
+              return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])(_elements_RelListingFlag_RelListingFlag__WEBPACK_IMPORTED_MODULE_8__["default"], {
+                flag: flag,
+                description: false,
+                tooltip: true,
+                globals: _this.props.globals
+              });
+            }
+          }));
+        }
+      }
+    }
+  }, {
     key: "render",
     value: function render() {
-      var _this = this;
+      var _this2 = this;
 
       // Destruct required props and globals
       var listing = this.props.listing;
       var _this$props$globals = this.props.globals,
           addressField = _this$props$globals.addressField,
+          flagName = _this$props$globals.flagName,
+          flagHiddenField = _this$props$globals.flagHiddenField,
           regionColourField = _this$props$globals.regionColourField; // Get the Region dot colour if it exists
 
       var dotStyle = {
         backgroundColor: '#c7c7c7'
       };
 
-      if (typeof listing._embedded['wp:term'][2] !== 'undefined' && listing._embedded['wp:term'][2].length > 0 && typeof listing._embedded['wp:term'][2][0].rel_fields[regionColourField] !== 'undefined') {
+      try {
         dotStyle.backgroundColor = listing._embedded['wp:term'][2][0].rel_fields[regionColourField];
+      } catch (err) {// No region colour
       }
 
       return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("div", {
         className: "rel-listing-row-item",
         onClick: function onClick(e) {
-          return _this.props.toggleModal(e, false, listing);
+          return _this2.props.toggleModal(e, false, listing);
         }
       }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("div", {
         className: "rel-listing-row-details"
@@ -31045,7 +27273,7 @@ var RelListingRowItem = /*#__PURE__*/function (_Component) {
         style: dotStyle
       })), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("div", {
         className: "rel-listing-row-text"
-      }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("h4", null, entities.decode(listing.title.rendered)), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("p", null, entities.decode(listing.rel_fields[addressField]))), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("div", {
+      }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("h4", null, entities.decode(listing.title.rendered)), this.renderFlags(listing, flagName, flagHiddenField), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("p", null, entities.decode(listing.rel_fields[addressField]))), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("div", {
         className: "rel-listing-row-arrow-container"
       }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("div", {
         className: "rel-listing-row-arrow"
@@ -31178,8 +27406,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__);
 /* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @wordpress/element */ "@wordpress/element");
 /* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var _RelListingSingle_css__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./RelListingSingle.css */ "./src/components/views/ListingSingle/RelListingSingle.css");
-/* harmony import */ var _RelListingSingle_css__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(_RelListingSingle_css__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var _helpers_apiHelpers__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../../helpers/apiHelpers */ "./src/helpers/apiHelpers.js");
+/* harmony import */ var _RelListingSingle_css__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./RelListingSingle.css */ "./src/components/views/ListingSingle/RelListingSingle.css");
+/* harmony import */ var _RelListingSingle_css__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(_RelListingSingle_css__WEBPACK_IMPORTED_MODULE_7__);
+/* harmony import */ var _elements_RelListingFlag_RelListingFlag__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../elements/RelListingFlag/RelListingFlag */ "./src/components/elements/RelListingFlag/RelListingFlag.js");
 
 
 
@@ -31196,6 +27426,9 @@ var Component = wp.element.Component;
 var Entities = __webpack_require__(/*! html-entities */ "./node_modules/html-entities/lib/index.js").AllHtmlEntities;
 
 var entities = new Entities();
+
+ // Import Components
+
 
 var RelListingSingle = /*#__PURE__*/function (_Component) {
   _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default()(RelListingSingle, _Component);
@@ -31217,23 +27450,25 @@ var RelListingSingle = /*#__PURE__*/function (_Component) {
         backgroundColor: '#c7c7c7'
       };
 
-      if (typeof listing._embedded['wp:term'][2] !== 'undefined' && listing._embedded['wp:term'][2].length > 0) {
-        if (typeof listing._embedded['wp:term'][2][0].rel_fields[regionColourField] !== 'undefined') {
+      try {
+        regionName = entities.decode(listing._embedded['wp:term'][2][0].name);
+
+        try {
           dotStyle.backgroundColor = listing._embedded['wp:term'][2][0].rel_fields[regionColourField];
+        } catch (err) {// No region colour
         }
 
-        regionName = entities.decode(listing._embedded['wp:term'][2][0].name);
-      }
-
-      if (regionName) {
-        return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("div", {
-          className: "rel-single-region-container"
-        }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("div", {
-          className: "rel-single-region-dot",
-          style: dotStyle
-        }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("div", {
-          className: "rel-single-region"
-        }, regionName));
+        if (regionName) {
+          return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("div", {
+            className: "rel-modal-region-container"
+          }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("div", {
+            className: "rel-modal-region-dot",
+            style: dotStyle
+          }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("div", {
+            className: "rel-modal-region"
+          }, regionName));
+        }
+      } catch (err) {// No region name
       }
     }
   }, {
@@ -31291,6 +27526,22 @@ var RelListingSingle = /*#__PURE__*/function (_Component) {
       }
     }
   }, {
+    key: "renderHours",
+    value: function renderHours(listing, hoursField) {
+      if (listing.rel_fields[hoursField]) {
+        return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("div", {
+          className: "rel-single-hours"
+        }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("h5", {
+          className: "rel-single-hours-title"
+        }, "Hours of Operation"), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("div", {
+          className: "rel-single-hours-desc",
+          dangerouslySetInnerHTML: {
+            __html: entities.decode(listing.rel_fields[hoursField])
+          }
+        }));
+      }
+    }
+  }, {
     key: "renderLogo",
     value: function renderLogo(listing, logoField) {
       if (typeof listing.rel_fields[logoField] !== 'undefined' && listing.rel_fields[logoField] != false) {
@@ -31302,6 +27553,30 @@ var RelListingSingle = /*#__PURE__*/function (_Component) {
       }
     }
   }, {
+    key: "renderFlags",
+    value: function renderFlags(listing, flagName, flagHiddenField) {
+      var _this = this;
+
+      if (flagName) {
+        var flags = Object(_helpers_apiHelpers__WEBPACK_IMPORTED_MODULE_6__["getTaxonomyTerms"])(flagName, listing);
+
+        if (flags) {
+          return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("div", {
+            className: "rel-single-flags"
+          }, flags.map(function (flag, index) {
+            if (!flag.rel_fields[flagHiddenField]) {
+              return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])(_elements_RelListingFlag_RelListingFlag__WEBPACK_IMPORTED_MODULE_8__["default"], {
+                flag: flag,
+                description: true,
+                tooltip: false,
+                globals: _this.props.globals
+              });
+            }
+          }));
+        }
+      }
+    }
+  }, {
     key: "render",
     value: function render() {
       // Destruct required props and globals
@@ -31309,7 +27584,10 @@ var RelListingSingle = /*#__PURE__*/function (_Component) {
       var _this$props$globals = this.props.globals,
           phoneField = _this$props$globals.phoneField,
           addressField = _this$props$globals.addressField,
+          hoursField = _this$props$globals.hoursField,
           logoField = _this$props$globals.logoField,
+          flagName = _this$props$globals.flagName,
+          flagHiddenField = _this$props$globals.flagHiddenField,
           mapField = _this$props$globals.mapField,
           websiteField = _this$props$globals.websiteField,
           regionColourField = _this$props$globals.regionColourField,
@@ -31320,9 +27598,16 @@ var RelListingSingle = /*#__PURE__*/function (_Component) {
         var thumbSrc = placeholderImage;
         var thumbAlt = '';
 
-        if (listing._embedded['wp:featuredmedia']) {
+        try {
           thumbSrc = listing._embedded['wp:featuredmedia'][0].media_details.sizes.large.source_url;
           thumbAlt = listing._embedded['wp:featuredmedia'][0].alt_text;
+        } catch (err) {
+          // No LARGE Featured Media
+          try {
+            thumbSrc = listing._embedded['wp:featuredmedia'][0].media_details.sizes.full.source_url;
+            thumbAlt = listing._embedded['wp:featuredmedia'][0].alt_text;
+          } catch (err) {// No Featured Media
+          }
         }
 
         return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("div", {
@@ -31336,14 +27621,14 @@ var RelListingSingle = /*#__PURE__*/function (_Component) {
           className: "rel-single-details"
         }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("div", {
           className: "rel-single-text"
-        }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("h4", null, entities.decode(listing.title.rendered)), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("div", {
+        }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("h4", null, entities.decode(listing.title.rendered)), this.renderFlags(listing, flagName, flagHiddenField), this.renderRegion(listing, regionColourField), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("div", {
+          className: "rel-single-field-container"
+        }, this.renderAddress(listing, addressField, mapField), this.renderPhone(listing, phoneField), this.renderWebsite(listing, websiteField)), this.renderHours(listing, hoursField), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("div", {
           className: "rel-single-content",
           dangerouslySetInnerHTML: {
             __html: entities.decode(listing.content.rendered)
           }
-        })), this.renderRegion(listing, regionColourField), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("div", {
-          className: "rel-single-field-container"
-        }, this.renderAddress(listing, addressField, mapField), this.renderPhone(listing, phoneField), this.renderWebsite(listing, websiteField))));
+        }))));
       } else {
         return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("div", {
           className: "rel-listings-single"
@@ -31355,6 +27640,73 @@ var RelListingSingle = /*#__PURE__*/function (_Component) {
   return RelListingSingle;
 }(Component);
 /* harmony default export */ __webpack_exports__["default"] = (RelListingSingle);
+
+/***/ }),
+
+/***/ "./src/helpers/apiHelpers.js":
+/*!***********************************!*\
+  !*** ./src/helpers/apiHelpers.js ***!
+  \***********************************/
+/*! exports provided: getTaxonomyTerms */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getTaxonomyTerms", function() { return getTaxonomyTerms; });
+function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+// Returns the terms of a specific taxonomy from a listing
+function getTaxonomyTerms(taxonomy, listing) {
+  var termObjects = {};
+  var terms = [];
+
+  var _iterator = _createForOfIteratorHelper(listing._embedded['wp:term']),
+      _step;
+
+  try {
+    for (_iterator.s(); !(_step = _iterator.n()).done;) {
+      var taxonomyTerms = _step.value;
+
+      var _iterator3 = _createForOfIteratorHelper(taxonomyTerms),
+          _step3;
+
+      try {
+        for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
+          var term = _step3.value;
+          termObjects[term.id] = term;
+        }
+      } catch (err) {
+        _iterator3.e(err);
+      } finally {
+        _iterator3.f();
+      }
+    }
+  } catch (err) {
+    _iterator.e(err);
+  } finally {
+    _iterator.f();
+  }
+
+  var _iterator2 = _createForOfIteratorHelper(listing[taxonomy]),
+      _step2;
+
+  try {
+    for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
+      var termId = _step2.value;
+      terms.push(termObjects[termId]);
+    }
+  } catch (err) {
+    _iterator2.e(err);
+  } finally {
+    _iterator2.f();
+  }
+
+  return terms;
+}
 
 /***/ }),
 
@@ -31392,13 +27744,13 @@ Array.prototype.forEach.call(targets, function (target) {
 /***/ }),
 
 /***/ "@wordpress/element":
-/*!******************************************!*\
-  !*** external {"this":["wp","element"]} ***!
-  \******************************************/
+/*!*********************************!*\
+  !*** external ["wp","element"] ***!
+  \*********************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-(function() { module.exports = this["wp"]["element"]; }());
+(function() { module.exports = window["wp"]["element"]; }());
 
 /***/ }),
 

@@ -4,7 +4,7 @@
  * Plugin Name:       React Experiences Listings
  * Plugin URI:        https://github.com/bpolack/React-Experiences-Listings
  * Description:       Load React based experience/business listings via this Wordpress Plugin. Uses the Wordpress REST API as a backend.
- * Version:           0.1.0
+ * Version:           0.9.1
  * Author:            Braighton Polack
  */
 
@@ -46,4 +46,5 @@ function rel_acf_to_rest_api_taxonomy($response, $item, $request) {
     return $response;
 }
 add_filter('rest_prepare_' . $rel_options['category'], 'rel_acf_to_rest_api_taxonomy', 10, 3);
+add_filter('rest_prepare_' . $rel_options['flag'], 'rel_acf_to_rest_api_taxonomy', 10, 3);
 add_filter('rest_prepare_' . $rel_options['region'], 'rel_acf_to_rest_api_taxonomy', 10, 3);

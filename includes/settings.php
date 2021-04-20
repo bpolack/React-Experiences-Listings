@@ -29,10 +29,13 @@ function rel_register_settings() {
     add_settings_field( 'rel_plugin_setting_phone', 'ACF Phone Field', 'rel_plugin_setting_phone', 'react-experiences-listings', 'post_type_settings' );
     add_settings_field( 'rel_plugin_setting_website', 'ACF Website Field', 'rel_plugin_setting_website', 'react-experiences-listings', 'post_type_settings' );
     add_settings_field( 'rel_plugin_setting_address', 'ACF Address Field', 'rel_plugin_setting_address', 'react-experiences-listings', 'post_type_settings' );
+    add_settings_field( 'rel_plugin_setting_hours', 'ACF Hours Field', 'rel_plugin_setting_hours', 'react-experiences-listings', 'post_type_settings' );
     add_settings_field( 'rel_plugin_setting_logo', 'ACF Logo Field', 'rel_plugin_setting_logo', 'react-experiences-listings', 'post_type_settings' );
     add_settings_field( 'rel_plugin_setting_map_pin', 'ACF Map Field', 'rel_plugin_setting_map_pin', 'react-experiences-listings', 'post_type_settings' );
     add_settings_field( 'rel_plugin_setting_category', 'Category Custom Taxonomy (optional)', 'rel_plugin_setting_category', 'react-experiences-listings', 'post_type_settings' );
-    add_settings_field( 'rel_plugin_setting_category_icon', 'Category Icon Field', 'rel_plugin_setting_category_icon', 'react-experiences-listings', 'post_type_settings' );
+    add_settings_field( 'rel_plugin_setting_flag', 'Flag Custom Taxonomy (optional)', 'rel_plugin_setting_flag', 'react-experiences-listings', 'post_type_settings' );
+    add_settings_field( 'rel_plugin_setting_flag_hidden', 'Flag Hidden Field', 'rel_plugin_setting_flag_hidden', 'react-experiences-listings', 'post_type_settings' );
+    add_settings_field( 'rel_plugin_setting_flag_icon', 'Flag Icon Field', 'rel_plugin_setting_flag_icon', 'react-experiences-listings', 'post_type_settings' );
     add_settings_field( 'rel_plugin_setting_region', 'Region Custom Taxonomy (optional)', 'rel_plugin_setting_region', 'react-experiences-listings', 'post_type_settings' );
     add_settings_field( 'rel_plugin_setting_region_colour', 'Region Colour Field', 'rel_plugin_setting_region_colour', 'react-experiences-listings', 'post_type_settings' );
 
@@ -65,6 +68,10 @@ function rel_plugin_setting_address() {
     $options = get_option( 'rel_plugin_options' );
     echo '<input id="rel_plugin_setting_address" name="rel_plugin_options[address]" type="text" value="'.esc_attr( $options['address'] ).'" />';
 }
+function rel_plugin_setting_hours() {
+    $options = get_option( 'rel_plugin_options' );
+    echo '<input id="rel_plugin_setting_hours" name="rel_plugin_options[hours]" type="text" value="'.esc_attr( $options['hours'] ).'" />';
+}
 function rel_plugin_setting_logo() {
     $options = get_option( 'rel_plugin_options' );
     echo '<input id="rel_plugin_setting_logo" name="rel_plugin_options[logo]" type="text" value="'.esc_attr( $options['logo'] ).'" />';
@@ -77,9 +84,17 @@ function rel_plugin_setting_category() {
     $options = get_option( 'rel_plugin_options' );
     echo '<input id="rel_plugin_setting_category" name="rel_plugin_options[category]" type="text" value="'.esc_attr( $options['category'] ).'" />';
 }
-function rel_plugin_setting_category_icon() {
+function rel_plugin_setting_flag() {
     $options = get_option( 'rel_plugin_options' );
-    echo '<input id="rel_plugin_setting_category_icon" name="rel_plugin_options[category_icon]" type="text" value="'.esc_attr( $options['category_icon'] ).'" />';
+    echo '<input id="rel_plugin_setting_flag" name="rel_plugin_options[flag]" type="text" value="'.esc_attr( $options['flag'] ).'" />';
+}
+function rel_plugin_setting_flag_hidden() {
+    $options = get_option( 'rel_plugin_options' );
+    echo '<input id="rel_plugin_setting_flag_hidden" name="rel_plugin_options[flag_hidden]" type="text" value="'.esc_attr( $options['flag_hidden'] ).'" />';
+}
+function rel_plugin_setting_flag_icon() {
+    $options = get_option( 'rel_plugin_options' );
+    echo '<input id="rel_plugin_setting_flag_icon" name="rel_plugin_options[flag_icon]" type="text" value="'.esc_attr( $options['flag_icon'] ).'" />';
 }
 function rel_plugin_setting_region() {
     $options = get_option( 'rel_plugin_options' );

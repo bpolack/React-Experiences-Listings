@@ -1,11 +1,12 @@
 .rel-listings-single {
     margin: 0 30px;
     display: flex;
+    flex-wrap: wrap;
 }
 .rel-single-image {
-    width: 50%;
+    width: 100%;
     display: flex;
-    background-color: #ddd;
+    max-height: 50vh;
     position: relative;
 }
 .rel-single-image img {
@@ -22,6 +23,7 @@
     opacity: 0.84;
 }
 .rel-single-details {
+    width: 100%;
     padding: 35px;
 }
 .rel-single-text h4 {
@@ -35,6 +37,22 @@
     padding-bottom: 1px;
     text-align: center;
 }
+.rel-single-flags {
+    display: flex;
+    flex-wrap: wrap;
+    margin:5px 0px;
+}
+.rel-single-hours {
+    margin: 20px 0px;
+    padding: 15px;
+    border-radius: 16px;
+    background-color: #fcf2db;
+}
+.rel-single-hours-title {
+    font-size: 22px;
+    line-height: 1;
+    margin-bottom: 5px;
+}
 .rel-single-text, .rel-single-field, .rel-single-region-container {
     color: #173f57;
     font-size: 16px;
@@ -45,7 +63,7 @@
     margin: 8px 0px;
 }
 .rel-single-field-container {
-    margin-top:25px;
+    margin:25px 0px;
 }
 .rel-single-field a {
     text-decoration: underline;
@@ -67,19 +85,11 @@
 }
 @media only screen and (min-width: 801px) { 
     .rel-single-details {
-        width: 50%;
+        width: 100%;
     }
 }
 @media only screen and (max-width: 800px) {
     .rel-listings-single {
         flex-wrap: wrap;
-    }
-    .rel-single-image {
-        order: 2;
-        width: 100%;
-    }
-    .rel-single-details {
-        order: 1;
-        width: 100%;
     }
 }

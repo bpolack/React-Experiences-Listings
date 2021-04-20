@@ -1,7 +1,11 @@
 const { Component } = wp.element;
 const Entities = require('html-entities').AllHtmlEntities;
 const entities = new Entities();
+import {getTaxonomyTerms} from '../../../helpers/apiHelpers';
 import './RelListingSingle.css';
+
+// Import Components
+import RelListingFlag from '../../elements/RelListingFlag/RelListingFlag';
 
 export class RelListingSingle extends Component {
 
@@ -12,20 +16,24 @@ export class RelListingSingle extends Component {
         let dotStyle = {
             backgroundColor: '#c7c7c7'
         }
-        if ((typeof listing._embedded['wp:term'][2] !== 'undefined') && (listing._embedded['wp:term'][2].length > 0)) {
-            if (typeof listing._embedded['wp:term'][2][0].rel_fields[regionColourField] !== 'undefined') {
-                dotStyle.backgroundColor = listing._embedded['wp:term'][2][0].rel_fields[regionColourField];
-            }
+        try {
             regionName = entities.decode(listing._embedded['wp:term'][2][0].name);
-        }
+            try {
+                dotStyle.backgroundColor = listing._embedded['wp:term'][2][0].rel_fields[regionColourField];
+            } catch (err) {
+                // No region colour
+            }
 
-        if (regionName) {
-            return (
-                <div className="rel-single-region-container">
-                    <div className="rel-single-region-dot" style={dotStyle} ></div>
-                    <div className="rel-single-region">{regionName}</div>
-                </div>
-            )
+            if (regionName) {
+                return (
+                    <div className="rel-modal-region-container">
+                        <div className="rel-modal-region-dot" style={dotStyle} ></div>
+                        <div className="rel-modal-region">{regionName}</div>
+                    </div>
+                )
+            }
+        } catch (err) {
+            // No region name
         }
     }
 
@@ -53,6 +61,7 @@ export class RelListingSingle extends Component {
             )
         }
     }
+
     renderPhone(listing, phoneField) {
 
         if (listing.rel_fields[phoneField] != false) {
@@ -64,6 +73,7 @@ export class RelListingSingle extends Component {
             )
         }
     }
+
     renderWebsite(listing, websiteField) {
 
         if (listing.rel_fields[websiteField] != false) {
@@ -72,6 +82,20 @@ export class RelListingSingle extends Component {
                     <div className="rel-single-region-dot empty"></div>
                     <div className="rel-single-website">
                         <a href={listing.rel_fields[websiteField]} target="_blank">{listing.rel_fields[websiteField]}</a>
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    renderHours(listing, hoursField) {
+
+        if (listing.rel_fields[hoursField]) {
+            return (
+                <div className="rel-single-hours">
+                    <h5 className="rel-single-hours-title">Hours of Operation</h5>
+                    <div className="rel-single-hours-desc" 
+                        dangerouslySetInnerHTML={{ __html: entities.decode(listing.rel_fields[hoursField]) }} >
                     </div>
                 </div>
             )
@@ -88,19 +112,47 @@ export class RelListingSingle extends Component {
         }
     }
 
+    renderFlags(listing, flagName, flagHiddenField) {
+        if (flagName) {
+            const flags = getTaxonomyTerms( flagName, listing );
+            if (flags) {
+                return (
+                    <div className="rel-single-flags">
+                        {flags.map((flag, index) => {
+                            if (!flag.rel_fields[flagHiddenField]) {
+                                return (
+                                    <RelListingFlag flag={flag} description={true} tooltip={false} globals={this.props.globals} />
+                                )
+                            }
+                        })}
+                    </div>
+                )
+            }
+        }
+    }
+
     render() {
 
         // Destruct required props and globals
         const listing = this.props.singleListing;
-        const {phoneField, addressField, logoField, mapField, websiteField, regionColourField, placeholderImage} = this.props.globals;
+        const {phoneField, addressField, hoursField, logoField, flagName, flagHiddenField, mapField, websiteField, regionColourField, placeholderImage} = this.props.globals;
 
         if (listing) {
+
             // Check for a featured image if it exists
             let thumbSrc = placeholderImage;
             let thumbAlt = '';
-            if (listing._embedded['wp:featuredmedia']) {
+            try {
                 thumbSrc = listing._embedded['wp:featuredmedia'][0].media_details.sizes.large.source_url;
                 thumbAlt = listing._embedded['wp:featuredmedia'][0].alt_text;
+            } catch (err) {
+                // No LARGE Featured Media
+                try {
+                    thumbSrc = listing._embedded['wp:featuredmedia'][0].media_details.sizes.full.source_url;
+                    thumbAlt = listing._embedded['wp:featuredmedia'][0].alt_text;
+                } catch (err) {
+                    // No Featured Media
+                }
             }
 
             return (
@@ -112,16 +164,19 @@ export class RelListingSingle extends Component {
                     <div className="rel-single-details">
                         <div className="rel-single-text">
                             <h4>{entities.decode(listing.title.rendered)}</h4>
+                            {this.renderFlags(listing, flagName, flagHiddenField)}
+                            {this.renderRegion(listing, regionColourField)}
+                            <div className="rel-single-field-container">
+                                {this.renderAddress(listing, addressField, mapField)}
+                                {this.renderPhone(listing, phoneField)}
+                                {this.renderWebsite(listing, websiteField)}
+                            </div>
+                            {this.renderHours(listing, hoursField)}
                             <div className="rel-single-content" 
                                 dangerouslySetInnerHTML={{ __html: entities.decode(listing.content.rendered) }} >
                             </div>
                         </div>
-                        {this.renderRegion(listing, regionColourField)}
-                        <div className="rel-single-field-container">
-                            {this.renderAddress(listing, addressField, mapField)}
-                            {this.renderPhone(listing, phoneField)}
-                            {this.renderWebsite(listing, websiteField)}
-                        </div>
+                        
                     </div>
                 </div>
             )

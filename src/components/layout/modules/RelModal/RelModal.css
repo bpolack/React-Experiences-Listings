@@ -70,6 +70,22 @@
     padding-bottom: 1px;
     text-align: center;
 }
+.rel-modal-flags {
+    display: flex;
+    flex-wrap: wrap;
+    margin:5px 0px;
+}
+.rel-modal-hours {
+    margin: 20px 0px;
+    padding: 15px;
+    border-radius: 16px;
+    background-color: #fcf2db;
+}
+.rel-modal-hours-title {
+    font-size: 22px;
+    line-height: 1;
+    margin-bottom: 5px;
+}
 .rel-modal-text, .rel-modal-field, .rel-modal-region-container {
     color: #173f57;
     font-size: 16px;

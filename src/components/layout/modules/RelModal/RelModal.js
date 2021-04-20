@@ -2,10 +2,14 @@ const { Component } = wp.element;
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 const Entities = require('html-entities').AllHtmlEntities;
 const entities = new Entities();
+import {getTaxonomyTerms} from '../../../../helpers/apiHelpers';
 import './RelModal.css';
 
 // Fontawesome Icons
 import { faTimesCircle, faLink } from '@fortawesome/free-solid-svg-icons';
+
+// Import Components
+import RelListingFlag from '../../../elements/RelListingFlag/RelListingFlag';
 
 export class RelModal extends Component {
 
@@ -16,21 +20,26 @@ export class RelModal extends Component {
         let dotStyle = {
             backgroundColor: '#c7c7c7'
         }
-        if ((typeof listing._embedded['wp:term'][2] !== 'undefined') && (listing._embedded['wp:term'][2].length > 0)) {
-            if (typeof listing._embedded['wp:term'][2][0].rel_fields[regionColourField] !== 'undefined') {
-                dotStyle.backgroundColor = listing._embedded['wp:term'][2][0].rel_fields[regionColourField];
-            }
+        try {
             regionName = entities.decode(listing._embedded['wp:term'][2][0].name);
-        }
+            try {
+                dotStyle.backgroundColor = listing._embedded['wp:term'][2][0].rel_fields[regionColourField];
+            } catch (err) {
+                // No region colour
+            }
 
-        if (regionName) {
-            return (
-                <div className="rel-modal-region-container">
-                    <div className="rel-modal-region-dot" style={dotStyle} ></div>
-                    <div className="rel-modal-region">{regionName}</div>
-                </div>
-            )
+            if (regionName) {
+                return (
+                    <div className="rel-modal-region-container">
+                        <div className="rel-modal-region-dot" style={dotStyle} ></div>
+                        <div className="rel-modal-region">{regionName}</div>
+                    </div>
+                )
+            }
+        } catch (err) {
+            // No region name
         }
+        
     }
 
     renderAddress(listing, addressField, mapField) {
@@ -57,6 +66,7 @@ export class RelModal extends Component {
             )
         }
     }
+
     renderPhone(listing, phoneField) {
 
         if (listing.rel_fields[phoneField] != false) {
@@ -68,6 +78,7 @@ export class RelModal extends Component {
             )
         }
     }
+
     renderWebsite(listing, websiteField) {
 
         if (listing.rel_fields[websiteField] != false) {
@@ -81,6 +92,21 @@ export class RelModal extends Component {
             )
         }
     }
+
+    renderHours(listing, hoursField) {
+
+        if (listing.rel_fields[hoursField]) {
+            return (
+                <div className="rel-modal-hours">
+                    <h5 className="rel-modal-hours-title">Hours of Operation</h5>
+                    <div className="rel-modal-hours-desc" 
+                        dangerouslySetInnerHTML={{ __html: entities.decode(listing.rel_fields[hoursField]) }} >
+                    </div>
+                </div>
+            )
+        }
+    }
+
     renderLink(internalLink) {
 
         if (internalLink != false) {
@@ -100,18 +126,45 @@ export class RelModal extends Component {
         }
     }
 
+    renderFlags(listing, flagName, flagHiddenField) {
+        if (flagName) {
+            const flags = getTaxonomyTerms( flagName, listing );
+            if (flags) {
+                return (
+                    <div className="rel-modal-flags">
+                        {flags.map((flag, index) => {
+                            if (!flag.rel_fields[flagHiddenField]) {
+                                return (
+                                    <RelListingFlag flag={flag} description={true} tooltip={false} globals={this.props.globals} />
+                                )
+                            }
+                        })}
+                    </div>
+                )
+            }
+        }
+    }
+
     render() {
 
         // Destruct required props and globals
         const listing = this.props.modalListing;
-        const {phoneField, addressField, logoField, mapField, websiteField, regionColourField, placeholderImage} = this.props.globals;
+        const {phoneField, addressField, hoursField, logoField, flagName, flagHiddenField, mapField, websiteField, regionColourField, placeholderImage} = this.props.globals;
 
         // Check for a featured image if it exists
         let thumbSrc = placeholderImage;
         let thumbAlt = '';
-        if (listing._embedded['wp:featuredmedia']) {
-            thumbSrc = listing._embedded['wp:featuredmedia'][0].media_details.sizes.medium.source_url;
+        try {
+            thumbSrc = listing._embedded['wp:featuredmedia'][0].media_details.sizes.large.source_url;
             thumbAlt = listing._embedded['wp:featuredmedia'][0].alt_text;
+        } catch (err) {
+            // No LARGE Featured Media
+            try {
+                thumbSrc = listing._embedded['wp:featuredmedia'][0].media_details.sizes.thumbnail.source_url;
+                thumbAlt = listing._embedded['wp:featuredmedia'][0].alt_text;
+            } catch (err) {
+                // No Featured Media
+            }
         }
 
         return (
@@ -124,9 +177,11 @@ export class RelModal extends Component {
                     <div className="rel-modal-details">
                         <div className="rel-modal-text">
                             <h4>{entities.decode(listing.title.rendered)} {this.renderLink(listing.link)}</h4>
+                            {this.renderFlags(listing, flagName, flagHiddenField)}
                             <div className="rel-modal-content" 
                                 dangerouslySetInnerHTML={{ __html: entities.decode(listing.content.rendered) }} >
                             </div>
+                            {this.renderHours(listing, hoursField)}
                         </div>
                         {this.renderRegion(listing, regionColourField)}
                         <div className="rel-modal-field-container">

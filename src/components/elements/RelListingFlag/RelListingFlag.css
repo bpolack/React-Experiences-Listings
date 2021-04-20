@@ -1,0 +1,29 @@
+.rel-flag {
+    display: flex;
+    align-items: center;
+    padding: 2px;
+    margin: 4px;
+    border-radius: 18px;
+    background-color: #f4ac2c;
+}
+.rel-flag.contains-desc {
+    margin:0;
+    margin-bottom: 8px;
+    margin-right: 8px;
+}
+.rel-flag-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+}
+.rel-flag-icon img {
+    max-width: 100%;
+    max-height: 100%;
+}
+.rel-flag-desc {
+    padding: 0px 10px;
+    font-size: 13px;
+    font-weight: bold;
+}

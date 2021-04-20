@@ -9,7 +9,7 @@
     display: flex;
     position: relative;
 }
-.rel-listing-image img {
+.rel-listing-image > img {
     width: 100%;
     display: block;
     object-fit: cover;
@@ -25,6 +25,14 @@
 }
 .rel-listing-grid-item:hover .rel-listing-image > img {
     opacity: 0.65;
+}
+.rel-listing-image .rel-grid-flags {
+    position: absolute;
+    left: 5px;
+    top: 5px;
+    display: flex;
+    flex-wrap: wrap;
+    max-width: calc(100% - 110px);
 }
 .rel-listing-grid-details {
     padding: 20px 25px 0px 25px;
