@@ -2,6 +2,7 @@ const { Component } = wp.element;
 import WPAPI from 'wpapi/browser/wpapi.min';
 import { v3 as uuidv3 } from 'uuid';
 import Loader from 'react-loader-spinner'
+import { InView } from 'react-intersection-observer';
 import './App.css';
 
 // Import Components
@@ -22,6 +23,7 @@ export class App extends Component {
         this.state = {
             view: props.args.view,
             loading: true,
+            viewIntersected: false,
             modalOpened: false,
             modalListing: false,
             page: 1,
@@ -42,6 +44,7 @@ export class App extends Component {
 
         // Bind callback methods to class
         this.changeView = this.changeView.bind(this);
+        this.triggerIntersection = this.triggerIntersection.bind(this);
         this.changeCategory = this.changeCategory.bind(this);
         this.changeRegion = this.changeRegion.bind(this);
         this.toggleModal = this.toggleModal.bind(this);
@@ -107,7 +110,7 @@ export class App extends Component {
     // Method to load more listings
     loadMore(callback) {
         const currentPage = this.state.page;
-        
+
         if (typeof this.state.totalPages !== 'undefined') {
             // Check that currentPage is less than totalPages
             if (currentPage < this.state.totalPages) {
@@ -130,7 +133,7 @@ export class App extends Component {
         else {
             // Callback early if totalPages state has not yet been set
             if (typeof callback === 'function') {
-                callback(true); 
+                callback(true);
             }
         }
 
@@ -180,8 +183,8 @@ export class App extends Component {
             .param(flagName, (currentFlag != false) ? currentFlag.trim().split(',') : [])
             .param(regionName, (currentRegion != false) ? currentRegion.trim().split(',') : [])
             .param('_embed', "1")
-            .order( (order != false ) ? order : 'asc' )
-            .orderby( (orderby != false ) ? orderby : 'title' )
+            .order((order != false) ? order : 'asc')
+            .orderby((orderby != false) ? orderby : 'title')
             .page(page)
             .perPage(perpage)
             .then((data) => {
@@ -362,42 +365,50 @@ export class App extends Component {
     }
 
     renderView() {
-        switch (this.state.view) {
-            case 'list':
-                return (
-                    <RelListingRows
-                        listings={this.state.listings}
-                        globals={this.props.globals}
-                        toggleModal={this.toggleModal}
-                    />
-                )
-            case 'map':
-                return (
-                    <RelListingMap
-                        listings={this.state.listings}
-                        globals={this.props.globals}
-                        toggleModal={this.toggleModal}
-                        page={this.state.page}
-                        totalPages={this.state.totalPages}
-                        loadMore={this.loadMore}
-                    />
-                )
-            case 'single':
-                return (
-                    <RelListingSingle
-                        singleListing={this.state.modalListing}
-                        globals={this.props.globals}
-                    />
-                )
-            default:
-                return (
-                    <RelListingGrid
-                        listings={this.state.listings}
-                        globals={this.props.globals}
-                        toggleModal={this.toggleModal}
-                    />
-                )
+        if (this.state.viewIntersected) {
+            switch (this.state.view) {
+                case 'list':
+                    return (
+                        <RelListingRows
+                            listings={this.state.listings}
+                            globals={this.props.globals}
+                            toggleModal={this.toggleModal}
+                        />
+                    )
+                case 'map':
+                    return (
+                        <RelListingMap
+                            listings={this.state.listings}
+                            globals={this.props.globals}
+                            toggleModal={this.toggleModal}
+                            page={this.state.page}
+                            totalPages={this.state.totalPages}
+                            loadMore={this.loadMore}
+                        />
+                    )
+                case 'single':
+                    return (
+                        <RelListingSingle
+                            singleListing={this.state.modalListing}
+                            globals={this.props.globals}
+                        />
+                    )
+                default:
+                    return (
+                        <RelListingGrid
+                            listings={this.state.listings}
+                            globals={this.props.globals}
+                            toggleModal={this.toggleModal}
+                        />
+                    )
+            }
         }
+    }
+
+    triggerIntersection(inView) {
+        // change intersection state for lazy load of view components
+        if (inView)
+            this.setState({viewIntersected: true});
     }
 
     render() {
@@ -414,7 +425,9 @@ export class App extends Component {
                     changeRegion={this.changeRegion}
                     regionColourField={this.props.globals.regionColourField}
                 />
-                {this.renderView()}
+                <InView as="div" triggerOnce={true} onChange={(inView, entry) => this.triggerIntersection(inView)}>
+                    {this.renderView()}
+                </InView>
                 {this.renderLoader()}
                 <RelFooter
                     currentView={this.state.view}

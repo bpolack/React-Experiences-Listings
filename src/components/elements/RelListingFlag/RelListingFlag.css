@@ -19,6 +19,7 @@
     height: 32px;
 }
 .rel-flag-icon img {
+    height: auto;
     max-width: 100%;
     max-height: 100%;
 }

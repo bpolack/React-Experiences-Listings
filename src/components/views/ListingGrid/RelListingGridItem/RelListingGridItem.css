@@ -21,6 +21,7 @@
     right: 5px;
     top: 5px;
     max-width: 90px;
+    height: auto;
     opacity: 0.8;
 }
 .rel-listing-grid-item:hover .rel-listing-image > img {

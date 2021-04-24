@@ -13,7 +13,7 @@ export class RelListingFlag extends Component {
     renderIcon(flag, flagIconField) {
         if (flag.rel_fields[flagIconField]) {
             return (
-                <img src={flag.rel_fields[flagIconField].url} />
+                <img width="32" height="32" src={flag.rel_fields[flagIconField].url} />
             )
         }
         else {

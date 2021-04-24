@@ -13,7 +13,7 @@ export class RelListingGridItem extends Component {
         if (typeof listing.rel_fields[logoField] !== 'undefined' && listing.rel_fields[logoField] != false) {
             return (
                 <div className="rel-listing-logo">
-                    <img src={listing.rel_fields[logoField]} />
+                    <img width="90" height="90" src={listing.rel_fields[logoField]} />
                 </div>
             )
         }
@@ -67,7 +67,7 @@ export class RelListingGridItem extends Component {
         return (
             <div className="rel-listing-grid-item" onClick={(e) => this.props.toggleModal(e, false, listing)}>
                 <div className="rel-listing-image">
-                    <img src={thumbSrc} alt={thumbAlt} />
+                    <img src={thumbSrc} width="400" height="260" alt={thumbAlt} />
                     {this.renderLogo(listing, logoField)}
                     {this.renderFlags(listing, flagName, flagHiddenField)}
                 </div>
